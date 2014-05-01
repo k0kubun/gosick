@@ -7,24 +7,18 @@ This is started as [a programming project](https://github.com/k0kubun/gosick/blo
 
 ### Implemented syntax and functions
 
-| Type | Name | Implemented |
+| Type | List | Implemented |
 |:-----|:-----|:-----------:|
-| Number | number?, +, -, *, /, =, <, <=, >, >= | x |
-| List | null?, pair?, list?, symbol?, car, cdr, cons, list, length, memq, last, append, set-car!, set-cdr! | x |
-| Boolean | boolean?, not | x |
-| String | string?, string-append, symbol->string, string->symbol, string->number, number->string | x |
-| Procedure | procedure? | x |
-| Comparison | eq?, neq?, equal? | x |
-| Syntax | lambda, let, let*, letrec | x |
-| Statement | if, cond, and, or, begin, do | x |
-| Definition | set!, define, define-macro | x |
-| Others | load | x |
-
-### Optimization
-
-| Name | Implemented |
-|:-----|:-----------:|
-| Tail Call Optimization | x |
+| Number | number?, +, -, *, /, =, <, <=, >, >= | + |
+| List | null?, pair?, list?, symbol?, car, cdr, cons, list, length, memq, last, append, set-car!, set-cdr! |  |
+| Boolean | boolean?, not |  |
+| String | string?, string-append, symbol->string, string->symbol, string->number, number->string |  |
+| Procedure | procedure? |  |
+| Comparison | eq?, neq?, equal? |  |
+| Syntax | lambda, let, let*, letrec |  |
+| Statement | if, cond, and, or, begin, do |  |
+| Definition | set!, define, define-macro |  |
+| Others | load |  |
 
 ## License
 

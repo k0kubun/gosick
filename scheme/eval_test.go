@@ -9,6 +9,8 @@ func TestEval(t *testing.T) {
 		" 1 ":      "1",
 		" 　 20　 　": "20",
 		" 　	300 　	": "300",
+		"(+)": "0",
+		"(+ 1  2    3      4    5)": "15",
 	}
 
 	for expression, expectedResult := range expectedResultByExpression {
