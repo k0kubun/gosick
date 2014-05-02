@@ -20,7 +20,7 @@ func NewExpression(expression string) *Expression {
 func (e *Expression) String() string {
 	result, err := e.Eval()
 	if err != nil {
-		fmt.Errorf(err.Error())
+		log.Fatal(err.Error())
 		return ""
 	}
 	return result.String()
@@ -31,15 +31,19 @@ func (e *Expression) Eval() (Type, error) {
 		expressions := strings.Split(e.parenthesesStrippedExpression(), " ")
 		function := &Expression{expression: expressions[0]}
 
-		childs := []*Expression{}
+		args := []*Expression{}
 		for _, expression := range expressions[1:] {
-			childs = append(childs, &Expression{expression: expression})
+			args = append(args, &Expression{expression: expression})
 		}
 
-		return function.evalFunction(childs)
+		return function.evalFunction(args)
 	} else {
 		if matched, _ := regexp.MatchString("[0-9]*", e.expression); matched {
-			return NewConst(e.expression), nil
+			value, err := NewConst(e.expression).Eval()
+			if err != nil {
+				return nil, err
+			}
+			return value, nil
 		} else {
 			return nil, errors.New(fmt.Sprintf("Invalid or unexpected token: %s\n", e.expression))
 		}
@@ -48,6 +52,18 @@ func (e *Expression) Eval() (Type, error) {
 
 func (e *Expression) evalFunction(args []*Expression) (Type, error) {
 	switch e.expression {
+	case "number?":
+		if len(args) == 1 {
+			arg, err := args[0].Eval()
+			if err != nil {
+				return nil, err
+			}
+			return NewBoolean(arg.IsNumber()), nil
+		} else {
+			return nil, errors.New(
+				fmt.Sprintf("Wrong number of arguments: %s requires 1, but got %d", e.expression, len(args)),
+			)
+		}
 	case "+":
 		sum := 0
 		for _, arg := range args {
@@ -85,3 +101,7 @@ func (e *Expression) parenthesesStrippedExpression() string {
 
 	return e.expression
 }
+
+// func (e *Expression) IsNumber() bool {
+// 	return false
+// }

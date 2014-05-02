@@ -9,6 +9,8 @@ func TestConst(t *testing.T) {
 		"1":        "1",
 		"20":       "20",
 		"10000000": "10000000",
+		"#t":       "#t",
+		"#f":       "#f",
 	}
 
 	for expression, expectedResult := range expectedResultByExpression {

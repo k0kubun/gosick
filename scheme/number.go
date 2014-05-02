@@ -21,3 +21,7 @@ func NewNumber(expression interface{}) *Number {
 func (n *Number) String() string {
 	return n.expression
 }
+
+func (n *Number) IsNumber() bool {
+	return true
+}

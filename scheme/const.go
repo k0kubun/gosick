@@ -19,8 +19,10 @@ func (c *Const) String() string {
 }
 
 func (c *Const) Eval() (Type, error) {
-	if matched, _ := regexp.MatchString("[0-9]*", c.expression); matched {
+	if matched, _ := regexp.MatchString("^[0-9]*$", c.expression); matched {
 		return NewNumber(c.expression), nil
+	} else if matched, _ := regexp.MatchString("^#(t|f)$", c.expression); matched {
+		return NewBoolean(c.expression), nil
 	} else {
 		return nil, errors.New(fmt.Sprintf("Invalid or unexpected token: %s\n", c.expression))
 	}
