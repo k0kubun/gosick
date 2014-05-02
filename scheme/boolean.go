@@ -27,7 +27,3 @@ func NewBoolean(expression interface{}) *Boolean {
 func (b *Boolean) String() string {
 	return b.expression
 }
-
-// func (b *Boolean) IsNumber() bool {
-// 	return false
-// }

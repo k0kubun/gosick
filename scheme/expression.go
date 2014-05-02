@@ -87,21 +87,7 @@ func (e *Expression) isParenthesized() bool {
 }
 
 func (e *Expression) parenthesesStrippedExpression() string {
-	reg, err := regexp.Compile("^\\(")
-	if err != nil {
-		log.Fatal(err)
-	}
-	e.expression = reg.ReplaceAllString(e.expression, "")
-
-	reg, err = regexp.Compile("\\)$")
-	if err != nil {
-		log.Fatal(err)
-	}
-	e.expression = reg.ReplaceAllString(e.expression, "")
-
-	return e.expression
+	expression := strings.TrimPrefix(e.expression, "(")
+	expression = strings.TrimSuffix(expression, ")")
+	return expression
 }
-
-// func (e *Expression) IsNumber() bool {
-// 	return false
-// }
