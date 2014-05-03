@@ -1,4 +1,7 @@
 package scheme
 
-type Object struct {
+type Object interface {
+}
+
+type ObjectBase struct {
 }

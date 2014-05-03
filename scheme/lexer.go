@@ -8,6 +8,6 @@ type Lexer struct {
 	scanner.Scanner
 }
 
-func (l Lexer) ReadToken() *Token {
-	return nil
+func (l Lexer) ReadToken() rune {
+	return 0
 }
