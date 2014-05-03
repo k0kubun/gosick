@@ -1,7 +1,7 @@
 package scheme
 
 type Interpreter struct {
-	lexer *Lexer
+	Parser
 }
 
 func NewInterpreter(expression string) *Interpreter {
