@@ -1,41 +1,36 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
+	"github.com/GeertJohan/go.linenoise"
 	"github.com/k0kubun/gosick/scheme"
 	"log"
-	"os"
+	"strings"
 )
 
-func printShellPrompt(indentLevel int) {
+func shellPrompt(indentLevel int) string {
 	if indentLevel == 0 {
-		fmt.Print("gosick> ")
+		return "gosick> "
 	} else if indentLevel > 0 {
-		fmt.Print("gosick* ")
-
-		for length := indentLevel; length > 0; length-- {
-			fmt.Print("  ")
-		}
+		return fmt.Sprintf("gosick* %s", strings.Repeat("  ", indentLevel))
 	} else {
 		panic("Negative indent level")
 	}
 }
 
 func invokeInteractiveShell() {
-	commandLine := bufio.NewReader(os.Stdin)
-
 	for {
 		indentLevel := 0
 		expression := ""
 
 		for {
-			printShellPrompt(indentLevel)
-
-			currentLine, err := commandLine.ReadString('\n')
+			currentLine, err := linenoise.Line(shellPrompt(indentLevel))
 			if err != nil {
 				log.Fatal(err)
 				return
+			}
+			if len(currentLine) == 0 {
+				continue
 			}
 			expression += currentLine
 
