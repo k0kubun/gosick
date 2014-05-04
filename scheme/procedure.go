@@ -10,8 +10,36 @@ package scheme
 type Procedure struct {
 	ObjectBase
 	environment *Environment
+	function    func(Object) Object
 }
 
-func NewProcedure(func(Object) Object) *Procedure {
-	return &Procedure{}
+var builtinProcedures = Binding{
+	"+": NewProcedure(plus),
+}
+
+func NewProcedure(function func(Object) Object) *Procedure {
+	return &Procedure{
+		environment: nil,
+		function:    function,
+	}
+}
+
+func (p *Procedure) invoke(argument Object) Object {
+	return p.function(argument)
+}
+
+func plus(arguments Object) Object {
+	sum := 0
+	for arguments != nil {
+		pair := arguments.(*Pair)
+		if pair == nil {
+			break
+		}
+		if car := pair.Car; car != nil {
+			number := car.(*Number)
+			sum += number.value
+		}
+		arguments = pair.Cdr
+	}
+	return NewNumber(sum)
 }

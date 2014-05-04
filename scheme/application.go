@@ -12,7 +12,7 @@ type Application struct {
 	ObjectBase
 	procedureVariable Object
 	arguments         Object // expect *Pair
-	environment       Environment
+	environment       *Environment
 }
 
 func (a *Application) String() string {
@@ -24,5 +24,5 @@ func (a *Application) String() string {
 }
 
 func (a *Application) applyProcedure() Object {
-	return nil
+	return a.environment.invokeProcedure(a.procedureVariable, a.arguments)
 }
