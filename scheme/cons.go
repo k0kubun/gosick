@@ -5,3 +5,11 @@ type Cons struct {
 	Car *Object
 	Cdr *Cons
 }
+
+func (c *Cons) String() string {
+	if c.Car == nil && c.Cdr == nil {
+		return "()"
+	} else {
+		return "Not implemented."
+	}
+}
