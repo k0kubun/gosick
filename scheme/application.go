@@ -4,10 +4,24 @@
 
 package scheme
 
+import (
+	"log"
+)
+
 type Application struct {
 	ObjectBase
+	procedureVariable Object
+	arguments         Object // expect *Pair
 }
 
-func NewApplication() *Application {
-	return &Application{}
+func (a *Application) String() string {
+	result := a.applyProcedure()
+	if result == nil {
+		log.Fatal("Procedure appication returns nil")
+	}
+	return result.String()
+}
+
+func (a *Application) applyProcedure() Object {
+	return nil
 }

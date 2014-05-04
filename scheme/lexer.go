@@ -26,8 +26,8 @@ func (l *Lexer) NextToken() Object {
 		return NewNumber(l.TokenText())
 	case '-':
 		fmt.Println("Unexpected")
-	case scanner.String:
-		text = l.TokenText()
+	case scanner.String, '+':
+		return NewVariable(l.TokenText())
 	default:
 		text = l.TokenText()
 	}

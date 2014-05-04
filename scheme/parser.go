@@ -27,7 +27,19 @@ func (p *Parser) Parse() Object {
 		return nil
 	case '(':
 		p.Next()
-		return p.parseListBody()
+		object := p.parseListBody()
+		if object == nil {
+			log.Fatal("Unexpected flow(parseListBody returns nil)")
+			return nil
+		}
+		list := object.(*Pair)
+		if list.Car == nil && list.Cdr == nil {
+			return list
+		}
+		return &Application{
+			procedureVariable: list.Car,
+			arguments:         list.Cdr,
+		}
 	case scanner.EOF:
 		return nil
 	}

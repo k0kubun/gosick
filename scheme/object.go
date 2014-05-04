@@ -6,6 +6,7 @@ package scheme
 
 type Object interface {
 	String() string
+	IsProcedure() bool
 }
 
 type ObjectBase struct {
@@ -13,4 +14,8 @@ type ObjectBase struct {
 
 func (o *ObjectBase) String() string {
 	return "This type's String() is not implemented yet."
+}
+
+func (o *ObjectBase) IsProcedure() bool {
+	return false
 }
