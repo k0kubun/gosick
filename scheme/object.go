@@ -12,5 +12,5 @@ type ObjectBase struct {
 }
 
 func (o *ObjectBase) String() string {
-	return "This type's Eval() is not implemented yet."
+	return "This type's String() is not implemented yet."
 }

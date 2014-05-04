@@ -21,18 +21,19 @@ func NewParser(source string) *Parser {
 }
 
 func (p *Parser) Parse() Object {
-	token := p.Next()
-	switch token {
+	switch p.Peek() {
 	case ')':
 		log.Print("Unexpected token: ')'")
 		return nil
-	case '\'':
 	case '(':
+		p.Next()
 		return p.parseListBody()
 	case scanner.EOF:
 		return nil
 	}
-	return nil
+
+	object := p.NextToken()
+	return object
 }
 
 // This function returns only *Pair.

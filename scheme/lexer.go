@@ -18,14 +18,12 @@ type Lexer struct {
 }
 
 func (l *Lexer) NextToken() Object {
-	token := l.Peek()
-	fmt.Printf("Detected token: %c\n", token)
 	text := ""
-	switch token {
+	switch l.Scan() {
 	case '(', ')', '\'', scanner.EOF:
-		fmt.Println("Unexpected")
-	case scanner.Int, scanner.Float:
-		fmt.Println("Unexpected")
+		fmt.Println("Unexpected flow")
+	case scanner.Int:
+		return NewNumber(l.TokenText())
 	case '-':
 		fmt.Println("Unexpected")
 	case scanner.String:
