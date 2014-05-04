@@ -1,3 +1,7 @@
+// Parser is a type to analyse scheme source's syntax.
+// It embeds Lexer to generate tokens from a source code.
+// Parser.Parse() does syntactic analysis and returns scheme object pointer.
+
 package scheme
 
 import (
@@ -31,14 +35,14 @@ func (p *Parser) Parse() Object {
 	return nil
 }
 
-// This function returns only *Cons.
+// This function returns only *Pair.
 // But returns Object because if this method returns nil which is not interface type,
 // Parse()'s result cannot be judged as nil.
 // To avoid such a situation, this method's return value is Object.
 func (p *Parser) parseListBody() Object {
 	if p.Peek() == ')' {
 		p.Next()
-		return new(Cons)
+		return new(Pair)
 	}
 
 	car := p.Parse()
@@ -46,6 +50,6 @@ func (p *Parser) parseListBody() Object {
 		log.Print("Unsupported flow (maybe incomplete source or unexpected expression)")
 		return nil
 	}
-	cdr := p.parseListBody().(*Cons)
-	return &Cons{Car: car, Cdr: cdr}
+	cdr := p.parseListBody().(*Pair)
+	return &Pair{Car: car, Cdr: cdr}
 }

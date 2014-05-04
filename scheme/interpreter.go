@@ -1,3 +1,7 @@
+// Interpreter is a scheme source code interpreter.
+// It owns a role of API for executing scheme program.
+// Interpreter embeds Parser and delegates syntactic analysis to it.
+
 package scheme
 
 import (
