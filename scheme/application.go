@@ -12,6 +12,7 @@ type Application struct {
 	ObjectBase
 	procedureVariable Object
 	arguments         Object // expect *Pair
+	environment       Environment
 }
 
 func (a *Application) String() string {

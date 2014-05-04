@@ -9,8 +9,9 @@ package scheme
 
 type Pair struct {
 	ObjectBase
-	Car Object
-	Cdr *Pair
+	Car         Object
+	Cdr         *Pair
+	environment *Environment
 }
 
 func (p *Pair) String() string {

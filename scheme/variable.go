@@ -7,7 +7,8 @@ package scheme
 
 type Variable struct {
 	ObjectBase
-	identifier string
+	identifier  string
+	environment *Environment
 }
 
 func NewVariable(identifier string) *Variable {

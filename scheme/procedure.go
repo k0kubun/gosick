@@ -9,6 +9,7 @@ package scheme
 
 type Procedure struct {
 	ObjectBase
+	environment *Environment
 }
 
 func NewProcedure(func(Object) Object) *Procedure {
