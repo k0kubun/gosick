@@ -44,7 +44,7 @@ func (p *Parser) Parse() Object {
 		return nil
 	}
 
-	object := p.NextToken()
+	object := p.parseObject()
 	return object
 }
 
@@ -65,4 +65,20 @@ func (p *Parser) parseListBody() Object {
 	}
 	cdr := p.parseListBody().(*Pair)
 	return &Pair{Car: car, Cdr: cdr}
+}
+
+// This function parses a token from current position,
+// and changes the current position to the end of the token.
+func (p *Parser) parseObject() Object {
+	switch p.Scan() {
+	case ')':
+		return nil
+	case scanner.Int:
+		return NewNumber(p.TokenText())
+	case scanner.String, '+':
+		return NewVariable(p.TokenText())
+	default:
+		log.Fatal("Unexpected flow (switched default in scanning)")
+	}
+	return nil
 }
