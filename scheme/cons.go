@@ -2,7 +2,7 @@ package scheme
 
 type Cons struct {
 	ObjectBase
-	Car *Object
+	Car Object
 	Cdr *Cons
 }
 

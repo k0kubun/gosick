@@ -20,7 +20,8 @@ func (p *Parser) Parse() Object {
 	token := p.Next()
 	switch token {
 	case ')':
-		log.Fatal("Unexpected token: ')'")
+		log.Print("Unexpected token: ')'")
+		return nil
 	case '\'':
 	case '(':
 		return p.parseListBody()
@@ -30,10 +31,21 @@ func (p *Parser) Parse() Object {
 	return nil
 }
 
+// This function returns only *Cons.
+// But returns Object because if this method returns nil which is not interface type,
+// Parse()'s result cannot be judged as nil.
+// To avoid such a situation, this method's return value is Object.
 func (p *Parser) parseListBody() Object {
 	if p.Peek() == ')' {
 		p.Next()
 		return new(Cons)
 	}
-	return nil
+
+	car := p.Parse()
+	if car == nil {
+		log.Print("Unsupported flow (maybe incomplete source or unexpected expression)")
+		return nil
+	}
+	cdr := p.parseListBody().(*Cons)
+	return &Cons{Car: car, Cdr: cdr}
 }
