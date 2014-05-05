@@ -25,6 +25,7 @@ func (i *Interpreter) IndentLevel() int {
 func (i *Interpreter) Eval() {
 	for i.Peek() != scanner.EOF {
 		expression := i.Parser.Parse()
+		i.DumpAST(expression)
 
 		if expression == nil {
 			return
@@ -57,6 +58,8 @@ func (i *Interpreter) dumpASTWithIndent(object Object, indentLevel int) {
 		i.dumpASTWithIndent(pair.Cdr, indentLevel+1)
 	case *Number:
 		i.printWithIndent(fmt.Sprintf("Number(%d)", object.(*Number).value), indentLevel)
+	case *Boolean:
+		i.printWithIndent(fmt.Sprintf("Boolean(%s)", object.(*Boolean).String()), indentLevel)
 	case *Variable:
 		i.printWithIndent(fmt.Sprintf("Variable(%s)", object.(*Variable).identifier), indentLevel)
 	}

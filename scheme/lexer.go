@@ -53,6 +53,15 @@ func (l Lexer) TokenType() rune {
 // Non-destructive Lexer.NextToken().
 func (l Lexer) PeekToken() string {
 	l.Scan()
+	if l.TokenText() == "#" {
+		l.Scan()
+		switch l.TokenText() {
+		case "t", "f":
+			return fmt.Sprintf("#%s", l.TokenText())
+		default:
+			log.Fatal("Tokens which start from '#' are not implemented except #f, #t.")
+		}
+	}
 	return l.TokenText()
 }
 
