@@ -15,8 +15,12 @@ type Application struct {
 	environment       *Environment
 }
 
+func (a *Application) Eval() Object {
+	return a.applyProcedure()
+}
+
 func (a *Application) String() string {
-	result := a.applyProcedure()
+	result := a.Eval()
 	if result == nil {
 		log.Fatal("Procedure appication returns nil")
 	}

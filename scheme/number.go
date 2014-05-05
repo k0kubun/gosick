@@ -32,6 +32,10 @@ func NewNumber(argument interface{}) *Number {
 	return &Number{value: value}
 }
 
+func (n *Number) Eval() Object {
+	return n
+}
+
 func (n *Number) String() string {
 	return strconv.Itoa(n.value)
 }

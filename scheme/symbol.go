@@ -12,6 +12,10 @@ func NewSymbol(identifier string) *Symbol {
 	return &Symbol{identifier: identifier}
 }
 
+func (s *Symbol) Eval() Object {
+	return s
+}
+
 func (s *Symbol) String() string {
 	return s.identifier
 }

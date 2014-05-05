@@ -20,6 +20,10 @@ type Pair struct {
 	environment *Environment
 }
 
+func (p *Pair) Eval() Object {
+	return p
+}
+
 func (p *Pair) String() string {
 	if p.IsEmpty() {
 		return "()"
@@ -32,16 +36,6 @@ func (p *Pair) String() string {
 		return fmt.Sprintf("(%s)", strings.Join(tokens, " "))
 	} else {
 		return "Not implemented."
-	}
-}
-
-// ***DEPRICATED***
-func (p *Pair) EvaledCar() Object {
-	switch p.Car.(type) {
-	case *Application:
-		return p.Car.(*Application).applyProcedure()
-	default:
-		return p.Car
 	}
 }
 

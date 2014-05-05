@@ -9,7 +9,6 @@ import (
 )
 
 type Environment struct {
-	ObjectBase
 	parent  *Environment
 	binding Binding
 }

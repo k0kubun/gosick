@@ -3,6 +3,10 @@
 
 package scheme
 
+import (
+	"fmt"
+)
+
 type String struct {
 	ObjectBase
 	text string
@@ -10,4 +14,12 @@ type String struct {
 
 func NewString(text string) *String {
 	return &String{text: text}
+}
+
+func (s *String) Eval() Object {
+	return s
+}
+
+func (s *String) String() string {
+	return fmt.Sprintf("\"%s\"", s.text)
 }

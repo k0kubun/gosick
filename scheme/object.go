@@ -5,6 +5,7 @@
 package scheme
 
 type Object interface {
+	Eval() Object
 	String() string
 	IsNumber() bool
 	IsPair() bool
@@ -13,6 +14,10 @@ type Object interface {
 }
 
 type ObjectBase struct {
+}
+
+func (o *ObjectBase) Eval() Object {
+	panic("This object's Eval() is not implemented yet.")
 }
 
 func (o *ObjectBase) String() string {

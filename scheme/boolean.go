@@ -27,6 +27,10 @@ func NewBoolean(value interface{}) *Boolean {
 	return nil
 }
 
+func (b *Boolean) Eval() Object {
+	return b
+}
+
 func (b *Boolean) String() string {
 	if b.value == true {
 		return "#t"

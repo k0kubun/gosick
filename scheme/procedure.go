@@ -32,6 +32,10 @@ func NewProcedure(function func(Object) Object) *Procedure {
 	}
 }
 
+func (p *Procedure) Eval() Object {
+	return p
+}
+
 func (p *Procedure) invoke(argument Object) Object {
 	return p.function(argument)
 }
@@ -44,10 +48,10 @@ func plus(arguments Object) Object {
 	sum := 0
 	for arguments != nil {
 		pair := arguments.(*Pair)
-		if pair == nil {
+		if pair == nil || pair.Car == nil {
 			break
 		}
-		if car := pair.EvaledCar(); car != nil {
+		if car := pair.Car.Eval(); car != nil {
 			number := car.(*Number)
 			sum += number.value
 		}
@@ -66,13 +70,13 @@ func minus(arguments Object) Object {
 	}
 
 	pair := arguments.(*Pair)
-	difference := pair.EvaledCar().(*Number).value
+	difference := pair.Car.Eval().(*Number).value
 	list := pair.Cdr
 	for {
-		if list == nil {
+		if list == nil || list.Car == nil {
 			break
 		}
-		if car := list.EvaledCar(); car != nil {
+		if car := list.Car.Eval(); car != nil {
 			number := car.(*Number)
 			difference -= number.value
 		}
@@ -85,10 +89,10 @@ func multiply(arguments Object) Object {
 	product := 1
 	for arguments != nil {
 		pair := arguments.(*Pair)
-		if pair == nil {
+		if pair == nil || pair.Car == nil {
 			break
 		}
-		if car := pair.EvaledCar(); car != nil {
+		if car := pair.Car.Eval(); car != nil {
 			number := car.(*Number)
 			product *= number.value
 		}
@@ -107,13 +111,13 @@ func divide(arguments Object) Object {
 	}
 
 	pair := arguments.(*Pair)
-	quotient := pair.EvaledCar().(*Number).value
+	quotient := pair.Car.Eval().(*Number).value
 	list := pair.Cdr
 	for {
-		if list == nil {
+		if list == nil || list.Car == nil {
 			break
 		}
-		if car := list.EvaledCar(); car != nil {
+		if car := list.Car.Eval(); car != nil {
 			number := car.(*Number)
 			quotient /= number.value
 		}
@@ -129,7 +133,7 @@ func isNumber(object Object) Object {
 	if object.IsList() {
 		list := object.(*Pair)
 		if list.ListLength() == 1 {
-			object = list.EvaledCar()
+			object = list.Car.Eval()
 		} else {
 			log.Printf("wrong number of arguments: number? requires 1, but got %d", list.ListLength())
 			return nil
