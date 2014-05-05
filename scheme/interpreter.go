@@ -14,8 +14,7 @@ type Interpreter struct {
 }
 
 func NewInterpreter(source string) *Interpreter {
-	interpreter := &Interpreter{NewParser(source)}
-	return interpreter
+	return &Interpreter{NewParser(source)}
 }
 
 func (i *Interpreter) IndentLevel() int {

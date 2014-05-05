@@ -7,7 +7,6 @@ package scheme
 import (
 	"log"
 	"strings"
-	"text/scanner"
 )
 
 type Parser struct {
@@ -21,64 +20,57 @@ func NewParser(source string) *Parser {
 }
 
 func (p *Parser) Parse() Object {
-	switch p.Peek() {
-	case ')':
-		log.Print("Unexpected token: ')'")
-		return nil
+	return p.parseObject()
+}
+
+func (p *Parser) parseObject() Object {
+	tokenType := p.TokenType()
+	token := p.NextToken()
+
+	switch tokenType {
 	case '(':
-		p.Next()
-		object := p.parseListBody()
-		if object == nil {
-			log.Fatal("Unexpected flow(parseListBody returns nil)")
+		if p.TokenType() == ')' {
+			p.NextToken()
+			return new(Pair)
+		}
+
+		firstObject := p.parseObject()
+		if firstObject == nil {
+			log.Print("Unexpected flow: procedure application car is nil")
 			return nil
 		}
-		list := object.(*Pair)
-		if list.Car == nil && list.Cdr == nil {
-			return list
+
+		list := p.parseList()
+		if list == nil {
+			log.Print("Unexpected flow: procedure application cdr is nil")
+			return nil
 		}
 		return &Application{
-			procedureVariable: list.Car,
-			arguments:         list.Cdr,
+			procedureVariable: firstObject,
+			arguments:         list,
 		}
-	case scanner.EOF:
-		return nil
-	}
-
-	object := p.parseObject()
-	return object
-}
-
-// This function returns only *Pair.
-// But returns Object because if this method returns nil which is not interface type,
-// Parse()'s result cannot be judged as nil.
-// To avoid such a situation, this method's return value is Object.
-func (p *Parser) parseListBody() Object {
-	if p.Peek() == ')' {
-		p.Next()
-		return new(Pair)
-	}
-
-	car := p.Parse()
-	if car == nil {
-		log.Print("Unsupported flow (maybe incomplete source or unexpected expression)")
-		return nil
-	}
-	cdr := p.parseListBody().(*Pair)
-	return &Pair{Car: car, Cdr: cdr}
-}
-
-// This function parses a token from current position,
-// and changes the current position to the end of the token.
-func (p *Parser) parseObject() Object {
-	switch p.Scan() {
 	case ')':
 		return nil
-	case scanner.Int:
-		return NewNumber(p.TokenText())
-	case scanner.String, '+':
-		return NewVariable(p.TokenText())
+	case EOF:
+		return nil
+	case IntToken:
+		return NewNumber(token)
+	case IdentifierToken:
+		return NewVariable(token)
 	default:
-		log.Fatal("Unexpected flow (switched default in scanning)")
+		return nil
 	}
 	return nil
+}
+
+// This function returns *Pair of first object and list from second.
+// Returns value is Object because if a method returns nil which is not
+// interface type, the method's result cannot be judged as nil.
+func (p *Parser) parseList() Object {
+	car := p.Parse()
+	if car == nil {
+		return new(Pair)
+	}
+	cdr := p.parseList().(*Pair)
+	return &Pair{Car: car, Cdr: cdr}
 }
