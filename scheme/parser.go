@@ -43,12 +43,8 @@ func (p *Parser) parseObject(environment *Environment) Object {
 		}
 
 		return p.parseApplication(environment)
-	case ')':
-		return nil
 	case '\'':
 		return p.parseQuotedObject(environment)
-	case EOF:
-		return nil
 	case IntToken:
 		return NewNumber(token)
 	case IdentifierToken:
