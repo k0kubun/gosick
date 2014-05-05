@@ -64,7 +64,7 @@ func (p *Parser) parseObject() Object {
 // Returns value is Object because if a method returns nil which is not
 // interface type, the method's result cannot be judged as nil.
 func (p *Parser) parseList() Object {
-	car := p.Parse()
+	car := p.parseObject()
 	if car == nil {
 		return new(Pair)
 	}
