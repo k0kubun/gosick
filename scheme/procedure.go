@@ -7,6 +7,10 @@
 
 package scheme
 
+import (
+	"log"
+)
+
 type Procedure struct {
 	ObjectBase
 	environment *Environment
@@ -15,6 +19,7 @@ type Procedure struct {
 
 var builtinProcedures = Binding{
 	"+": NewProcedure(plus),
+	"-": NewProcedure(minus),
 }
 
 func NewProcedure(function func(Object) Object) *Procedure {
@@ -42,4 +47,32 @@ func plus(arguments Object) Object {
 		arguments = pair.Cdr
 	}
 	return NewNumber(sum)
+}
+
+func minus(arguments Object) Object {
+	switch arguments.(type) {
+	case *Pair:
+		pair := arguments.(*Pair)
+		if pair.IsEmpty() {
+			log.Print("procedure requires at least one argument: (-)")
+			return nil
+		}
+
+		result := pair.EvaledCar().(*Number).value
+		list := pair.Cdr
+		for {
+			if list == nil {
+				break
+			}
+			if car := list.EvaledCar(); car != nil {
+				number := car.(*Number)
+				result -= number.value
+			}
+			list = list.Cdr
+		}
+		return NewNumber(result)
+	default:
+		log.Print("procedure requires at least one argument: (-)")
+		return nil
+	}
 }

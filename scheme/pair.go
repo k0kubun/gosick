@@ -15,7 +15,7 @@ type Pair struct {
 }
 
 func (p *Pair) String() string {
-	if p.Car == nil && p.Cdr == nil {
+	if p.IsEmpty() {
 		return "()"
 	} else {
 		return "Not implemented."
@@ -29,4 +29,8 @@ func (p *Pair) EvaledCar() Object {
 	default:
 		return p.Car
 	}
+}
+
+func (p *Pair) IsEmpty() bool {
+	return p.Car == nil && p.Cdr == nil
 }
