@@ -31,6 +31,18 @@ func (p *Pair) EvaledCar() Object {
 	}
 }
 
+func (p *Pair) IsList() bool {
+	return true
+}
+
 func (p *Pair) IsEmpty() bool {
 	return p.Car == nil && p.Cdr == nil
+}
+
+func (p *Pair) ListLength() int {
+	if p.IsEmpty() {
+		return 0
+	} else {
+		return p.Cdr.ListLength() + 1
+	}
 }

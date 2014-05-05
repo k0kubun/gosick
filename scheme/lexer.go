@@ -52,24 +52,19 @@ func (l Lexer) TokenType() rune {
 
 // Non-destructive Lexer.NextToken().
 func (l Lexer) PeekToken() string {
-	l.Scan()
-	if l.TokenText() == "#" {
-		l.Scan()
-		switch l.TokenText() {
-		case "t", "f":
-			return fmt.Sprintf("#%s", l.TokenText())
-		default:
-			log.Fatal("Tokens which start from '#' are not implemented except #f, #t.")
-		}
-	}
-	return l.TokenText()
+	return l.nextToken()
 }
 
 // This function returns next token and moves current token reading
 // position to next token position.
 func (l *Lexer) NextToken() string {
+	return l.nextToken()
+}
+
+func (l *Lexer) nextToken() string {
 	l.Scan()
 	if l.TokenText() == "#" {
+		// text/scanner scans '#t' as '#' and 't'.
 		l.Scan()
 		switch l.TokenText() {
 		case "t", "f":
@@ -77,8 +72,21 @@ func (l *Lexer) NextToken() string {
 		default:
 			log.Fatal("Tokens which start from '#' are not implemented except #f, #t.")
 		}
+	} else if l.matchRegexp(l.TokenText(), fmt.Sprintf("^%s$", identifierExp)) {
+		// text/scanner scans some signs as splitted token from alphabet token.
+		text := l.TokenText()
+		for l.isIdentifierChar(l.Peek()) {
+			l.Scan()
+			text = fmt.Sprintf("%s%s", text, l.TokenText())
+		}
+		return text
 	}
 	return l.TokenText()
+}
+
+func (l Lexer) isIdentifierChar(char rune) bool {
+	charString := fmt.Sprintf("%c", char)
+	return l.matchRegexp(charString, fmt.Sprintf("^[%s%s]$", identifierChars, numberChars))
 }
 
 func (l *Lexer) matchRegexp(matchString string, expression string) bool {

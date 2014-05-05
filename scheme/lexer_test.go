@@ -33,6 +33,7 @@ var tokenizeTests = []tokenizeTest{
 	{"(+ 1 (+ 1))", []string{"(", "+", "1", "(", "+", "1", ")", ")"}},
 	{"(+ (- 1)2)", []string{"(", "+", "(", "-", "1", ")", "2", ")"}},
 	{"(* (/ 1)2)", []string{"(", "*", "(", "/", "1", ")", "2", ")"}},
+	{"(number? 1)", []string{"(", "number?", "1", ")"}},
 }
 
 func TestTokenType(t *testing.T) {

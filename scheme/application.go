@@ -29,3 +29,7 @@ func (a *Application) applyProcedure() Object {
 	}
 	return a.environment.invokeProcedure(a.procedureVariable, a.arguments)
 }
+
+func (a *Application) IsApplication() bool {
+	return true
+}

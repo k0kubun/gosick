@@ -11,13 +11,18 @@ type Boolean struct {
 	value bool
 }
 
-func NewBoolean(value string) *Boolean {
-	if value == "#t" {
-		return &Boolean{value: true}
-	} else if value == "#f" {
-		return &Boolean{value: false}
-	} else {
-		log.Fatal("Unexpected value for NewBoolean")
+func NewBoolean(value interface{}) *Boolean {
+	switch value.(type) {
+	case bool:
+		return &Boolean{value: value.(bool)}
+	case string:
+		if value.(string) == "#t" {
+			return &Boolean{value: true}
+		} else if value.(string) == "#f" {
+			return &Boolean{value: false}
+		} else {
+			log.Fatal("Unexpected value for NewBoolean")
+		}
 	}
 	return nil
 }

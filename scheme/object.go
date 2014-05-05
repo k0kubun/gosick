@@ -6,6 +6,9 @@ package scheme
 
 type Object interface {
 	String() string
+	IsNumber() bool
+	IsList() bool
+	IsApplication() bool
 }
 
 type ObjectBase struct {
@@ -13,4 +16,16 @@ type ObjectBase struct {
 
 func (o *ObjectBase) String() string {
 	return "This type's String() is not implemented yet."
+}
+
+func (o *ObjectBase) IsNumber() bool {
+	return false
+}
+
+func (o *ObjectBase) IsList() bool {
+	return false
+}
+
+func (o *ObjectBase) IsApplication() bool {
+	return false
 }
