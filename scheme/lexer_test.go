@@ -35,6 +35,10 @@ var tokenizeTests = []tokenizeTest{
 	{"(+ (- 1)2)", makeTokens("(,+,(,-,1,),2,)")},
 	{"(* (/ 1)2)", makeTokens("(,*,(,/,1,),2,)")},
 	{"(number? 1)", makeTokens("(,number?,1,)")},
+	{"((()", makeTokens("(,(,(,)")},
+	{"()))", makeTokens("(,),),)")},
+	{")))", makeTokens("),),)")},
+	{"((()))(()", makeTokens("(,(,(,),),),(,(,)")},
 }
 
 func TestTokenType(t *testing.T) {
@@ -48,9 +52,11 @@ func TestTokenType(t *testing.T) {
 	}
 }
 
-func TestNextToken(t *testing.T) {
+func TestAllTokens(t *testing.T) {
 	for _, test := range tokenizeTests {
-		actual := tokenizedStrings(test.source)
+		l := NewLexer(test.source)
+		actual := l.AllTokens()
+
 		if !areTheSameStrings(actual, test.result) {
 			t.Errorf("%s => %s; want %s", test.source, actual, test.result)
 		}
@@ -68,21 +74,6 @@ func tokenTypeString(tokenType rune) string {
 	default:
 		return fmt.Sprintf("%c", tokenType)
 	}
-}
-
-func tokenizedStrings(source string) []string {
-	l := NewLexer(source)
-	tokens := []string{}
-
-	for {
-		token := l.NextToken()
-		if token == "" {
-			break
-		}
-		tokens = append(tokens, token)
-	}
-
-	return tokens
 }
 
 func areTheSameStrings(a, b []string) bool {

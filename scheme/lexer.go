@@ -61,6 +61,19 @@ func (l *Lexer) NextToken() string {
 	return l.nextToken()
 }
 
+func (l Lexer) AllTokens() []string {
+	tokens := []string{}
+
+	for {
+		token := l.NextToken()
+		if token == "" {
+			break
+		}
+		tokens = append(tokens, token)
+	}
+	return tokens
+}
+
 func (l *Lexer) nextToken() string {
 	l.Scan()
 	if l.TokenText() == "#" {
