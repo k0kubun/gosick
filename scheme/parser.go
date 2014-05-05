@@ -6,7 +6,6 @@ package scheme
 
 import (
 	"log"
-	"strings"
 )
 
 type Parser struct {
@@ -14,9 +13,7 @@ type Parser struct {
 }
 
 func NewParser(source string) *Parser {
-	parser := &Parser{&Lexer{}}
-	parser.Init(strings.NewReader(source))
-	return parser
+	return &Parser{NewLexer(source)}
 }
 
 func (p *Parser) Parse() Object {

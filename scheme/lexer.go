@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"strings"
 	"text/scanner"
 )
 
@@ -24,13 +25,19 @@ var identifierChars = "a-zA-Z?!*/<=>:$%^&_~"
 var numberChars = "0-9+-."
 var identifierExp = fmt.Sprintf("[%s][%s%s]*", identifierChars, identifierChars, numberChars)
 
+func NewLexer(source string) *Lexer {
+	lexer := new(Lexer)
+	lexer.Init(strings.NewReader(source))
+	return lexer
+}
+
 // Non-destructive scanner.Scan().
 // This method returns next token type or unicode character.
 func (l Lexer) TokenType() rune {
 	token := l.PeekToken()
 	if l.matchRegexp(token, "^[ ]*$") {
 		return EOF
-	} else if l.matchRegexp(token, fmt.Sprintf("^(%s|\\+|-|\\.\\.\\.)$", identifierExp)) {
+	} else if l.matchRegexp(token, fmt.Sprintf("^(%s|\\+|-)$", identifierExp)) {
 		return IdentifierToken
 	} else if l.matchRegexp(token, "^[0-9]+$") {
 		return IntToken
