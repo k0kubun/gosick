@@ -42,7 +42,8 @@ func (l Lexer) TokenType() rune {
 	} else if l.matchRegexp(token, "^[0-9]+$") {
 		return IntToken
 	} else {
-		return l.Peek()
+		runes := []rune(token)
+		return runes[0]
 	}
 }
 

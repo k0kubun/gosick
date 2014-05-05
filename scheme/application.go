@@ -24,5 +24,8 @@ func (a *Application) String() string {
 }
 
 func (a *Application) applyProcedure() Object {
+	if a.environment == nil {
+		log.Fatal("Procedure does not have environment")
+	}
 	return a.environment.invokeProcedure(a.procedureVariable, a.arguments)
 }

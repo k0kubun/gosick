@@ -25,7 +25,6 @@ func (i *Interpreter) IndentLevel() int {
 func (i *Interpreter) Eval() {
 	for i.Peek() != scanner.EOF {
 		expression := i.Parser.Parse()
-		i.DumpAST(expression)
 
 		if expression == nil {
 			return

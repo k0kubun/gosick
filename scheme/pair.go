@@ -21,3 +21,12 @@ func (p *Pair) String() string {
 		return "Not implemented."
 	}
 }
+
+func (p *Pair) EvaledCar() Object {
+	switch p.Car.(type) {
+	case *Application:
+		return p.Car.(*Application).applyProcedure()
+	default:
+		return p.Car
+	}
+}

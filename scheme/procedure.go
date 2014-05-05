@@ -35,7 +35,7 @@ func plus(arguments Object) Object {
 		if pair == nil {
 			break
 		}
-		if car := pair.Car; car != nil {
+		if car := pair.EvaledCar(); car != nil {
 			number := car.(*Number)
 			sum += number.value
 		}
