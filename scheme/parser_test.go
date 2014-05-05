@@ -28,6 +28,8 @@ var parserTests = []parserTest{
 	makePT("(number? (+ 3(* 2 8)))", "#t"),
 	makePT("(number? #t)", "#f"),
 	makePT("(number? ())", "#f"),
+	makePT("(define x 1) x", "x", "1"),
+	makePT("(define x (+ 1 3)) x", "x", "4"),
 }
 
 func makePT(source string, results ...string) parserTest {

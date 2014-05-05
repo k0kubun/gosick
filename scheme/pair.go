@@ -7,6 +7,10 @@
 
 package scheme
 
+import (
+	"log"
+)
+
 type Pair struct {
 	ObjectBase
 	Car         Object
@@ -22,6 +26,7 @@ func (p *Pair) String() string {
 	}
 }
 
+// ***DEPRICATED***
 func (p *Pair) EvaledCar() Object {
 	switch p.Car.(type) {
 	case *Application:
@@ -33,6 +38,29 @@ func (p *Pair) EvaledCar() Object {
 
 func (p *Pair) IsList() bool {
 	return true
+}
+
+func (p *Pair) ElementAt(index int) Object {
+	if !p.IsList() {
+		log.Fatal("ElementAt() was called for not list object")
+	} else if index < 0 {
+		log.Fatal("ElementAt() was called with negative index")
+	}
+
+	pair := p
+	for {
+		if index == 0 {
+			switch pair.Car.(type) {
+			case *Application:
+				return pair.Car.(*Application).applyProcedure()
+			default:
+				return pair.Car
+			}
+		} else {
+			pair = pair.Cdr
+			index--
+		}
+	}
 }
 
 func (p *Pair) IsEmpty() bool {

@@ -29,24 +29,11 @@ func (p *Parser) parseObject(environment *Environment) Object {
 		if p.TokenType() == ')' {
 			p.NextToken()
 			return new(Pair)
+		} else if p.PeekToken() == "define" {
+			return p.parseDefinition(environment)
 		}
 
-		firstObject := p.parseObject(environment)
-		if firstObject == nil {
-			log.Print("Unexpected flow: procedure application car is nil")
-			return nil
-		}
-
-		list := p.parseList(environment)
-		if list == nil {
-			log.Print("Unexpected flow: procedure application cdr is nil")
-			return nil
-		}
-		return &Application{
-			procedureVariable: firstObject,
-			arguments:         list,
-			environment:       environment,
-		}
+		return p.parseApplication(environment)
 	case ')':
 		return nil
 	case EOF:
@@ -54,7 +41,7 @@ func (p *Parser) parseObject(environment *Environment) Object {
 	case IntToken:
 		return NewNumber(token)
 	case IdentifierToken:
-		return NewVariable(token)
+		return NewVariable(token, environment)
 	case BooleanToken:
 		return NewBoolean(token)
 	default:
@@ -73,4 +60,43 @@ func (p *Parser) parseList(environment *Environment) Object {
 	}
 	cdr := p.parseList(environment).(*Pair)
 	return &Pair{Car: car, Cdr: cdr}
+}
+
+func (p *Parser) parseApplication(environment *Environment) Object {
+	firstObject := p.parseObject(environment)
+	if firstObject == nil {
+		log.Print("Unexpected flow: procedure application car is nil")
+		return nil
+	}
+
+	list := p.parseList(environment)
+	if list == nil {
+		log.Print("Unexpected flow: procedure application cdr is nil")
+		return nil
+	}
+	return &Application{
+		procedureVariable: firstObject,
+		arguments:         list,
+		environment:       environment,
+	}
+}
+
+func (p *Parser) parseDefinition(environment *Environment) Object {
+	p.NextToken() // skip "define"
+
+	object := p.parseList(environment)
+	if !object.IsList() || object.(*Pair).ListLength() != 2 {
+		log.Print("Compile Error: syntax-error: (define)")
+		return nil
+	}
+
+	list := object.(*Pair)
+	variable := list.ElementAt(0).(*Variable)
+	value := list.ElementAt(1)
+
+	return &Definition{
+		environment: environment,
+		variable:    variable,
+		value:       value,
+	}
 }

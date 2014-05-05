@@ -17,7 +17,7 @@ This is started as [a programming project](https://github.com/k0kubun/gosick/blo
 | Comparison | eq?, neq?, equal? |  |
 | Syntax | lambda, let, let*, letrec |  |
 | Statement | if, cond, and, or, begin, do |  |
-| Definition | set!, define, define-macro |  |
+| Definition | set!, define-macro | define |
 | Others | load |  |
 
 ## License

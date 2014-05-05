@@ -11,6 +11,13 @@ type Variable struct {
 	environment *Environment
 }
 
-func NewVariable(identifier string) *Variable {
-	return &Variable{identifier: identifier}
+func NewVariable(identifier string, environment *Environment) *Variable {
+	return &Variable{
+		identifier:  identifier,
+		environment: environment,
+	}
+}
+
+func (v *Variable) String() string {
+	return v.environment.binding[v.identifier].String()
 }
