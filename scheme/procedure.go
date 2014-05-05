@@ -57,31 +57,24 @@ func plus(arguments Object) Object {
 }
 
 func minus(arguments Object) Object {
-	switch arguments.(type) {
-	case *Pair:
-		pair := arguments.(*Pair)
-		if pair.IsEmpty() {
-			log.Print("procedure requires at least one argument: (-)")
-			return nil
-		}
-
-		difference := pair.EvaledCar().(*Number).value
-		list := pair.Cdr
-		for {
-			if list == nil {
-				break
-			}
-			if car := list.EvaledCar(); car != nil {
-				number := car.(*Number)
-				difference -= number.value
-			}
-			list = list.Cdr
-		}
-		return NewNumber(difference)
-	default:
+	if !arguments.IsList() || arguments.(*Pair).ListLength() < 1 {
 		log.Print("procedure requires at least one argument: (-)")
-		return nil
 	}
+
+	pair := arguments.(*Pair)
+	difference := pair.EvaledCar().(*Number).value
+	list := pair.Cdr
+	for {
+		if list == nil {
+			break
+		}
+		if car := list.EvaledCar(); car != nil {
+			number := car.(*Number)
+			difference -= number.value
+		}
+		list = list.Cdr
+	}
+	return NewNumber(difference)
 }
 
 func multiply(arguments Object) Object {
@@ -101,31 +94,24 @@ func multiply(arguments Object) Object {
 }
 
 func divide(arguments Object) Object {
-	switch arguments.(type) {
-	case *Pair:
-		pair := arguments.(*Pair)
-		if pair.IsEmpty() {
-			log.Print("procedure requires at least one argument: (/)")
-			return nil
-		}
-
-		quotient := pair.EvaledCar().(*Number).value
-		list := pair.Cdr
-		for {
-			if list == nil {
-				break
-			}
-			if car := list.EvaledCar(); car != nil {
-				number := car.(*Number)
-				quotient /= number.value
-			}
-			list = list.Cdr
-		}
-		return NewNumber(quotient)
-	default:
+	if !arguments.IsList() || arguments.(*Pair).ListLength() < 1 {
 		log.Print("procedure requires at least one argument: (/)")
-		return nil
 	}
+
+	pair := arguments.(*Pair)
+	quotient := pair.EvaledCar().(*Number).value
+	list := pair.Cdr
+	for {
+		if list == nil {
+			break
+		}
+		if car := list.EvaledCar(); car != nil {
+			number := car.(*Number)
+			quotient /= number.value
+		}
+		list = list.Cdr
+	}
+	return NewNumber(quotient)
 }
 
 func isNumber(object Object) Object {

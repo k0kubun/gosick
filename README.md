@@ -9,7 +9,7 @@ This is started as [a programming project](https://github.com/k0kubun/gosick/blo
 
 | Type | To be done | Implemented |
 |:-----|:-----|:-----------:|
-| Number | number?, =, <, <=, >, >= | +, -, *, / |
+| Number | =, <, <=, >, >= | number?, +, -, *, / |
 | List | null?, pair?, list?, symbol?, car, cdr, cons, list, length, memq, last, append, set-car!, set-cdr! |  |
 | Boolean | boolean?, not |  |
 | String | string?, string-append, symbol->string, string->symbol, string->number, number->string |  |
