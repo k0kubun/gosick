@@ -2,6 +2,7 @@ package scheme
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 )
 
@@ -26,14 +27,14 @@ var tokenTypeTests = []tokenTypeTest{
 }
 
 var tokenizeTests = []tokenizeTest{
-	{"1", []string{"1"}},
-	{"#f", []string{"#f"}},
-	{"#t", []string{"#t"}},
-	{"(+ 1)", []string{"(", "+", "1", ")"}},
-	{"(+ 1 (+ 1))", []string{"(", "+", "1", "(", "+", "1", ")", ")"}},
-	{"(+ (- 1)2)", []string{"(", "+", "(", "-", "1", ")", "2", ")"}},
-	{"(* (/ 1)2)", []string{"(", "*", "(", "/", "1", ")", "2", ")"}},
-	{"(number? 1)", []string{"(", "number?", "1", ")"}},
+	{"1", makeTokens("1")},
+	{"#f", makeTokens("#f")},
+	{"#t", makeTokens("#t")},
+	{"(+ 1)", makeTokens("(,+,1,)")},
+	{"(+ 1 (+ 1))", makeTokens("(,+,1,(,+,1,),)")},
+	{"(+ (- 1)2)", makeTokens("(,+,(,-,1,),2,)")},
+	{"(* (/ 1)2)", makeTokens("(,*,(,/,1,),2,)")},
+	{"(number? 1)", makeTokens("(,number?,1,)")},
 }
 
 func TestTokenType(t *testing.T) {
@@ -95,4 +96,8 @@ func areTheSameStrings(a, b []string) bool {
 		}
 	}
 	return true
+}
+
+func makeTokens(text string) []string {
+	return strings.Split(text, ",")
 }
