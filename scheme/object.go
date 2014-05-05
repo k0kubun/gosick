@@ -7,6 +7,7 @@ package scheme
 type Object interface {
 	String() string
 	IsNumber() bool
+	IsPair() bool
 	IsList() bool
 	IsApplication() bool
 }
@@ -19,6 +20,10 @@ func (o *ObjectBase) String() string {
 }
 
 func (o *ObjectBase) IsNumber() bool {
+	return false
+}
+
+func (o *ObjectBase) IsPair() bool {
 	return false
 }
 

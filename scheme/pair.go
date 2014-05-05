@@ -45,8 +45,20 @@ func (p *Pair) EvaledCar() Object {
 	}
 }
 
-func (p *Pair) IsList() bool {
+func (p *Pair) IsPair() bool {
 	return true
+}
+
+func (p *Pair) IsList() bool {
+	pair := p
+
+	for {
+		if pair.IsEmpty() {
+			return true
+		}
+		pair = pair.Cdr
+	}
+	return false
 }
 
 func (p *Pair) ElementAt(index int) Object {
