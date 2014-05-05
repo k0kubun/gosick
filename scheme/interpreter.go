@@ -18,10 +18,6 @@ func NewInterpreter(source string) *Interpreter {
 	return &Interpreter{NewParser(source)}
 }
 
-func (i *Interpreter) IndentLevel() int {
-	return 0
-}
-
 func (i *Interpreter) Eval() {
 	for i.Peek() != scanner.EOF {
 		expression := i.Parser.Parse()

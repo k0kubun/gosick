@@ -61,6 +61,20 @@ func (l *Lexer) NextToken() string {
 	return l.nextToken()
 }
 
+func (l Lexer) IndentLevel() int {
+	tokens := l.AllTokens()
+	openCount, closedCount := 0, 0
+
+	for _, token := range tokens {
+		if token == "(" {
+			openCount++
+		} else if token == ")" {
+			closedCount++
+		}
+	}
+	return openCount - closedCount
+}
+
 func (l Lexer) AllTokens() []string {
 	tokens := []string{}
 
