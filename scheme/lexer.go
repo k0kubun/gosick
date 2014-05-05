@@ -19,6 +19,7 @@ const (
 	EOF = -(iota + 1)
 	IdentifierToken
 	IntToken
+	BooleanToken
 )
 
 var identifierChars = "a-zA-Z?!*/<=>:$%^&_~"
@@ -41,6 +42,8 @@ func (l Lexer) TokenType() rune {
 		return IdentifierToken
 	} else if l.matchRegexp(token, "^[0-9]+$") {
 		return IntToken
+	} else if l.matchRegexp(token, "^#(f|t)$") {
+		return BooleanToken
 	} else {
 		runes := []rune(token)
 		return runes[0]
@@ -57,6 +60,15 @@ func (l Lexer) PeekToken() string {
 // position to next token position.
 func (l *Lexer) NextToken() string {
 	l.Scan()
+	if l.TokenText() == "#" {
+		l.Scan()
+		switch l.TokenText() {
+		case "t", "f":
+			return fmt.Sprintf("#%s", l.TokenText())
+		default:
+			log.Fatal("Tokens which start from '#' are not implemented except #f, #t.")
+		}
+	}
 	return l.TokenText()
 }
 

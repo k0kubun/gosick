@@ -25,6 +25,8 @@ var tokenTypeTests = []tokenTypeTest{
 
 var tokenizeTests = []tokenizeTest{
 	{"1", []string{"1"}},
+	{"#f", []string{"#f"}},
+	{"#t", []string{"#t"}},
 	{"(+ 1)", []string{"(", "+", "1", ")"}},
 	{"(+ 1 (+ 1))", []string{"(", "+", "1", "(", "+", "1", ")", ")"}},
 	{"(+ (- 1)2)", []string{"(", "+", "(", "-", "1", ")", "2", ")"}},
