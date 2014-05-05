@@ -36,6 +36,8 @@ func (p *Parser) parseObject(environment *Environment) Object {
 		return p.parseApplication(environment)
 	case ')':
 		return nil
+	case '\'':
+		return p.parseQuotedObject(environment)
 	case EOF:
 		return nil
 	case IntToken:
@@ -99,4 +101,31 @@ func (p *Parser) parseDefinition(environment *Environment) Object {
 		variable:    variable,
 		value:       value,
 	}
+}
+
+func (p *Parser) parseQuotedObject(environment *Environment) Object {
+	tokenType := p.TokenType()
+	token := p.NextToken()
+
+	switch tokenType {
+	case '(':
+		return p.parseQuotedList(environment)
+	case IntToken:
+		return NewNumber(token)
+	case IdentifierToken:
+		return NewSymbol(token)
+	case BooleanToken:
+		return NewBoolean(token)
+	default:
+		return nil
+	}
+}
+
+func (p *Parser) parseQuotedList(environment *Environment) Object {
+	car := p.parseQuotedObject(environment)
+	if car == nil {
+		return new(Pair)
+	}
+	cdr := p.parseQuotedList(environment).(*Pair)
+	return &Pair{Car: car, Cdr: cdr}
 }

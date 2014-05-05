@@ -8,7 +8,9 @@
 package scheme
 
 import (
+	"fmt"
 	"log"
+	"strings"
 )
 
 type Pair struct {
@@ -21,6 +23,13 @@ type Pair struct {
 func (p *Pair) String() string {
 	if p.IsEmpty() {
 		return "()"
+	} else if p.IsList() {
+		length := p.ListLength()
+		tokens := []string{}
+		for i := 0; i < length; i++ {
+			tokens = append(tokens, p.ElementAt(i).String())
+		}
+		return fmt.Sprintf("(%s)", strings.Join(tokens, " "))
 	} else {
 		return "Not implemented."
 	}

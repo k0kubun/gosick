@@ -17,6 +17,9 @@ type tokenizeTest struct {
 }
 
 var tokenTypeTests = []tokenTypeTest{
+	{"(", '('},
+	{")", ')'},
+	{"'", '\''},
 	{"100", IntToken},
 	{"#f", BooleanToken},
 	{"#t", BooleanToken},
@@ -30,15 +33,24 @@ var tokenizeTests = []tokenizeTest{
 	{"1", makeTokens("1")},
 	{"#f", makeTokens("#f")},
 	{"#t", makeTokens("#t")},
+
 	{"(+ 1)", makeTokens("(,+,1,)")},
 	{"(+ 1 (+ 1))", makeTokens("(,+,1,(,+,1,),)")},
 	{"(+ (- 1)2)", makeTokens("(,+,(,-,1,),2,)")},
 	{"(* (/ 1)2)", makeTokens("(,*,(,/,1,),2,)")},
 	{"(number? 1)", makeTokens("(,number?,1,)")},
+
 	{"((()", makeTokens("(,(,(,)")},
 	{"()))", makeTokens("(,),),)")},
 	{")))", makeTokens("),),)")},
 	{"((()))(()", makeTokens("(,(,(,),),),(,(,)")},
+
+	{"'2", makeTokens("',2")},
+	{"'#f", makeTokens("',#f")},
+	{"'#t", makeTokens("',#t")},
+	{"'hello", makeTokens("',hello")},
+	{"'(1 2 3)", makeTokens("',(,1,2,3,)")},
+	{"'(1(2 3))", makeTokens("',(,1,(,2,3,),)")},
 }
 
 func TestTokenType(t *testing.T) {
