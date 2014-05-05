@@ -43,6 +43,12 @@ var parserTests = []parserTest{
 	makePT("'(1)", "(1)"),
 	makePT("'(  1   2   3  )", "(1 2 3)"),
 	makePT("'( 1 ( 2 3 ) )", "(1 (2 3))"),
+
+	makePT("(quote 12)", "12"),
+	makePT("(quote hello)", "hello"),
+	makePT("(quote #f)", "#f"),
+	makePT("(quote #t)", "#t"),
+	makePT("(quote  ( 1 (3) 4 ))", "(1 (3) 4)"),
 }
 
 func makePT(source string, results ...string) parserTest {

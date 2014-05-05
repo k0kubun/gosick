@@ -26,11 +26,20 @@ func (p *Parser) parseObject(environment *Environment) Object {
 
 	switch tokenType {
 	case '(':
+		peekToken := p.PeekToken()
 		if p.TokenType() == ')' {
 			p.NextToken()
 			return new(Pair)
-		} else if p.PeekToken() == "define" {
+		} else if peekToken == "define" {
 			return p.parseDefinition(environment)
+		} else if peekToken == "quote" {
+			p.NextToken()
+			object := p.parseQuotedList(environment)
+			if !object.IsList() || object.(*Pair).ListLength() != 1 {
+				log.Print("Error: syntax-error: malformed quote")
+				return nil
+			}
+			return object.(*Pair).Car
 		}
 
 		return p.parseApplication(environment)
