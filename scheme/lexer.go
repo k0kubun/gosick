@@ -107,7 +107,7 @@ func (l *Lexer) nextToken() string {
 		case "t", "f":
 			return fmt.Sprintf("#%s", l.TokenText())
 		default:
-			panic("Tokens which start from '#' are not implemented except #f, #t.")
+			runtimeError("Tokens which start from '#' are not implemented except #f, #t.")
 		}
 	} else if l.matchRegexp(l.TokenText(), fmt.Sprintf("^%s$", identifierExp)) {
 		// text/scanner scans some signs as splitted token from alphabet token.
@@ -129,7 +129,7 @@ func (l Lexer) isIdentifierChar(char rune) bool {
 func (l *Lexer) matchRegexp(matchString string, expression string) bool {
 	re, err := regexp.Compile(expression)
 	if err != nil {
-		panic(err.Error())
+		runtimeError(err.Error())
 	}
 	return re.MatchString(matchString)
 }

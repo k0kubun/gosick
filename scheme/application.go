@@ -18,14 +18,14 @@ func (a *Application) Eval() Object {
 func (a *Application) String() string {
 	result := a.Eval()
 	if result == nil {
-		panic("Procedure appication returns nil")
+		compileError("Procedure appication returns nil")
 	}
 	return result.String()
 }
 
 func (a *Application) applyProcedure() Object {
 	if a.environment == nil {
-		panic("Procedure does not have environment")
+		compileError("Procedure does not have environment")
 	}
 	return a.environment.invokeProcedure(a.procedureVariable, a.arguments)
 }

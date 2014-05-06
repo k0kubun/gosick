@@ -4,6 +4,10 @@
 
 package scheme
 
+import (
+	"fmt"
+)
+
 type Parser struct {
 	*Lexer
 }
@@ -33,7 +37,7 @@ func (p *Parser) parseObject(environment *Environment) Object {
 			p.NextToken()
 			object := p.parseQuotedList(environment)
 			if !object.IsList() || object.(*Pair).ListLength() != 1 {
-				panic("Compile Error: syntax-error: malformed quote")
+				compileError("syntax-error: malformed quote")
 			}
 			return object.(*Pair).Car
 		}
@@ -70,12 +74,12 @@ func (p *Parser) parseList(environment *Environment) Object {
 func (p *Parser) parseApplication(environment *Environment) Object {
 	firstObject := p.parseObject(environment)
 	if firstObject == nil {
-		panic("Unexpected flow: procedure application car is nil")
+		runtimeError("Unexpected flow: procedure application car is nil")
 	}
 
 	list := p.parseList(environment)
 	if list == nil {
-		panic("Unexpected flow: procedure application cdr is nil")
+		runtimeError("Unexpected flow: procedure application cdr is nil")
 	}
 	return &Application{
 		procedureVariable: firstObject,
@@ -89,7 +93,7 @@ func (p *Parser) parseDefinition(environment *Environment) Object {
 
 	object := p.parseList(environment)
 	if !object.IsList() || object.(*Pair).ListLength() != 2 {
-		panic("Compile Error: syntax-error: (define)")
+		runtimeError("Compile Error: syntax-error: (define)")
 	}
 
 	list := object.(*Pair)
@@ -133,4 +137,12 @@ func (p *Parser) parseQuotedList(environment *Environment) Object {
 func (p *Parser) ensureAvailability() {
 	// Error message will be printed by interpreter
 	recover()
+}
+
+func compileError(format string, a ...interface{}) {
+	runtimeError("Compile Error: "+format, a...)
+}
+
+func runtimeError(format string, a ...interface{}) {
+	panic(fmt.Sprintf(format, a...))
 }

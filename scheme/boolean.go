@@ -17,7 +17,7 @@ func NewBoolean(value interface{}) *Boolean {
 		} else if value.(string) == "#f" {
 			return &Boolean{value: false}
 		} else {
-			panic("Unexpected value for NewBoolean")
+			compileError("Unexpected value for NewBoolean")
 		}
 	}
 	return nil

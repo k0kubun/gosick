@@ -22,11 +22,13 @@ type ObjectBase struct {
 }
 
 func (o *ObjectBase) Eval() Object {
-	panic("This object's Eval() is not implemented yet.")
+	runtimeError("This object's Eval() is not implemented yet.")
+	return nil
 }
 
 func (o *ObjectBase) String() string {
-	panic("This object's String() is not implemented yet.")
+	runtimeError("This object's String() is not implemented yet.")
+	return ""
 }
 
 func (o *ObjectBase) IsNumber() bool {
