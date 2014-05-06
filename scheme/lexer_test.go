@@ -44,6 +44,7 @@ var tokenizeTests = []tokenizeTest{
 	{"(+ (- 1)2)", makeTokens("(,+,(,-,1,),2,)")},
 	{"(* (/ 1)2)", makeTokens("(,*,(,/,1,),2,)")},
 	{"(number? 1)", makeTokens("(,number?,1,)")},
+	{"(string-append \"\")", makeTokens("(,string-append,\"\",)")},
 
 	{"((()", makeTokens("(,(,(,)")},
 	{"()))", makeTokens("(,),),)")},

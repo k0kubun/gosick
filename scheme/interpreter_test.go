@@ -54,6 +54,9 @@ var interpreterTests = []interpreterTest{
 	makeIT("(list 1 2 3)", "(1 2 3)"),
 	makeIT("(cdr (list 1 2 3))", "(2 3)"),
 
+	makeIT("(string-append)", "\"\""),
+	makeIT("(string-append \"a\" \" \" \"b\")", "\"a b\""),
+
 	makeIT("(number? 100", "#t"),
 	makeIT("(number? (+ 3(* 2 8)))", "#t"),
 	makeIT("(number? #t)", "#f"),
@@ -119,10 +122,13 @@ var evalErrorTests = []evalErrorTest{
 	{"(null? 1 2)", "Compile Error: wrong number of arguments: number? requires 1, but got 2"},
 	{"(not)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
 
-	{"(+ 1 #t)", "Compile Error: procedure expects arguments to be Number"},
-	{"(- #t)", "Compile Error: procedure expects arguments to be Number"},
-	{"(* ())", "Compile Error: procedure expects arguments to be Number"},
-	{"(/ '(1 2 3))", "Compile Error: procedure expects arguments to be Number"},
+	{"(+ 1 #t)", "Compile Error: number required"},
+	{"(- #t)", "Compile Error: number required"},
+	{"(* ())", "Compile Error: number required"},
+	{"(/ '(1 2 3))", "Compile Error: number required"},
+
+	{"(string-append #f)", "Compile Error: string required"},
+	{"(string-append 1)", "Compile Error: string required"},
 
 	{"(car ())", "Compile Error: pair required"},
 	{"(cdr ())", "Compile Error: pair required"},
