@@ -16,29 +16,25 @@ var builtinProcedures = Binding{
 	"procedure?": NewProcedure(isProcedure),
 }
 
-func assertArgumentsMinimum(arguments Object, minimum int) bool {
+func assertArgumentsMinimum(arguments Object, minimum int) {
 	if !arguments.IsList() {
 		panic("Compile Error: proper list required for function application or macro use")
 	} else if arguments.(*Pair).ListLength() < minimum {
-		panic(fmt.Sprintf("Compile Error: procedure requires at least %d argument\n", minimum))
+		panic(fmt.Sprintf("Compile Error: procedure requires at least %d argument", minimum))
 	}
-	return true
 }
 
-func assertArgumentsEqual(arguments Object, length int) bool {
+func assertArgumentsEqual(arguments Object, length int) {
 	if !arguments.IsList() {
 		panic("Compile Error: proper list required for function application or macro use")
 	} else if arguments.(*Pair).ListLength() != length {
 		panic(fmt.Sprintf("Compile Error: wrong number of arguments: number? requires %d, but got %d",
 			length, arguments.(*Pair).ListLength()))
 	}
-	return true
 }
 
 func plus(arguments Object) Object {
-	if !assertArgumentsMinimum(arguments, 0) {
-		return nil
-	}
+	assertArgumentsMinimum(arguments, 0)
 
 	sum := 0
 	for arguments != nil {
@@ -56,9 +52,7 @@ func plus(arguments Object) Object {
 }
 
 func minus(arguments Object) Object {
-	if !assertArgumentsMinimum(arguments, 1) {
-		return nil
-	}
+	assertArgumentsMinimum(arguments, 1)
 
 	pair := arguments.(*Pair)
 	difference := pair.Car.Eval().(*Number).value
@@ -77,9 +71,7 @@ func minus(arguments Object) Object {
 }
 
 func multiply(arguments Object) Object {
-	if !assertArgumentsMinimum(arguments, 0) {
-		return nil
-	}
+	assertArgumentsMinimum(arguments, 0)
 
 	product := 1
 	for arguments != nil {
@@ -97,9 +89,7 @@ func multiply(arguments Object) Object {
 }
 
 func divide(arguments Object) Object {
-	if !assertArgumentsMinimum(arguments, 1) {
-		return nil
-	}
+	assertArgumentsMinimum(arguments, 1)
 
 	pair := arguments.(*Pair)
 	quotient := pair.Car.Eval().(*Number).value
@@ -118,17 +108,14 @@ func divide(arguments Object) Object {
 }
 
 func isNumber(arguments Object) Object {
-	if !assertArgumentsEqual(arguments, 1) {
-		return nil
-	}
+	assertArgumentsEqual(arguments, 1)
+
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	return NewBoolean(object.IsNumber())
 }
 
 func isNull(arguments Object) Object {
-	if !assertArgumentsEqual(arguments, 1) {
-		return nil
-	}
+	assertArgumentsEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	switch object.(type) {
@@ -140,9 +127,7 @@ func isNull(arguments Object) Object {
 }
 
 func isProcedure(arguments Object) Object {
-	if !assertArgumentsEqual(arguments, 1) {
-		return nil
-	}
+	assertArgumentsEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	return NewBoolean(object.IsProcedure())

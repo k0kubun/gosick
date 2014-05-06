@@ -70,6 +70,9 @@ var evalErrorTests = []evalErrorTest{
 	{"(quote)", "Compile Error: syntax-error: malformed quote"},
 	{"(define)", "Compile Error: syntax-error: (define)"},
 
+	{"(-)", "Compile Error: procedure requires at least 1 argument"},
+	{"(/)", "Compile Error: procedure requires at least 1 argument"},
+	{"(number?)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
 	{"(null?)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
 	{"(null? 1 2)", "Compile Error: wrong number of arguments: number? requires 1, but got 2"},
 }
