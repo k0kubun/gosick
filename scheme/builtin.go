@@ -23,6 +23,7 @@ var builtinProcedures = Binding{
 	"not":        NewProcedure(not),
 	"car":        NewProcedure(car),
 	"cdr":        NewProcedure(cdr),
+	"list":       NewProcedure(list),
 }
 
 func assertListMinimum(arguments Object, minimum int) {
@@ -215,4 +216,8 @@ func cdr(arguments Object) Object {
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	assertPair(object)
 	return object.(*Pair).Cdr
+}
+
+func list(arguments Object) Object {
+	return arguments
 }

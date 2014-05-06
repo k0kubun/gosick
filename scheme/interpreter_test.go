@@ -50,6 +50,10 @@ var interpreterTests = []interpreterTest{
 	makeIT("(car '(1 2))", "1"),
 	makeIT("(cdr '(1 2))", "(2)"),
 
+	makeIT("(list)", "()"),
+	makeIT("(list 1 2 3)", "(1 2 3)"),
+	makeIT("(cdr (list 1 2 3))", "(2 3)"),
+
 	makeIT("(number? 100", "#t"),
 	makeIT("(number? (+ 3(* 2 8)))", "#t"),
 	makeIT("(number? #t)", "#f"),
