@@ -16,6 +16,9 @@ var builtinProcedures = Binding{
 	"null?":      NewProcedure(isNull),
 	"procedure?": NewProcedure(isProcedure),
 	"boolean?":   NewProcedure(isBoolean),
+	"pair?":      NewProcedure(isPair),
+	"list?":      NewProcedure(isList),
+	"symbol?":    NewProcedure(isSymbol),
 	"not":        NewProcedure(not),
 }
 
@@ -148,6 +151,27 @@ func isBoolean(arguments Object) Object {
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	return NewBoolean(object.IsBoolean())
+}
+
+func isPair(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	return NewBoolean(object.IsPair())
+}
+
+func isList(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	return NewBoolean(object.IsList())
+}
+
+func isSymbol(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	return NewBoolean(object.IsSymbol())
 }
 
 func not(arguments Object) Object {

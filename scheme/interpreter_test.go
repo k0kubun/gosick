@@ -56,6 +56,17 @@ var interpreterTests = []interpreterTest{
 	makeIT("(boolean? #f)", "#t"),
 	makeIT("(boolean? (null? 1))", "#t"),
 
+	makeIT("(pair? 1)", "#f"),
+	makeIT("(pair? ())", "#t"),
+	makeIT("(pair? '(1 2 3))", "#t"),
+
+	makeIT("(list? 1)", "#f"),
+	makeIT("(list? ())", "#t"),
+	makeIT("(list? '(1 2 3))", "#t"),
+
+	makeIT("(symbol? 1)", "#f"),
+	makeIT("(symbol? 'hello)", "#t"),
+
 	makeIT("(null? 1)", "#f"),
 	makeIT("(null? ())", "#t"),
 

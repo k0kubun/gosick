@@ -19,3 +19,7 @@ func (s *Symbol) Eval() Object {
 func (s *Symbol) String() string {
 	return s.identifier
 }
+
+func (s *Symbol) IsSymbol() bool {
+	return true
+}

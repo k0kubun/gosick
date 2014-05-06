@@ -12,6 +12,7 @@ type Object interface {
 	IsProcedure() bool
 	IsPair() bool
 	IsList() bool
+	IsSymbol() bool
 	IsApplication() bool
 }
 
@@ -43,6 +44,10 @@ func (o *ObjectBase) IsPair() bool {
 }
 
 func (o *ObjectBase) IsList() bool {
+	return false
+}
+
+func (o *ObjectBase) IsSymbol() bool {
 	return false
 }
 
