@@ -11,13 +11,25 @@ type Procedure struct {
 	ObjectBase
 	environment *Environment
 	function    func(Object) Object
+	arguments   Object
+	body        Object
 }
 
-func NewProcedure(function func(Object) Object) *Procedure {
-	return &Procedure{
-		environment: nil,
-		function:    function,
+func NewProcedure(environment *Environment, arguments Object, body Object) *Procedure {
+	function := func(Object) Object {
+		return body.Eval()
 	}
+
+	return &Procedure{
+		environment: environment,
+		function:    function,
+		arguments:   arguments,
+		body:        body,
+	}
+}
+
+func (p *Procedure) String() string {
+	return "#<closure #f>"
 }
 
 func (p *Procedure) Eval() Object {

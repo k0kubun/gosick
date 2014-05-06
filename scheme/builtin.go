@@ -7,26 +7,35 @@ import (
 )
 
 var builtinProcedures = Binding{
-	"+":              NewProcedure(plus),
-	"-":              NewProcedure(minus),
-	"*":              NewProcedure(multiply),
-	"/":              NewProcedure(divide),
-	"=":              NewProcedure(equal),
-	"number?":        NewProcedure(isNumber),
-	"null?":          NewProcedure(isNull),
-	"procedure?":     NewProcedure(isProcedure),
-	"boolean?":       NewProcedure(isBoolean),
-	"pair?":          NewProcedure(isPair),
-	"list?":          NewProcedure(isList),
-	"symbol?":        NewProcedure(isSymbol),
-	"string?":        NewProcedure(isString),
-	"not":            NewProcedure(not),
-	"car":            NewProcedure(car),
-	"cdr":            NewProcedure(cdr),
-	"list":           NewProcedure(list),
-	"string-append":  NewProcedure(stringAppend),
-	"symbol->string": NewProcedure(symbolToString),
-	"string->symbol": NewProcedure(stringToSymbol),
+	"+":              BuiltinProcedure(plus),
+	"-":              BuiltinProcedure(minus),
+	"*":              BuiltinProcedure(multiply),
+	"/":              BuiltinProcedure(divide),
+	"=":              BuiltinProcedure(equal),
+	"number?":        BuiltinProcedure(isNumber),
+	"null?":          BuiltinProcedure(isNull),
+	"procedure?":     BuiltinProcedure(isProcedure),
+	"boolean?":       BuiltinProcedure(isBoolean),
+	"pair?":          BuiltinProcedure(isPair),
+	"list?":          BuiltinProcedure(isList),
+	"symbol?":        BuiltinProcedure(isSymbol),
+	"string?":        BuiltinProcedure(isString),
+	"not":            BuiltinProcedure(not),
+	"car":            BuiltinProcedure(car),
+	"cdr":            BuiltinProcedure(cdr),
+	"list":           BuiltinProcedure(list),
+	"string-append":  BuiltinProcedure(stringAppend),
+	"symbol->string": BuiltinProcedure(symbolToString),
+	"string->symbol": BuiltinProcedure(stringToSymbol),
+}
+
+func BuiltinProcedure(function func(Object) Object) *Procedure {
+	return &Procedure{
+		environment: nil,
+		function:    function,
+		arguments:   nil,
+		body:        nil,
+	}
 }
 
 func assertListMinimum(arguments Object, minimum int) {

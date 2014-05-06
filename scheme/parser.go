@@ -32,6 +32,7 @@ func (p *Parser) parseObject(environment *Environment) Object {
 			p.NextToken()
 			return new(Pair)
 		} else if peekToken == "define" {
+			p.NextToken()
 			return p.parseDefinition(environment)
 		} else if peekToken == "quote" {
 			p.NextToken()
@@ -40,6 +41,9 @@ func (p *Parser) parseObject(environment *Environment) Object {
 				compileError("syntax-error: malformed quote")
 			}
 			return object.(*Pair).Car
+		} else if peekToken == "lambda" {
+			p.NextToken()
+			return p.parseProcedure(environment)
 		}
 
 		return p.parseApplication(environment)
@@ -88,9 +92,23 @@ func (p *Parser) parseApplication(environment *Environment) Object {
 	}
 }
 
-func (p *Parser) parseDefinition(environment *Environment) Object {
-	p.NextToken() // skip "define"
+func (p *Parser) parseProcedure(environment *Environment) Object {
+	if p.TokenType() == '(' {
+		p.NextToken()
+		procedure := &Procedure{
+			environment: environment,
+			function:    func(Object) Object { return nil },
+			arguments:   p.parseList(environment),
+			body:        p.parseList(environment),
+		}
+		return procedure
+	} else {
+		runtimeError("Not implemented yet.")
+		return nil
+	}
+}
 
+func (p *Parser) parseDefinition(environment *Environment) Object {
 	object := p.parseList(environment)
 	if !object.IsList() || object.(*Pair).ListLength() != 2 {
 		runtimeError("Compile Error: syntax-error: (define)")
