@@ -59,6 +59,7 @@ func invokeInteractiveShell(options *Options) {
 			if currentLine == "exit" {
 				return
 			}
+			linenoise.AddHistory(currentLine)
 			expression += " "
 			expression += currentLine
 
