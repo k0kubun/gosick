@@ -17,7 +17,7 @@ var builtinProcedures = Binding{
 	"procedure?": NewProcedure(isProcedure),
 }
 
-func assertArgumentsMinimum(arguments Object, minimum int) {
+func assertListMinimum(arguments Object, minimum int) {
 	if !arguments.IsList() {
 		panic("Compile Error: proper list required for function application or macro use")
 	} else if arguments.(*Pair).ListLength() < minimum {
@@ -25,7 +25,7 @@ func assertArgumentsMinimum(arguments Object, minimum int) {
 	}
 }
 
-func assertArgumentsEqual(arguments Object, length int) {
+func assertListEqual(arguments Object, length int) {
 	if !arguments.IsList() {
 		panic("Compile Error: proper list required for function application or macro use")
 	} else if arguments.(*Pair).ListLength() != length {
@@ -34,88 +34,86 @@ func assertArgumentsEqual(arguments Object, length int) {
 	}
 }
 
+func assertObjectsType(objects []Object, typeName string) {
+	if typeName == "Number" {
+		for _, object := range objects {
+			if !object.IsNumber() {
+				panic("Compile Error: procedure expects arguments to be Number")
+			}
+		}
+	}
+}
+
+func evaledObjects(objects []Object) []Object {
+	evaledObjects := []Object{}
+
+	for _, object := range objects {
+		evaledObjects = append(evaledObjects, object.Eval())
+	}
+	return evaledObjects
+}
+
 func plus(arguments Object) Object {
-	assertArgumentsMinimum(arguments, 0)
+	assertListMinimum(arguments, 0)
+
+	numbers := evaledObjects(arguments.(*Pair).Elements())
+	assertObjectsType(numbers, "Number")
 
 	sum := 0
-	for arguments != nil {
-		pair := arguments.(*Pair)
-		if pair == nil || pair.Car == nil {
-			break
-		}
-		if car := pair.Car.Eval(); car != nil {
-			number := car.(*Number)
-			sum += number.value
-		}
-		arguments = pair.Cdr
+	for _, number := range numbers {
+		sum += number.(*Number).value
 	}
 	return NewNumber(sum)
 }
 
 func minus(arguments Object) Object {
-	assertArgumentsMinimum(arguments, 1)
+	assertListMinimum(arguments, 1)
 
-	pair := arguments.(*Pair)
-	difference := pair.Car.Eval().(*Number).value
-	list := pair.Cdr
-	for {
-		if list == nil || list.Car == nil {
-			break
-		}
-		if car := list.Car.Eval(); car != nil {
-			number := car.(*Number)
-			difference -= number.value
-		}
-		list = list.Cdr
+	numbers := evaledObjects(arguments.(*Pair).Elements())
+	assertObjectsType(numbers, "Number")
+
+	difference := numbers[0].(*Number).value
+	for _, number := range numbers[1:] {
+		difference -= number.(*Number).value
 	}
 	return NewNumber(difference)
 }
 
 func multiply(arguments Object) Object {
-	assertArgumentsMinimum(arguments, 0)
+	assertListMinimum(arguments, 0)
+
+	numbers := evaledObjects(arguments.(*Pair).Elements())
+	assertObjectsType(numbers, "Number")
 
 	product := 1
-	for arguments != nil {
-		pair := arguments.(*Pair)
-		if pair == nil || pair.Car == nil {
-			break
-		}
-		if car := pair.Car.Eval(); car != nil {
-			number := car.(*Number)
-			product *= number.value
-		}
-		arguments = pair.Cdr
+	for _, number := range numbers {
+		product *= number.(*Number).value
 	}
 	return NewNumber(product)
 }
 
 func divide(arguments Object) Object {
-	assertArgumentsMinimum(arguments, 1)
+	assertListMinimum(arguments, 1)
 
-	pair := arguments.(*Pair)
-	quotient := pair.Car.Eval().(*Number).value
-	list := pair.Cdr
-	for {
-		if list == nil || list.Car == nil {
-			break
-		}
-		if car := list.Car.Eval(); car != nil {
-			number := car.(*Number)
-			quotient /= number.value
-		}
-		list = list.Cdr
+	numbers := evaledObjects(arguments.(*Pair).Elements())
+	assertObjectsType(numbers, "Number")
+
+	quotient := numbers[0].(*Number).value
+	for _, number := range numbers[1:] {
+		quotient /= number.(*Number).value
 	}
 	return NewNumber(quotient)
 }
 
 func equal(arguments Object) Object {
-	assertArgumentsMinimum(arguments, 2)
+	assertListMinimum(arguments, 2)
 
-	list := arguments.(*Pair)
-	length := list.ListLength()
-	firstNumber := list.ElementAt(0).Eval().(*Number)
-	for i := 1; i < length; i++ {
-		if firstNumber.value != list.ElementAt(i).(*Number).value {
+	numbers := evaledObjects(arguments.(*Pair).Elements())
+	assertObjectsType(numbers, "Number")
+
+	firstValue := numbers[0].(*Number).value
+	for _, number := range numbers[1:] {
+		if firstValue != number.(*Number).value {
 			return NewBoolean(false)
 		}
 	}
@@ -123,26 +121,21 @@ func equal(arguments Object) Object {
 }
 
 func isNumber(arguments Object) Object {
-	assertArgumentsEqual(arguments, 1)
+	assertListEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	return NewBoolean(object.IsNumber())
 }
 
 func isNull(arguments Object) Object {
-	assertArgumentsEqual(arguments, 1)
+	assertListEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
-	switch object.(type) {
-	case *Pair:
-		return NewBoolean(object.(*Pair).IsEmpty())
-	default:
-		return NewBoolean(false)
-	}
+	return NewBoolean(object.IsPair() && object.(*Pair).IsEmpty())
 }
 
 func isProcedure(arguments Object) Object {
-	assertArgumentsEqual(arguments, 1)
+	assertListEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	return NewBoolean(object.IsProcedure())

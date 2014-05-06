@@ -38,6 +38,10 @@ func (p *Pair) String() string {
 	}
 }
 
+func (p *Pair) IsEmpty() bool {
+	return p.Car == nil && p.Cdr == nil
+}
+
 func (p *Pair) IsPair() bool {
 	return true
 }
@@ -54,26 +58,23 @@ func (p *Pair) IsList() bool {
 	return false
 }
 
-func (p *Pair) ElementAt(index int) Object {
-	if !p.IsList() {
-		panic("ElementAt() was called for not list object")
-	} else if index < 0 {
-		panic("ElementAt() was called with negative index")
-	}
+func (p *Pair) Elements() []Object {
+	elements := []Object{}
 
 	pair := p
 	for {
-		if index == 0 {
-			return pair.Car
+		if pair.Car == nil {
+			break
 		} else {
-			pair = pair.Cdr
-			index--
+			elements = append(elements, pair.Car)
 		}
+		pair = pair.Cdr
 	}
+	return elements
 }
 
-func (p *Pair) IsEmpty() bool {
-	return p.Car == nil && p.Cdr == nil
+func (p *Pair) ElementAt(index int) Object {
+	return p.Elements()[index]
 }
 
 func (p *Pair) ListLength() int {

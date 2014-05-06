@@ -78,6 +78,11 @@ var evalErrorTests = []evalErrorTest{
 	{"(number?)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
 	{"(null?)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
 	{"(null? 1 2)", "Compile Error: wrong number of arguments: number? requires 1, but got 2"},
+
+	{"(+ 1 #t)", "Compile Error: procedure expects arguments to be Number"},
+	{"(- #t)", "Compile Error: procedure expects arguments to be Number"},
+	{"(* ())", "Compile Error: procedure expects arguments to be Number"},
+	{"(/ '(1 2 3))", "Compile Error: procedure expects arguments to be Number"},
 }
 
 func makeIT(source string, results ...string) interpreterTest {
