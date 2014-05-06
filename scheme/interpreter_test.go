@@ -36,6 +36,12 @@ var interpreterTests = []interpreterTest{
 	makeIT("(= 2 1)", "#f"),
 	makeIT("(= (* 100 3) 300)", "#t"),
 
+	makeIT("(not #f)", "#t"),
+	makeIT("(not #t)", "#f"),
+	makeIT("(not (number? ()))", "#t"),
+	makeIT("(not 1)", "#f"),
+	makeIT("(not ())", "#f"),
+
 	makeIT("(number? 100", "#t"),
 	makeIT("(number? (+ 3(* 2 8)))", "#t"),
 	makeIT("(number? #t)", "#f"),
@@ -84,6 +90,7 @@ var evalErrorTests = []evalErrorTest{
 	{"(number?)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
 	{"(null?)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
 	{"(null? 1 2)", "Compile Error: wrong number of arguments: number? requires 1, but got 2"},
+	{"(not)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
 
 	{"(+ 1 #t)", "Compile Error: procedure expects arguments to be Number"},
 	{"(- #t)", "Compile Error: procedure expects arguments to be Number"},

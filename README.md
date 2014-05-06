@@ -36,7 +36,7 @@ $ gosick -h
 |:-----|:-----|:-----------:|
 | Number | <, <=, >, >= | number?, +, -, *, /, = |
 | List | car, cdr, cons, list, length, memq, last, append, set-car!, set-cdr! |  |
-| Boolean | not |  |
+| Boolean | | not |
 | String | string-append, symbol->string, string->symbol, string->number, number->string |  |
 | Type | string?, pair?, list?, symbol? | null?, boolean?, procedure? |
 | Comparison | eq?, neq?, equal? |  |
