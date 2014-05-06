@@ -31,7 +31,7 @@ func (p *Pair) String() string {
 		length := p.ListLength()
 		tokens := []string{}
 		for i := 0; i < length; i++ {
-			tokens = append(tokens, p.ElementAt(i).String())
+			tokens = append(tokens, p.ElementAt(i).Eval().String())
 		}
 		return fmt.Sprintf("(%s)", strings.Join(tokens, " "))
 	} else {
@@ -65,12 +65,7 @@ func (p *Pair) ElementAt(index int) Object {
 	pair := p
 	for {
 		if index == 0 {
-			switch pair.Car.(type) {
-			case *Application:
-				return pair.Car.(*Application).applyProcedure()
-			default:
-				return pair.Car
-			}
+			return pair.Car
 		} else {
 			pair = pair.Cdr
 			index--

@@ -49,11 +49,15 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 		i.DumpAST(pair.Car, indentLevel+1)
 		i.DumpAST(pair.Cdr, indentLevel+1)
 	case *Number:
-		i.printWithIndent(fmt.Sprintf("Number(%d)", object.(*Number).value), indentLevel)
+		i.printWithIndent(fmt.Sprintf("Number(%s)", object), indentLevel)
 	case *Boolean:
-		i.printWithIndent(fmt.Sprintf("Boolean(%s)", object.(*Boolean).String()), indentLevel)
+		i.printWithIndent(fmt.Sprintf("Boolean(%s)", object), indentLevel)
 	case *Variable:
 		i.printWithIndent(fmt.Sprintf("Variable(%s)", object.(*Variable).identifier), indentLevel)
+	case *Definition:
+		i.printWithIndent("Definition", indentLevel)
+		i.DumpAST(object.(*Definition).variable, indentLevel+1)
+		i.DumpAST(object.(*Definition).value, indentLevel+1)
 	}
 }
 

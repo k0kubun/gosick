@@ -8,7 +8,7 @@ type Definition struct {
 }
 
 func (d *Definition) Eval() Object {
-	TopLevel.Bind(d.variable.identifier, d.value)
+	TopLevel.Bind(d.variable.identifier, d.value.Eval())
 	return NewSymbol(d.variable.identifier)
 }
 
