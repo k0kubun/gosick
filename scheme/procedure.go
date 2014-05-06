@@ -17,7 +17,13 @@ type Procedure struct {
 
 func NewProcedure(environment *Environment, arguments Object, body Object) *Procedure {
 	function := func(Object) Object {
-		return body.Eval()
+		var returnValue Object
+
+		elements := body.(*Pair).Elements()
+		for _, element := range elements {
+			returnValue = element.Eval()
+		}
+		return returnValue
 	}
 
 	return &Procedure{

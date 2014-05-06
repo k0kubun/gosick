@@ -112,6 +112,8 @@ var interpreterTests = []interpreterTest{
 	evalTest("(define x 1) (define x 2) x", "x", "x", "2"),
 
 	evalTest("(lambda (x) x)", "#<closure #f>"),
+	evalTest("((lambda (x) 1) 2)", "1"),
+	evalTest("((lambda (x y z) (+ 3 4) (- 4 1) ) 2)", "3"),
 }
 
 var evalErrorTests = []evalErrorTest{

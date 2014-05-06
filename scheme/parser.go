@@ -95,13 +95,11 @@ func (p *Parser) parseApplication(environment *Environment) Object {
 func (p *Parser) parseProcedure(environment *Environment) Object {
 	if p.TokenType() == '(' {
 		p.NextToken()
-		procedure := &Procedure{
-			environment: environment,
-			function:    func(Object) Object { return nil },
-			arguments:   p.parseList(environment),
-			body:        p.parseList(environment),
-		}
-		return procedure
+		return NewProcedure(
+			environment,
+			p.parseList(environment),
+			p.parseList(environment),
+		)
 	} else {
 		runtimeError("Not implemented yet.")
 		return nil

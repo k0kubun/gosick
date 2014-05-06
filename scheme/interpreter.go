@@ -68,6 +68,10 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 		i.printWithIndent("Definition", indentLevel)
 		i.DumpAST(object.(*Definition).variable, indentLevel+1)
 		i.DumpAST(object.(*Definition).value, indentLevel+1)
+	case *Procedure:
+		i.printWithIndent("Procedure", indentLevel)
+		i.DumpAST(object.(*Procedure).arguments, indentLevel+1)
+		i.DumpAST(object.(*Procedure).body, indentLevel+1)
 	}
 }
 
