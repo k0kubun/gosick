@@ -13,7 +13,7 @@ type String struct {
 }
 
 func NewString(text string) *String {
-	return &String{text: text}
+	return &String{text: text[1 : len(text)-1]}
 }
 
 func (s *String) Eval() Object {

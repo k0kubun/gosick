@@ -47,6 +47,8 @@ func (p *Parser) parseObject(environment *Environment) Object {
 		return NewVariable(token, environment)
 	case BooleanToken:
 		return NewBoolean(token)
+	case StringToken:
+		return NewString(token)
 	default:
 		return nil
 	}

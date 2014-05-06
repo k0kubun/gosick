@@ -20,6 +20,9 @@ var interpreterTests = []interpreterTest{
 	makeIT("#f #t", "#f", "#t"),
 	makeIT("1234567890", "1234567890"),
 
+	makeIT("\"\"", "\"\""),
+	makeIT("\"hello\"", "\"hello\""),
+
 	makeIT("(+)", "0"),
 	makeIT("(- 1)", "1"),
 	makeIT("(*)", "1"),

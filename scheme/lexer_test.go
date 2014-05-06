@@ -20,13 +20,18 @@ var tokenTypeTests = []tokenTypeTest{
 	{"(", '('},
 	{")", ')'},
 	{"'", '\''},
+
 	{"100", IntToken},
+
 	{"#f", BooleanToken},
 	{"#t", BooleanToken},
+
 	{"+", IdentifierToken},
 	{"-", IdentifierToken},
 	{"f2000", IdentifierToken},
 	{"a0?!*/<=>:$%^&_~", IdentifierToken},
+
+	{"\"a b\"", StringToken},
 }
 
 var tokenizeTests = []tokenizeTest{
@@ -51,6 +56,8 @@ var tokenizeTests = []tokenizeTest{
 	{"'hello", makeTokens("',hello")},
 	{"'(1 2 3)", makeTokens("',(,1,2,3,)")},
 	{"'(1(2 3))", makeTokens("',(,1,(,2,3,),)")},
+
+	{"\"a b\"", makeTokens("\"a b\"")},
 }
 
 func TestTokenType(t *testing.T) {
@@ -83,6 +90,8 @@ func tokenTypeString(tokenType rune) string {
 		return "IdentifierToken"
 	case IntToken:
 		return "IntToken"
+	case StringToken:
+		return "StringToken"
 	default:
 		return fmt.Sprintf("%c", tokenType)
 	}
