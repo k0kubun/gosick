@@ -19,9 +19,9 @@ func NewVariable(identifier string, environment *Environment) *Variable {
 }
 
 func (v *Variable) Eval() Object {
-	return v
+	return v.environment.boundedObject(v.identifier)
 }
 
 func (v *Variable) String() string {
-	return v.environment.boundedObject(v.identifier).String()
+	return v.Eval().String()
 }

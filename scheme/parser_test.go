@@ -35,6 +35,7 @@ var parserTests = []parserTest{
 
 	makePT("(define x 1) x", "x", "1"),
 	makePT("(define x (+ 1 3)) x", "x", "4"),
+	makePT("(define x 1) (define y 2) (define z 3) (+ x (* y z))", "x", "y", "z", "7"),
 
 	makePT("'12", "12"),
 	makePT("'hello", "hello"),
