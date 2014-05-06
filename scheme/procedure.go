@@ -44,7 +44,33 @@ func (p *Procedure) invoke(argument Object) Object {
 // *** Builtin Procedures ***
 //
 
+func assertArgumentsMinimum(arguments Object, minimum int) bool {
+	if !arguments.IsList() {
+		log.Print("Error: proper list required for function application or macro use")
+		return false
+	} else if arguments.(*Pair).ListLength() < minimum {
+		log.Printf("Error: procedure requires at least %d argument\n", minimum)
+		return false
+	}
+	return true
+}
+
+func assertArgumentsEqual(arguments Object, length int) bool {
+	if !arguments.IsList() {
+		log.Print("Error: proper list required for function application or macro use")
+		return false
+	} else if arguments.(*Pair).ListLength() != length {
+		log.Printf("wrong number of arguments: number? requires %d, but got %d", length, arguments.(*Pair).ListLength())
+		return false
+	}
+	return true
+}
+
 func plus(arguments Object) Object {
+	if !assertArgumentsMinimum(arguments, 0) {
+		return nil
+	}
+
 	sum := 0
 	for arguments != nil {
 		pair := arguments.(*Pair)
@@ -61,11 +87,7 @@ func plus(arguments Object) Object {
 }
 
 func minus(arguments Object) Object {
-	if !arguments.IsList() {
-		log.Print("Error: proper list required for function application or macro use")
-		return nil
-	} else if arguments.(*Pair).ListLength() < 1 {
-		log.Print("Error: procedure requires at least one argument")
+	if !assertArgumentsMinimum(arguments, 1) {
 		return nil
 	}
 
@@ -86,6 +108,10 @@ func minus(arguments Object) Object {
 }
 
 func multiply(arguments Object) Object {
+	if !assertArgumentsMinimum(arguments, 0) {
+		return nil
+	}
+
 	product := 1
 	for arguments != nil {
 		pair := arguments.(*Pair)
@@ -102,11 +128,7 @@ func multiply(arguments Object) Object {
 }
 
 func divide(arguments Object) Object {
-	if !arguments.IsList() {
-		log.Print("Error: proper list required for function application or macro use")
-		return nil
-	} else if arguments.(*Pair).ListLength() < 1 {
-		log.Print("Error: procedure requires at least one argument")
+	if !assertArgumentsMinimum(arguments, 1) {
 		return nil
 	}
 
@@ -126,18 +148,10 @@ func divide(arguments Object) Object {
 	return NewNumber(quotient)
 }
 
-func isNumber(object Object) Object {
-	if object.IsApplication() {
-		object = object.(*Application).applyProcedure()
+func isNumber(arguments Object) Object {
+	if !assertArgumentsEqual(arguments, 1) {
+		return nil
 	}
-	if object.IsList() {
-		list := object.(*Pair)
-		if list.ListLength() == 1 {
-			object = list.Car.Eval()
-		} else {
-			log.Printf("wrong number of arguments: number? requires 1, but got %d", list.ListLength())
-			return nil
-		}
-	}
+	object := arguments.(*Pair).ElementAt(0).Eval()
 	return NewBoolean(object.IsNumber())
 }
