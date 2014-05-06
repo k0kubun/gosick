@@ -34,7 +34,15 @@ func (e *Environment) invokeProcedure(variable, arguments Object) Object {
 	if variable == nil {
 		panic("Invoked procedure for <nil> variable.")
 	}
-	identifier := variable.(*Variable).identifier
+
+	var identifier string
+	switch variable.(type) {
+	case *Variable:
+		identifier = variable.(*Variable).identifier
+	default:
+		panic("invalid application")
+	}
+
 	procedure := e.boundedObject(identifier).(*Procedure)
 	return procedure.invoke(arguments)
 }

@@ -33,7 +33,7 @@ func (p *Parser) parseObject(environment *Environment) Object {
 			p.NextToken()
 			object := p.parseQuotedList(environment)
 			if !object.IsList() || object.(*Pair).ListLength() != 1 {
-				panic("Error: syntax-error: malformed quote")
+				panic("Compile Error: syntax-error: malformed quote")
 			}
 			return object.(*Pair).Car
 		}

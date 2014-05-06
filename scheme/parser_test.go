@@ -9,6 +9,11 @@ type parserTest struct {
 	results []string
 }
 
+type evalErrorTest struct {
+	source  string
+	message string
+}
+
 var parserTests = []parserTest{
 	makePT("12", "12"),
 	makePT("()", "()"),
@@ -53,6 +58,13 @@ var parserTests = []parserTest{
 	makePT("(quote  ( 1 (3) 4 ))", "(1 (3) 4)"),
 }
 
+var evalErrorTests = []evalErrorTest{
+	{"(1)", "invalid application"},
+	{"hello", "Unbound variable: hello"},
+	{"(quote)", "Compile Error: syntax-error: malformed quote"},
+	{"(define)", "Compile Error: syntax-error: (define)"},
+}
+
 func makePT(source string, results ...string) parserTest {
 	return parserTest{source: source, results: results}
 }
@@ -78,4 +90,25 @@ func TestParser(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestEvalError(t *testing.T) {
+	for _, test := range evalErrorTests {
+		assertError(t, test.source, test.message)
+	}
+}
+
+func assertError(t *testing.T, source string, message string) {
+	defer func() {
+		err := recover()
+		if err == nil {
+			t.Errorf("\"%s\" did not panic\n want: %s\n", source, message)
+		} else if err != message {
+			t.Errorf("\"%s\" paniced\nwith: %s\nwant: %s\n", source, err, message)
+		}
+	}()
+
+	p := NewParser(source)
+	p.Peek()
+	p.Parse().Eval()
 }
