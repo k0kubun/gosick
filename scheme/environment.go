@@ -44,7 +44,7 @@ func (e *Environment) invokeProcedure(variable, arguments Object) Object {
 	}
 
 	procedure := e.boundedObject(identifier).(*Procedure)
-	return procedure.invoke(arguments)
+	return procedure.Invoke(arguments)
 }
 
 func (e *Environment) boundedObject(identifier string) Object {
