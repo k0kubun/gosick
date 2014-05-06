@@ -35,10 +35,10 @@ $ gosick -h
 | Type | To be done | Implemented |
 |:-----|:-----|:-----------:|
 | Number | =, <, <=, >, >= | number?, +, -, *, / |
-| List | pair?, list?, symbol?, car, cdr, cons, list, length, memq, last, append, set-car!, set-cdr! | null? |
-| Boolean | boolean?, not |  |
-| String | string?, string-append, symbol->string, string->symbol, string->number, number->string |  |
-| Procedure | procedure? |  |
+| List | car, cdr, cons, list, length, memq, last, append, set-car!, set-cdr! |  |
+| Boolean | not |  |
+| String | string-append, symbol->string, string->symbol, string->number, number->string |  |
+| Type | string?, boolean?, pair?, list?, symbol? | null?, procedure? |
 | Comparison | eq?, neq?, equal? |  |
 | Syntax | lambda, let, let*, letrec |  |
 | Statement | if, cond, and, or, begin, do |  |

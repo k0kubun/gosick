@@ -38,6 +38,9 @@ var interpreterTests = []interpreterTest{
 	makeIT("(number? #t)", "#f"),
 	makeIT("(number? ())", "#f"),
 
+	makeIT("(procedure? 1)", "#f"),
+	makeIT("(procedure? +)", "#t"),
+
 	makeIT("(null? 1)", "#f"),
 	makeIT("(null? ())", "#t"),
 
@@ -66,6 +69,8 @@ var evalErrorTests = []evalErrorTest{
 	{"hello", "Unbound variable: hello"},
 	{"(quote)", "Compile Error: syntax-error: malformed quote"},
 	{"(define)", "Compile Error: syntax-error: (define)"},
+
+	{"(null?)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
 	{"(null? 1 2)", "Compile Error: wrong number of arguments: number? requires 1, but got 2"},
 }
 
