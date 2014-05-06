@@ -37,20 +37,16 @@ func (e *Environment) topLevel() *Environment {
 
 // Search procedure which is binded with given variable from environment,
 // and invoke the procedure with given arguments.
-func (e *Environment) invokeProcedure(variable, arguments Object) Object {
-	if variable == nil {
+func (e *Environment) invokeProcedure(object, arguments Object) Object {
+	if object == nil {
 		runtimeError("Invoked procedure for <nil> variable.")
 	}
 
-	var identifier string
-	switch variable.(type) {
-	case *Variable:
-		identifier = variable.(*Variable).identifier
-	default:
+	evaledObject := object.Eval()
+	if !evaledObject.IsProcedure() {
 		runtimeError("invalid application")
 	}
-
-	procedure := e.boundedObject(identifier).(*Procedure)
+	procedure := evaledObject.(*Procedure)
 	return procedure.Invoke(arguments)
 }
 
