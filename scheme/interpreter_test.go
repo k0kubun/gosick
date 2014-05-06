@@ -42,6 +42,11 @@ var interpreterTests = []interpreterTest{
 	makeIT("(not 1)", "#f"),
 	makeIT("(not ())", "#f"),
 
+	makeIT("(car '(1))", "1"),
+	makeIT("(cdr '(1))", "()"),
+	makeIT("(car '(1 2))", "1"),
+	makeIT("(cdr '(1 2))", "(2)"),
+
 	makeIT("(number? 100", "#t"),
 	makeIT("(number? (+ 3(* 2 8)))", "#t"),
 	makeIT("(number? #t)", "#f"),

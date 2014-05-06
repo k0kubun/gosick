@@ -20,6 +20,8 @@ var builtinProcedures = Binding{
 	"list?":      NewProcedure(isList),
 	"symbol?":    NewProcedure(isSymbol),
 	"not":        NewProcedure(not),
+	"car":        NewProcedure(car),
+	"cdr":        NewProcedure(cdr),
 }
 
 func assertListMinimum(arguments Object, minimum int) {
@@ -179,4 +181,18 @@ func not(arguments Object) Object {
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	return NewBoolean(object.IsBoolean() && !object.(*Boolean).value)
+}
+
+func car(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	return object.(*Pair).Car
+}
+
+func cdr(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	return object.(*Pair).Cdr
 }
