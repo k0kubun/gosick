@@ -33,6 +33,9 @@ var interpreterTests = []interpreterTest{
 	makeIT("(/ 100(/ 4 2))", "50"),
 	makeIT("(+ (* 100 3) (/(- 4 2) 2))", "301"),
 
+	makeIT("(= 2 1)", "#f"),
+	makeIT("(= (* 100 3) 300)", "#t"),
+
 	makeIT("(number? 100", "#t"),
 	makeIT("(number? (+ 3(* 2 8)))", "#t"),
 	makeIT("(number? #t)", "#f"),

@@ -34,7 +34,7 @@ $ gosick -h
 
 | Type | To be done | Implemented |
 |:-----|:-----|:-----------:|
-| Number | =, <, <=, >, >= | number?, +, -, *, / |
+| Number | <, <=, >, >= | number?, +, -, *, /, = |
 | List | car, cdr, cons, list, length, memq, last, append, set-car!, set-cdr! |  |
 | Boolean | not |  |
 | String | string-append, symbol->string, string->symbol, string->number, number->string |  |
