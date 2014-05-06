@@ -125,18 +125,18 @@ var evalErrorTests = []evalErrorTest{
 	{"(null? 1 2)", "Compile Error: wrong number of arguments: number? requires 1, but got 2"},
 	{"(not)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
 
-	{"(+ 1 #t)", "Compile Error: number required"},
-	{"(- #t)", "Compile Error: number required"},
-	{"(* ())", "Compile Error: number required"},
-	{"(/ '(1 2 3))", "Compile Error: number required"},
+	{"(+ 1 #t)", "Compile Error: number required, but got #t"},
+	{"(- #t)", "Compile Error: number required, but got #t"},
+	{"(* ())", "Compile Error: number required, but got ()"},
+	{"(/ '(1 2 3))", "Compile Error: number required, but got (1 2 3)"},
 
-	{"(string-append #f)", "Compile Error: string required"},
-	{"(string-append 1)", "Compile Error: string required"},
+	{"(string-append #f)", "Compile Error: string required, but got #f"},
+	{"(string-append 1)", "Compile Error: string required, but got 1"},
 
 	{"(string->symbol)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
-	{"(string->symbol 'hello)", "Compile Error: string required"},
+	{"(string->symbol 'hello)", "Compile Error: string required, but got hello"},
 	{"(symbol->string)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
-	{"(symbol->string \"\")", "Compile Error: symbol required"},
+	{"(symbol->string \"\")", "Compile Error: symbol required, but got \"\""},
 
 	{"(car ())", "Compile Error: pair required"},
 	{"(cdr ())", "Compile Error: pair required"},

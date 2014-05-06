@@ -53,13 +53,22 @@ func assertObjectsType(objects []Object, typeName string) {
 	}
 }
 
-func assertObjectType(object Object, typeName string) {
-	if typeName == "Number" && !object.IsNumber() {
-		panic("Compile Error: number required")
-	} else if typeName == "String" && !object.IsString() {
-		panic("Compile Error: string required")
-	} else if typeName == "Symbol" && !object.IsSymbol() {
-		panic("Compile Error: symbol required")
+func typeName(object Object) string {
+	switch object.(type) {
+	case *Number:
+		return "number"
+	case *String:
+		return "string"
+	case *Symbol:
+		return "symbol"
+	default:
+		return "Not Implemented typeName"
+	}
+}
+
+func assertObjectType(object Object, assertType string) {
+	if assertType != typeName(object) {
+		panic(fmt.Sprintf("Compile Error: %s required, but got %s", assertType, object))
 	}
 }
 
@@ -93,7 +102,7 @@ func plus(arguments Object) Object {
 	assertListMinimum(arguments, 0)
 
 	numbers := evaledObjects(arguments.(*Pair).Elements())
-	assertObjectsType(numbers, "Number")
+	assertObjectsType(numbers, "number")
 
 	sum := 0
 	for _, number := range numbers {
@@ -106,7 +115,7 @@ func minus(arguments Object) Object {
 	assertListMinimum(arguments, 1)
 
 	numbers := evaledObjects(arguments.(*Pair).Elements())
-	assertObjectsType(numbers, "Number")
+	assertObjectsType(numbers, "number")
 
 	difference := numbers[0].(*Number).value
 	for _, number := range numbers[1:] {
@@ -119,7 +128,7 @@ func multiply(arguments Object) Object {
 	assertListMinimum(arguments, 0)
 
 	numbers := evaledObjects(arguments.(*Pair).Elements())
-	assertObjectsType(numbers, "Number")
+	assertObjectsType(numbers, "number")
 
 	product := 1
 	for _, number := range numbers {
@@ -132,7 +141,7 @@ func divide(arguments Object) Object {
 	assertListMinimum(arguments, 1)
 
 	numbers := evaledObjects(arguments.(*Pair).Elements())
-	assertObjectsType(numbers, "Number")
+	assertObjectsType(numbers, "number")
 
 	quotient := numbers[0].(*Number).value
 	for _, number := range numbers[1:] {
@@ -145,7 +154,7 @@ func equal(arguments Object) Object {
 	assertListMinimum(arguments, 2)
 
 	numbers := evaledObjects(arguments.(*Pair).Elements())
-	assertObjectsType(numbers, "Number")
+	assertObjectsType(numbers, "number")
 
 	firstValue := numbers[0].(*Number).value
 	for _, number := range numbers[1:] {
@@ -217,7 +226,7 @@ func stringAppend(arguments Object) Object {
 	assertListMinimum(arguments, 0)
 
 	stringObjects := evaledObjects(arguments.(*Pair).Elements())
-	assertObjectsType(stringObjects, "String")
+	assertObjectsType(stringObjects, "string")
 
 	texts := []string{}
 	for _, stringObject := range stringObjects {
@@ -230,7 +239,7 @@ func symbolToString(arguments Object) Object {
 	assertListEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
-	assertObjectType(object, "Symbol")
+	assertObjectType(object, "symbol")
 	return NewString(object.(*Symbol).identifier)
 }
 
@@ -238,6 +247,6 @@ func stringToSymbol(arguments Object) Object {
 	assertListEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
-	assertObjectType(object, "String")
+	assertObjectType(object, "string")
 	return NewSymbol(object.(*String).text)
 }
