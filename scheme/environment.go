@@ -24,6 +24,17 @@ func (e *Environment) Bind(identifier string, value Object) {
 	e.binding[identifier] = value
 }
 
+// Returns ultimate-ancestral environment.
+// This returns virtual top level environment in closure,
+// which is separated from TopLevel.
+func (e *Environment) topLevel() *Environment {
+	environment := e
+	for environment.parent != nil {
+		environment = environment.parent
+	}
+	return environment
+}
+
 // Search procedure which is binded with given variable from environment,
 // and invoke the procedure with given arguments.
 func (e *Environment) invokeProcedure(variable, arguments Object) Object {
