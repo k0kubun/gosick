@@ -8,6 +8,7 @@ type Object interface {
 	Eval() Object
 	String() string
 	IsNumber() bool
+	IsBoolean() bool
 	IsProcedure() bool
 	IsPair() bool
 	IsList() bool
@@ -26,6 +27,10 @@ func (o *ObjectBase) String() string {
 }
 
 func (o *ObjectBase) IsNumber() bool {
+	return false
+}
+
+func (o *ObjectBase) IsBoolean() bool {
 	return false
 }
 

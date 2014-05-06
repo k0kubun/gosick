@@ -34,3 +34,7 @@ func (b *Boolean) String() string {
 		return "#f"
 	}
 }
+
+func (b *Boolean) IsBoolean() bool {
+	return true
+}

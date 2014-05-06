@@ -15,6 +15,7 @@ var builtinProcedures = Binding{
 	"number?":    NewProcedure(isNumber),
 	"null?":      NewProcedure(isNull),
 	"procedure?": NewProcedure(isProcedure),
+	"boolean?":   NewProcedure(isBoolean),
 }
 
 func assertListMinimum(arguments Object, minimum int) {
@@ -139,4 +140,11 @@ func isProcedure(arguments Object) Object {
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	return NewBoolean(object.IsProcedure())
+}
+
+func isBoolean(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	return NewBoolean(object.IsBoolean())
 }

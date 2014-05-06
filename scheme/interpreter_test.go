@@ -44,6 +44,12 @@ var interpreterTests = []interpreterTest{
 	makeIT("(procedure? 1)", "#f"),
 	makeIT("(procedure? +)", "#t"),
 
+	makeIT("(boolean? 1)", "#f"),
+	makeIT("(boolean? ())", "#f"),
+	makeIT("(boolean? #t)", "#t"),
+	makeIT("(boolean? #f)", "#t"),
+	makeIT("(boolean? (null? 1))", "#t"),
+
 	makeIT("(null? 1)", "#f"),
 	makeIT("(null? ())", "#t"),
 
