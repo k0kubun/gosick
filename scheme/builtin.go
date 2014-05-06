@@ -61,6 +61,12 @@ func typeName(object Object) string {
 		return "string"
 	case *Symbol:
 		return "symbol"
+	case *Procedure:
+		return "procedure"
+	case *Boolean:
+		return "boolean"
+	case *Pair:
+		return "pair"
 	default:
 		return "Not Implemented typeName"
 	}
