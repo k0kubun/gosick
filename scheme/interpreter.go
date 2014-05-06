@@ -19,6 +19,8 @@ func NewInterpreter(source string) *Interpreter {
 }
 
 func (i *Interpreter) Eval(dumpAST bool) {
+	defer i.ensureAvailability()
+
 	for i.Peek() != scanner.EOF {
 		expression := i.Parser.Parse()
 		if dumpAST {
@@ -29,6 +31,12 @@ func (i *Interpreter) Eval(dumpAST bool) {
 			return
 		}
 		fmt.Println(expression.Eval())
+	}
+}
+
+func (i *Interpreter) ensureAvailability() {
+	if err := recover(); err != nil {
+		fmt.Println("*** ERROR:", err)
 	}
 }
 

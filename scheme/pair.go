@@ -9,7 +9,6 @@ package scheme
 
 import (
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -35,7 +34,7 @@ func (p *Pair) String() string {
 		}
 		return fmt.Sprintf("(%s)", strings.Join(tokens, " "))
 	} else {
-		return "Not implemented."
+		return "Not implemented. (Pair.String())"
 	}
 }
 
@@ -57,9 +56,9 @@ func (p *Pair) IsList() bool {
 
 func (p *Pair) ElementAt(index int) Object {
 	if !p.IsList() {
-		log.Fatal("ElementAt() was called for not list object")
+		panic("ElementAt() was called for not list object")
 	} else if index < 0 {
-		log.Fatal("ElementAt() was called with negative index")
+		panic("ElementAt() was called with negative index")
 	}
 
 	pair := p

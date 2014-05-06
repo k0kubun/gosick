@@ -8,7 +8,7 @@
 package scheme
 
 import (
-	"log"
+	"fmt"
 )
 
 type Procedure struct {
@@ -46,22 +46,19 @@ func (p *Procedure) invoke(argument Object) Object {
 
 func assertArgumentsMinimum(arguments Object, minimum int) bool {
 	if !arguments.IsList() {
-		log.Print("Error: proper list required for function application or macro use")
-		return false
+		panic("Compile Error: proper list required for function application or macro use")
 	} else if arguments.(*Pair).ListLength() < minimum {
-		log.Printf("Error: procedure requires at least %d argument\n", minimum)
-		return false
+		panic(fmt.Sprintf("Compile Error: procedure requires at least %d argument\n", minimum))
 	}
 	return true
 }
 
 func assertArgumentsEqual(arguments Object, length int) bool {
 	if !arguments.IsList() {
-		log.Print("Error: proper list required for function application or macro use")
-		return false
+		panic("Compile Error: proper list required for function application or macro use")
 	} else if arguments.(*Pair).ListLength() != length {
-		log.Printf("wrong number of arguments: number? requires %d, but got %d", length, arguments.(*Pair).ListLength())
-		return false
+		panic(fmt.Sprintf("Compile Error: wrong number of arguments: number? requires %d, but got %d",
+			length, arguments.(*Pair).ListLength()))
 	}
 	return true
 }

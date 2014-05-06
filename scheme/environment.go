@@ -5,7 +5,7 @@
 package scheme
 
 import (
-	"log"
+	"fmt"
 )
 
 type Environment struct {
@@ -32,18 +32,18 @@ func (e *Environment) Bind(identifier string, value Object) {
 // and invoke the procedure with given arguments.
 func (e *Environment) invokeProcedure(variable, arguments Object) Object {
 	if variable == nil {
-		log.Fatal("Invoked procedure for <nil> variable.")
+		panic("Invoked procedure for <nil> variable.")
 	}
 	identifier := variable.(*Variable).identifier
 	procedure := e.boundedObject(identifier).(*Procedure)
-	if procedure == nil {
-		log.Printf("Unbound variable: %s\n", identifier)
-		return nil
-	}
 	return procedure.invoke(arguments)
 }
 
 func (e *Environment) boundedObject(identifier string) Object {
+	object := e.scopedBinding()[identifier]
+	if object == nil {
+		panic(fmt.Sprintf("Unbound variable: %s", identifier))
+	}
 	return e.scopedBinding()[identifier]
 }
 

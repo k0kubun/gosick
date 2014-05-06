@@ -2,10 +2,6 @@
 
 package scheme
 
-import (
-	"log"
-)
-
 type Boolean struct {
 	ObjectBase
 	value bool
@@ -21,7 +17,7 @@ func NewBoolean(value interface{}) *Boolean {
 		} else if value.(string) == "#f" {
 			return &Boolean{value: false}
 		} else {
-			log.Fatal("Unexpected value for NewBoolean")
+			panic("Unexpected value for NewBoolean")
 		}
 	}
 	return nil

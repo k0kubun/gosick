@@ -4,10 +4,6 @@
 
 package scheme
 
-import (
-	"log"
-)
-
 type Application struct {
 	ObjectBase
 	procedureVariable Object
@@ -22,14 +18,14 @@ func (a *Application) Eval() Object {
 func (a *Application) String() string {
 	result := a.Eval()
 	if result == nil {
-		log.Fatal("Procedure appication returns nil")
+		panic("Procedure appication returns nil")
 	}
 	return result.String()
 }
 
 func (a *Application) applyProcedure() Object {
 	if a.environment == nil {
-		log.Fatal("Procedure does not have environment")
+		panic("Procedure does not have environment")
 	}
 	return a.environment.invokeProcedure(a.procedureVariable, a.arguments)
 }
