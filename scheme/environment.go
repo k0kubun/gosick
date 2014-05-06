@@ -35,7 +35,7 @@ func (e *Environment) invokeProcedure(variable, arguments Object) Object {
 		log.Fatal("Invoked procedure for <nil> variable.")
 	}
 	identifier := variable.(*Variable).identifier
-	procedure := e.binding[identifier].(*Procedure)
+	procedure := e.boundedObject(identifier).(*Procedure)
 	if procedure == nil {
 		log.Printf("Unbound variable: %s\n", identifier)
 		return nil
@@ -43,6 +43,21 @@ func (e *Environment) invokeProcedure(variable, arguments Object) Object {
 	return procedure.invoke(arguments)
 }
 
+func (e *Environment) boundedObject(identifier string) Object {
+	return e.scopedBinding()[identifier]
+}
+
 func (e *Environment) scopedBinding() Binding {
-	return Binding{}
+	scopedBinding := make(map[string]Object)
+	environment := e
+
+	for environment != nil {
+		for identifier, object := range environment.binding {
+			if scopedBinding[identifier] == nil {
+				scopedBinding[identifier] = object
+			}
+		}
+		environment = e.parent
+	}
+	return scopedBinding
 }
