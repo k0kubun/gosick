@@ -8,24 +8,26 @@ import (
 )
 
 var builtinProcedures = Binding{
-	"+":             NewProcedure(plus),
-	"-":             NewProcedure(minus),
-	"*":             NewProcedure(multiply),
-	"/":             NewProcedure(divide),
-	"=":             NewProcedure(equal),
-	"number?":       NewProcedure(isNumber),
-	"null?":         NewProcedure(isNull),
-	"procedure?":    NewProcedure(isProcedure),
-	"boolean?":      NewProcedure(isBoolean),
-	"pair?":         NewProcedure(isPair),
-	"list?":         NewProcedure(isList),
-	"symbol?":       NewProcedure(isSymbol),
-	"string?":       NewProcedure(isString),
-	"not":           NewProcedure(not),
-	"car":           NewProcedure(car),
-	"cdr":           NewProcedure(cdr),
-	"list":          NewProcedure(list),
-	"string-append": NewProcedure(stringAppend),
+	"+":              NewProcedure(plus),
+	"-":              NewProcedure(minus),
+	"*":              NewProcedure(multiply),
+	"/":              NewProcedure(divide),
+	"=":              NewProcedure(equal),
+	"number?":        NewProcedure(isNumber),
+	"null?":          NewProcedure(isNull),
+	"procedure?":     NewProcedure(isProcedure),
+	"boolean?":       NewProcedure(isBoolean),
+	"pair?":          NewProcedure(isPair),
+	"list?":          NewProcedure(isList),
+	"symbol?":        NewProcedure(isSymbol),
+	"string?":        NewProcedure(isString),
+	"not":            NewProcedure(not),
+	"car":            NewProcedure(car),
+	"cdr":            NewProcedure(cdr),
+	"list":           NewProcedure(list),
+	"string-append":  NewProcedure(stringAppend),
+	"symbol->string": NewProcedure(symbolToString),
+	"string->symbol": NewProcedure(stringToSymbol),
 }
 
 func assertListMinimum(arguments Object, minimum int) {
@@ -47,11 +49,17 @@ func assertListEqual(arguments Object, length int) {
 
 func assertObjectsType(objects []Object, typeName string) {
 	for _, object := range objects {
-		if typeName == "Number" && !object.IsNumber() {
-			panic("Compile Error: number required")
-		} else if typeName == "String" && !object.IsString() {
-			panic("Compile Error: string required")
-		}
+		assertObjectType(object, typeName)
+	}
+}
+
+func assertObjectType(object Object, typeName string) {
+	if typeName == "Number" && !object.IsNumber() {
+		panic("Compile Error: number required")
+	} else if typeName == "String" && !object.IsString() {
+		panic("Compile Error: string required")
+	} else if typeName == "Symbol" && !object.IsSymbol() {
+		panic("Compile Error: symbol required")
 	}
 }
 
@@ -216,4 +224,20 @@ func stringAppend(arguments Object) Object {
 		texts = append(texts, stringObject.(*String).text)
 	}
 	return NewString(strings.Join(texts, ""))
+}
+
+func symbolToString(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(object, "Symbol")
+	return NewString(object.(*Symbol).identifier)
+}
+
+func stringToSymbol(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(object, "String")
+	return NewSymbol(object.(*String).text)
 }
