@@ -38,6 +38,9 @@ var parserTests = []parserTest{
 	makePT("(number? #t)", "#f"),
 	makePT("(number? ())", "#f"),
 
+	makePT("(null? 1)", "#f"),
+	makePT("(null? ())", "#t"),
+
 	makePT("(define x 1) x", "x", "1"),
 	makePT("(define x (+ 1 3)) x", "x", "4"),
 	makePT("(define x 1) (define y 2) (define z 3) (+ x (* y z))", "x", "y", "z", "7"),
@@ -63,6 +66,7 @@ var evalErrorTests = []evalErrorTest{
 	{"hello", "Unbound variable: hello"},
 	{"(quote)", "Compile Error: syntax-error: malformed quote"},
 	{"(define)", "Compile Error: syntax-error: (define)"},
+	{"(null? 1 2)", "Compile Error: wrong number of arguments: number? requires 1, but got 2"},
 }
 
 func makePT(source string, results ...string) parserTest {

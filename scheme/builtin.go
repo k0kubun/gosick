@@ -12,6 +12,7 @@ var builtinProcedures = Binding{
 	"*":       NewProcedure(multiply),
 	"/":       NewProcedure(divide),
 	"number?": NewProcedure(isNumber),
+	"null?":   NewProcedure(isNull),
 }
 
 func assertArgumentsMinimum(arguments Object, minimum int) bool {
@@ -121,4 +122,18 @@ func isNumber(arguments Object) Object {
 	}
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	return NewBoolean(object.IsNumber())
+}
+
+func isNull(arguments Object) Object {
+	if !assertArgumentsEqual(arguments, 1) {
+		return nil
+	}
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	switch object.(type) {
+	case *Pair:
+		return NewBoolean(object.(*Pair).IsEmpty())
+	default:
+		return NewBoolean(false)
+	}
 }
