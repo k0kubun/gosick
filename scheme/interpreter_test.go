@@ -62,7 +62,7 @@ var interpreterTests = []interpreterTest{
 	makeIT("(boolean? (null? 1))", "#t"),
 
 	makeIT("(pair? 1)", "#f"),
-	makeIT("(pair? ())", "#t"),
+	makeIT("(pair? ())", "#f"),
 	makeIT("(pair? '(1 2 3))", "#t"),
 
 	makeIT("(list? 1)", "#f"),
@@ -112,6 +112,11 @@ var evalErrorTests = []evalErrorTest{
 	{"(- #t)", "Compile Error: procedure expects arguments to be Number"},
 	{"(* ())", "Compile Error: procedure expects arguments to be Number"},
 	{"(/ '(1 2 3))", "Compile Error: procedure expects arguments to be Number"},
+
+	{"(car ())", "Compile Error: pair required"},
+	{"(cdr ())", "Compile Error: pair required"},
+	{"(car)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
+	{"(cdr)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
 }
 
 func makeIT(source string, results ...string) interpreterTest {

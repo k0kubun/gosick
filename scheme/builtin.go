@@ -51,6 +51,16 @@ func assertObjectsType(objects []Object, typeName string) {
 	}
 }
 
+func assertPair(object Object) {
+	switch object.(type) {
+	case *Pair:
+		if object.IsPair() {
+			return
+		}
+	}
+	panic("Compile Error: pair required")
+}
+
 func evaledObjects(objects []Object) []Object {
 	evaledObjects := []Object{}
 
@@ -138,7 +148,7 @@ func isNull(arguments Object) Object {
 	assertListEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
-	return NewBoolean(object.IsPair() && object.(*Pair).IsEmpty())
+	return NewBoolean(object.IsNull())
 }
 
 func isProcedure(arguments Object) Object {
@@ -187,6 +197,7 @@ func car(arguments Object) Object {
 	assertListEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertPair(object)
 	return object.(*Pair).Car
 }
 
@@ -194,5 +205,6 @@ func cdr(arguments Object) Object {
 	assertListEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertPair(object)
 	return object.(*Pair).Cdr
 }

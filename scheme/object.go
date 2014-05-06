@@ -10,6 +10,7 @@ type Object interface {
 	IsNumber() bool
 	IsBoolean() bool
 	IsProcedure() bool
+	IsNull() bool
 	IsPair() bool
 	IsList() bool
 	IsSymbol() bool
@@ -36,6 +37,10 @@ func (o *ObjectBase) IsBoolean() bool {
 }
 
 func (o *ObjectBase) IsProcedure() bool {
+	return false
+}
+
+func (o *ObjectBase) IsNull() bool {
 	return false
 }
 
