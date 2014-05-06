@@ -18,6 +18,9 @@ $ gosick
 # Excecute scheme source code
 $ gosick -f source.scm
 
+# One liner
+$ gosick -e "(+ 1 2)"
+
 # Dump AST of input source code
 $ gosick -a
 
