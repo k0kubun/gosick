@@ -18,10 +18,12 @@ func NewInterpreter(source string) *Interpreter {
 	return &Interpreter{NewParser(source)}
 }
 
-func (i *Interpreter) Eval() {
+func (i *Interpreter) Eval(dumpAST bool) {
 	for i.Peek() != scanner.EOF {
 		expression := i.Parser.Parse()
-		i.DumpAST(expression, 0)
+		if dumpAST {
+			i.DumpAST(expression, 0)
+		}
 
 		if expression == nil {
 			return
