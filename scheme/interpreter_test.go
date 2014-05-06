@@ -75,6 +75,10 @@ var interpreterTests = []interpreterTest{
 	makeIT("(symbol? 1)", "#f"),
 	makeIT("(symbol? 'hello)", "#t"),
 
+	makeIT("(string? 1)", "#f"),
+	makeIT("(string? \"\")", "#t"),
+	makeIT("(string? \"hello\")", "#t"),
+
 	makeIT("(null? 1)", "#f"),
 	makeIT("(null? ())", "#t"),
 

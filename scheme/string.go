@@ -23,3 +23,7 @@ func (s *String) Eval() Object {
 func (s *String) String() string {
 	return fmt.Sprintf("\"%s\"", s.text)
 }
+
+func (s *String) IsString() bool {
+	return true
+}

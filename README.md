@@ -38,7 +38,7 @@ $ gosick -h
 | List | cons, list, length, memq, last, append, set-car!, set-cdr! | car, cdr |
 | Boolean | | not |
 | String | string-append, symbol->string, string->symbol, string->number, number->string |  |
-| Type | string? | null?, boolean?, procedure?, pair?, list?, symbol? |
+| Type | | null?, boolean?, procedure?, pair?, list?, symbol?, string? |
 | Comparison | eq?, neq?, equal? |  |
 | Syntax | lambda, let, let*, letrec |  |
 | Statement | if, cond, and, or, begin, do |  |
