@@ -24,6 +24,11 @@ func NewInterpreter(source string) *Interpreter {
 	return interpreter
 }
 
+// Load new source code with current environment
+func (i *Interpreter) ReloadSourceCode(source string) {
+	i.Parser = NewParser(source)
+}
+
 func (i *Interpreter) PrintResult(dumpAST bool) {
 	for _, result := range i.Eval(dumpAST) {
 		fmt.Println(result)

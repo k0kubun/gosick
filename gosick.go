@@ -46,6 +46,8 @@ func executeExpression(expression string, dumpAST bool) {
 }
 
 func invokeInteractiveShell(options *Options) {
+	mainInterpreter := scheme.NewInterpreter("")
+
 	for {
 		indentLevel := 0
 		expression := ""
@@ -66,7 +68,8 @@ func invokeInteractiveShell(options *Options) {
 			interpreter := scheme.NewInterpreter(expression)
 			indentLevel = interpreter.IndentLevel()
 			if indentLevel == 0 {
-				executeExpression(expression, options.DumpAST)
+				mainInterpreter.ReloadSourceCode(expression)
+				mainInterpreter.PrintResult(options.DumpAST)
 				break
 			} else if indentLevel < 0 {
 				fmt.Println("*** ERROR: extra close parentheses")
