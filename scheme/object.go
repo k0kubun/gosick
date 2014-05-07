@@ -15,6 +15,7 @@ type Object interface {
 	IsList() bool
 	IsSymbol() bool
 	IsString() bool
+	IsVariable() bool
 	IsApplication() bool
 }
 
@@ -60,6 +61,10 @@ func (o *ObjectBase) IsSymbol() bool {
 }
 
 func (o *ObjectBase) IsString() bool {
+	return false
+}
+
+func (o *ObjectBase) IsVariable() bool {
 	return false
 }
 

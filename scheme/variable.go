@@ -25,3 +25,7 @@ func (v *Variable) Eval() Object {
 func (v *Variable) String() string {
 	return v.Eval().String()
 }
+
+func (v *Variable) IsVariable() bool {
+	return true
+}

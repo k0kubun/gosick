@@ -19,6 +19,21 @@ func (e *Environment) Bind(identifier string, value Object) {
 	e.binding[identifier] = value
 }
 
+func (e *Environment) ScopedBinding() Binding {
+	scopedBinding := make(map[string]Object)
+	environment := e
+
+	for environment != nil {
+		for identifier, object := range environment.binding {
+			if scopedBinding[identifier] == nil {
+				scopedBinding[identifier] = object
+			}
+		}
+		environment = e.parent
+	}
+	return scopedBinding
+}
+
 // Returns ultimate-ancestral environment.
 // This returns virtual top level environment in closure,
 // which is separated from TopLevel.
@@ -46,24 +61,9 @@ func (e *Environment) invokeProcedure(object, arguments Object) Object {
 }
 
 func (e *Environment) boundedObject(identifier string) Object {
-	object := e.scopedBinding()[identifier]
+	object := e.ScopedBinding()[identifier]
 	if object == nil {
 		runtimeError("Unbound variable: %s", identifier)
 	}
-	return e.scopedBinding()[identifier]
-}
-
-func (e *Environment) scopedBinding() Binding {
-	scopedBinding := make(map[string]Object)
-	environment := e
-
-	for environment != nil {
-		for identifier, object := range environment.binding {
-			if scopedBinding[identifier] == nil {
-				scopedBinding[identifier] = object
-			}
-		}
-		environment = e.parent
-	}
-	return scopedBinding
+	return object
 }
