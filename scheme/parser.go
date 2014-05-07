@@ -16,9 +16,9 @@ func NewParser(source string) *Parser {
 	return &Parser{NewLexer(source)}
 }
 
-func (p *Parser) Parse() Object {
+func (p *Parser) Parse(environment *Environment) Object {
 	p.ensureAvailability()
-	return p.parseObject(&TopLevel)
+	return p.parseObject(environment)
 }
 
 func (p *Parser) parseObject(environment *Environment) Object {

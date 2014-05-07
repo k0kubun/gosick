@@ -11,11 +11,6 @@ type Environment struct {
 
 type Binding map[string]Object
 
-var TopLevel = Environment{
-	parent:  nil,
-	binding: builtinProcedures,
-}
-
 func NewEnvironment() *Environment {
 	return &Environment{}
 }

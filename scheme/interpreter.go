@@ -12,17 +12,33 @@ import (
 
 type Interpreter struct {
 	*Parser
+	topLevel *Environment
 }
 
 func NewInterpreter(source string) *Interpreter {
-	return &Interpreter{NewParser(source)}
+	interpreter := &Interpreter{Parser: NewParser(source)}
+	interpreter.topLevel = &Environment{
+		parent:  nil,
+		binding: BuiltinProcedures(),
+	}
+	return interpreter
 }
 
-func (i *Interpreter) Eval(dumpAST bool) {
-	defer i.ensureAvailability()
+func (i *Interpreter) PrintResult(dumpAST bool) {
+	for _, result := range i.Eval(dumpAST) {
+		fmt.Println(result)
+	}
+}
+
+func (i *Interpreter) Eval(dumpAST bool) (results []string) {
+	defer func() {
+		if err := recover(); err != nil {
+			results = append(results, fmt.Sprintf("*** ERROR: %s", err))
+		}
+	}()
 
 	for i.Peek() != scanner.EOF {
-		expression := i.Parser.Parse()
+		expression := i.Parser.Parse(i.topLevel)
 		if dumpAST {
 			i.DumpAST(expression, 0)
 		}
@@ -30,14 +46,9 @@ func (i *Interpreter) Eval(dumpAST bool) {
 		if expression == nil {
 			return
 		}
-		fmt.Println(expression.Eval())
+		results = append(results, expression.Eval().String())
 	}
-}
-
-func (i *Interpreter) ensureAvailability() {
-	if err := recover(); err != nil {
-		fmt.Println("*** ERROR:", err)
-	}
+	return
 }
 
 func (i *Interpreter) DumpAST(object Object, indentLevel int) {

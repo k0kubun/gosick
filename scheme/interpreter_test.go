@@ -154,22 +154,14 @@ func evalTest(source string, results ...string) interpreterTest {
 
 func TestInterpreter(t *testing.T) {
 	for _, test := range interpreterTests {
-		p := NewParser(test.source)
-
-		// I don't know what p.Peek() affects to p, but this test fails without p.Peek().
-		p.Peek()
+		i := NewInterpreter(test.source)
+		evalResults := i.Eval(false)
 
 		for i := 0; i < len(test.results); i++ {
-			result := test.results[i]
-
-			parsedObject := p.Parse()
-			if parsedObject == nil {
-				t.Errorf("%s => <nil>; want %s", test.source, result)
-				return
-			}
-			actual := parsedObject.String()
-			if actual != result {
-				t.Errorf("%s => %s; want %s", test.source, actual, result)
+			expect := test.results[i]
+			actual := evalResults[i]
+			if actual != expect {
+				t.Errorf("%s => %s; want %s", test.source, actual, expect)
 			}
 		}
 	}
@@ -177,21 +169,12 @@ func TestInterpreter(t *testing.T) {
 
 func TestEvalError(t *testing.T) {
 	for _, test := range evalErrorTests {
-		assertError(t, test.source, test.message)
-	}
-}
+		i := NewInterpreter(test.source)
 
-func assertError(t *testing.T, source string, message string) {
-	defer func() {
-		err := recover()
-		if err == nil {
-			t.Errorf("\"%s\" did not panic\n want: %s\n", source, message)
-		} else if err != message {
-			t.Errorf("\"%s\" paniced\nwith: %s\nwant: %s\n", source, err, message)
+		expect := "*** ERROR: " + test.message
+		actual := i.Eval(false)[0]
+		if actual != expect {
+			t.Errorf("%s\n got: %s;\nwant: %s", test.source, actual, expect)
 		}
-	}()
-
-	p := NewParser(source)
-	p.Peek()
-	p.Parse().Eval()
+	}
 }

@@ -6,30 +6,32 @@ import (
 	"strings"
 )
 
-var builtinProcedures = Binding{
-	"+":              BuiltinProcedure(plus),
-	"-":              BuiltinProcedure(minus),
-	"*":              BuiltinProcedure(multiply),
-	"/":              BuiltinProcedure(divide),
-	"=":              BuiltinProcedure(equal),
-	"number?":        BuiltinProcedure(isNumber),
-	"null?":          BuiltinProcedure(isNull),
-	"procedure?":     BuiltinProcedure(isProcedure),
-	"boolean?":       BuiltinProcedure(isBoolean),
-	"pair?":          BuiltinProcedure(isPair),
-	"list?":          BuiltinProcedure(isList),
-	"symbol?":        BuiltinProcedure(isSymbol),
-	"string?":        BuiltinProcedure(isString),
-	"not":            BuiltinProcedure(not),
-	"car":            BuiltinProcedure(car),
-	"cdr":            BuiltinProcedure(cdr),
-	"list":           BuiltinProcedure(list),
-	"string-append":  BuiltinProcedure(stringAppend),
-	"symbol->string": BuiltinProcedure(symbolToString),
-	"string->symbol": BuiltinProcedure(stringToSymbol),
+func BuiltinProcedures() Binding {
+	return Binding{
+		"+":              builtinProcedure(plus),
+		"-":              builtinProcedure(minus),
+		"*":              builtinProcedure(multiply),
+		"/":              builtinProcedure(divide),
+		"=":              builtinProcedure(equal),
+		"number?":        builtinProcedure(isNumber),
+		"null?":          builtinProcedure(isNull),
+		"procedure?":     builtinProcedure(isProcedure),
+		"boolean?":       builtinProcedure(isBoolean),
+		"pair?":          builtinProcedure(isPair),
+		"list?":          builtinProcedure(isList),
+		"symbol?":        builtinProcedure(isSymbol),
+		"string?":        builtinProcedure(isString),
+		"not":            builtinProcedure(not),
+		"car":            builtinProcedure(car),
+		"cdr":            builtinProcedure(cdr),
+		"list":           builtinProcedure(list),
+		"string-append":  builtinProcedure(stringAppend),
+		"symbol->string": builtinProcedure(symbolToString),
+		"string->symbol": builtinProcedure(stringToSymbol),
+	}
 }
 
-func BuiltinProcedure(function func(Object) Object) *Procedure {
+func builtinProcedure(function func(Object) Object) *Procedure {
 	return &Procedure{
 		environment: nil,
 		function:    function,
