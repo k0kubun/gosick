@@ -40,7 +40,9 @@ func (p *Parser) parseObject(parent Object) Object {
 			if !object.isList() || object.(*Pair).ListLength() != 1 {
 				compileError("syntax-error: malformed quote")
 			}
-			return object.(*Pair).Car
+			quotedObject := object.(*Pair).Car
+			quotedObject.setParent(parent)
+			return quotedObject
 		} else if peekToken == "lambda" {
 			p.NextToken()
 			return p.parseProcedure(parent)
@@ -54,7 +56,7 @@ func (p *Parser) parseObject(parent Object) Object {
 	case IdentifierToken:
 		return NewVariable(token, parent)
 	case BooleanToken:
-		return NewBoolean(token)
+		return NewBoolean(token, parent)
 	case StringToken:
 		return NewString(token[1:len(token)-1], parent)
 	default:
@@ -72,7 +74,7 @@ func (p *Parser) parseList(parent Object) Object {
 	if pair.Car == nil {
 		return pair
 	}
-	pair.Cdr = p.parseList(parent).(*Pair)
+	pair.Cdr = p.parseList(pair).(*Pair)
 	return pair
 }
 
@@ -99,20 +101,21 @@ func (p *Parser) parseProcedure(parent Object) Object {
 }
 
 func (p *Parser) parseDefinition(parent Object) Object {
-	object := p.parseList(parent)
+	definition := &Definition{ObjectBase: ObjectBase{parent: parent}}
+
+	object := p.parseList(definition)
 	if !object.isList() || object.(*Pair).ListLength() != 2 {
 		runtimeError("Compile Error: syntax-error: (define)")
 	}
-
 	list := object.(*Pair)
-	variable := list.ElementAt(0).(*Variable)
-	value := list.ElementAt(1)
 
-	return &Definition{
-		ObjectBase: ObjectBase{parent: parent},
-		variable:   variable,
-		value:      value,
-	}
+	definition.variable = list.ElementAt(0).(*Variable)
+	definition.variable.setParent(definition) // before this, variable's parent is list.
+
+	definition.value = list.ElementAt(1)
+	definition.value.setParent(definition) // before this, value's parent is list.
+
+	return definition
 }
 
 func (p *Parser) parseQuotedObject(parent Object) Object {
@@ -123,23 +126,24 @@ func (p *Parser) parseQuotedObject(parent Object) Object {
 	case '(':
 		return p.parseQuotedList(parent)
 	case IntToken:
-		return NewNumber(token)
+		return NewNumber(token, parent)
 	case IdentifierToken:
 		return NewSymbol(token, parent)
 	case BooleanToken:
-		return NewBoolean(token)
+		return NewBoolean(token, parent)
 	default:
 		return nil
 	}
 }
 
 func (p *Parser) parseQuotedList(parent Object) Object {
-	car := p.parseQuotedObject(parent)
-	if car == nil {
-		return NewNull(parent)
+	pair := NewNull(parent)
+	pair.Car = p.parseQuotedObject(pair)
+	if pair.Car == nil {
+		return pair
 	}
-	cdr := p.parseQuotedList(parent).(*Pair)
-	return &Pair{ObjectBase: ObjectBase{parent: parent}, Car: car, Cdr: cdr}
+	pair.Cdr = p.parseQuotedList(pair).(*Pair)
+	return pair
 }
 
 func (p *Parser) ensureAvailability() {

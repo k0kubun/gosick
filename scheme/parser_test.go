@@ -36,14 +36,14 @@ func testTreeStructure(t *testing.T, object Object, source string) {
 		car := object.(*Pair).Car
 		cdr := object.(*Pair).Cdr
 		if car != nil {
-			//testParentRelationship(t, object, object.(*Pair).Car, source)
+			testParentRelationship(t, object, object.(*Pair).Car, source)
 		}
 		if cdr != nil {
-			//testParentRelationship(t, object, object.(*Pair).Cdr, source)
+			testParentRelationship(t, object, object.(*Pair).Cdr, source)
 		}
 	case *Definition:
-		//testParentRelationship(t, object, object.(*Definition).variable, source)
-		//testParentRelationship(t, object, object.(*Definition).value, source)
+		testParentRelationship(t, object, object.(*Definition).variable, source)
+		testParentRelationship(t, object, object.(*Definition).value, source)
 	case *Procedure:
 		arguments := object.(*Procedure).arguments
 		body := object.(*Procedure).body
