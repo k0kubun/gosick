@@ -67,39 +67,31 @@ func (p *Parser) parseObject(parent Object) Object {
 // Returns value is Object because if a method returns nil which is not
 // interface type, the method's result cannot be judged as nil.
 func (p *Parser) parseList(parent Object) Object {
-	car := p.parseObject(parent)
-	if car == nil {
-		return new(Pair)
+	pair := NewNull(parent)
+	pair.Car = p.parseObject(pair)
+	if pair.Car == nil {
+		return pair
 	}
-	cdr := p.parseList(parent).(*Pair)
-	return &Pair{Car: car, Cdr: cdr}
+	pair.Cdr = p.parseList(parent).(*Pair)
+	return pair
 }
 
 func (p *Parser) parseApplication(parent Object) Object {
-	firstObject := p.parseObject(parent)
-	if firstObject == nil {
-		runtimeError("Unexpected flow: procedure application car is nil")
-	}
-
-	list := p.parseList(parent)
-	if list == nil {
-		runtimeError("Unexpected flow: procedure application cdr is nil")
-	}
-	return &Application{
+	application := &Application{
 		ObjectBase: ObjectBase{parent: parent},
-		procedure:  firstObject,
-		arguments:  list,
 	}
+	application.procedure = p.parseObject(application)
+	application.arguments = p.parseList(application)
+
+	return application
 }
 
 func (p *Parser) parseProcedure(parent Object) Object {
 	if p.TokenType() == '(' {
 		p.NextToken()
-		return NewProcedure(
-			parent,
-			p.parseList(parent),
-			p.parseList(parent),
-		)
+		procedure := new(Procedure)
+		procedure.generateFunction(parent, p.parseList(procedure), p.parseList(procedure))
+		return procedure
 	} else {
 		runtimeError("Not implemented yet.")
 		return nil

@@ -23,6 +23,7 @@ type Object interface {
 	scopedBinding() Binding
 	binding() Binding
 	boundedObject(string) Object
+	ancestor() Object
 }
 
 type Binding map[string]Object
@@ -112,10 +113,22 @@ func (o *ObjectBase) bind(identifier string, object Object) {
 	if o.parent == nil {
 		runtimeError("Bind called for object whose parent is nil")
 	} else {
-		o.Parent().bind(identifier, object)
+		o.ancestor().bind(identifier, object)
 	}
 }
 
 func (o *ObjectBase) boundedObject(identifier string) Object {
 	return o.scopedBinding()[identifier]
+}
+
+func (o *ObjectBase) ancestor() Object {
+	ancestor := o.Parent()
+	for {
+		if ancestor.Parent() == nil {
+			break
+		} else {
+			ancestor = ancestor.Parent()
+		}
+	}
+	return ancestor
 }

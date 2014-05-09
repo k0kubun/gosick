@@ -15,18 +15,12 @@ type Procedure struct {
 	localBinding Binding
 }
 
-func NewProcedure(parent Object, arguments Object, body Object) *Procedure {
+func (p *Procedure) generateFunction(parent Object, arguments Object, body Object) {
 	// Create local binding for procedure
 	localBinding := parent.scopedBinding()
-	procedure := &Procedure{
-		ObjectBase:   ObjectBase{parent: nil},
-		function:     nil,
-		arguments:    arguments,
-		body:         body,
-		localBinding: localBinding,
-	}
+	p.localBinding = localBinding
 
-	procedure.function = func(givenArguments Object) Object {
+	p.function = func(givenArguments Object) Object {
 		if !arguments.isList() || !givenArguments.isList() {
 			runtimeError("Given non-list arguments")
 		}
@@ -47,9 +41,6 @@ func NewProcedure(parent Object, arguments Object, body Object) *Procedure {
 			}
 		}
 
-		// set procedure as a parent of body to eval elements in local binding
-		body.setParent(procedure)
-
 		// returns last eval result
 		var returnValue Object
 		elements := body.(*Pair).Elements()
@@ -58,7 +49,6 @@ func NewProcedure(parent Object, arguments Object, body Object) *Procedure {
 		}
 		return returnValue
 	}
-	return procedure
 }
 
 func (p *Procedure) String() string {
@@ -79,4 +69,8 @@ func (p *Procedure) isProcedure() bool {
 
 func (p *Procedure) binding() Binding {
 	return p.localBinding
+}
+
+func (p *Procedure) bind(identifier string, object Object) {
+	p.localBinding[identifier] = object
 }

@@ -115,38 +115,41 @@ var interpreterTests = []interpreterTest{
 	evalTest("((lambda (x) 1) 2)", "1"),
 	evalTest("((lambda (x y z) (+ 3 4) (- 4 1) ) 2 3 3)", "3"),
 	evalTest("((lambda (x) (+ x x)) 1)", "2"),
-}
+	evalTest("(define x 1) ((lambda (y) (+ x y)) 2)", "x", "3"),
+	evalTest("(define x 1) ((lambda (x) (+ x x)) 2)", "x", "4"),
+	evalTest("((lambda (x) (define x 3) x) 2)", "3"),
 
-var evalErrorTests = []evalErrorTest{
-	{"(1)", "invalid application"},
-	{"hello", "Unbound variable: hello"},
-	{"(quote)", "Compile Error: syntax-error: malformed quote"},
-	{"(define)", "Compile Error: syntax-error: (define)"},
+	evalTest("(1)", "*** ERROR: invalid application"),
+	evalTest("hello", "*** ERROR: Unbound variable: hello"),
+	evalTest("(quote)", "*** ERROR: Compile Error: syntax-error: malformed quote"),
+	evalTest("(define)", "*** ERROR: Compile Error: syntax-error: (define)"),
 
-	{"(-)", "Compile Error: procedure requires at least 1 argument"},
-	{"(/)", "Compile Error: procedure requires at least 1 argument"},
-	{"(number?)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
-	{"(null?)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
-	{"(null? 1 2)", "Compile Error: wrong number of arguments: number? requires 1, but got 2"},
-	{"(not)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
+	evalTest("(-)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),
+	evalTest("(/)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),
+	evalTest("(number?)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
+	evalTest("(null?)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
+	evalTest("(null? 1 2)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 2"),
+	evalTest("(not)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
 
-	{"(+ 1 #t)", "Compile Error: number required, but got #t"},
-	{"(- #t)", "Compile Error: number required, but got #t"},
-	{"(* ())", "Compile Error: number required, but got ()"},
-	{"(/ '(1 2 3))", "Compile Error: number required, but got (1 2 3)"},
+	evalTest("(+ 1 #t)", "*** ERROR: Compile Error: number required, but got #t"),
+	evalTest("(- #t)", "*** ERROR: Compile Error: number required, but got #t"),
+	evalTest("(* ())", "*** ERROR: Compile Error: number required, but got ()"),
+	evalTest("(/ '(1 2 3))", "*** ERROR: Compile Error: number required, but got (1 2 3)"),
 
-	{"(string-append #f)", "Compile Error: string required, but got #f"},
-	{"(string-append 1)", "Compile Error: string required, but got 1"},
+	evalTest("(string-append #f)", "*** ERROR: Compile Error: string required, but got #f"),
+	evalTest("(string-append 1)", "*** ERROR: Compile Error: string required, but got 1"),
 
-	{"(string->symbol)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
-	{"(string->symbol 'hello)", "Compile Error: string required, but got hello"},
-	{"(symbol->string)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
-	{"(symbol->string \"\")", "Compile Error: symbol required, but got \"\""},
+	evalTest("(string->symbol)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
+	evalTest("(string->symbol 'hello)", "*** ERROR: Compile Error: string required, but got hello"),
+	evalTest("(symbol->string)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
+	evalTest("(symbol->string \"\")", "*** ERROR: Compile Error: symbol required, but got \"\""),
 
-	{"(car ())", "Compile Error: pair required, but got ()"},
-	{"(cdr ())", "Compile Error: pair required, but got ()"},
-	{"(car)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
-	{"(cdr)", "Compile Error: wrong number of arguments: number? requires 1, but got 0"},
+	evalTest("(car ())", "*** ERROR: Compile Error: pair required, but got ()"),
+	evalTest("(cdr ())", "*** ERROR: Compile Error: pair required, but got ()"),
+	evalTest("(car)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
+	evalTest("(cdr)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
+
+	evalTest("((lambda (x) (define y 1) 1) 1) y", "1", "*** ERROR: Unbound variable: y"),
 }
 
 func evalTest(source string, results ...string) interpreterTest {
@@ -164,18 +167,6 @@ func TestInterpreter(t *testing.T) {
 			if actual != expect {
 				t.Errorf("%s => %s; want %s", test.source, actual, expect)
 			}
-		}
-	}
-}
-
-func TestEvalError(t *testing.T) {
-	for _, test := range evalErrorTests {
-		i := NewInterpreter(test.source)
-
-		expect := "*** ERROR: " + test.message
-		actual := i.EvalSource(false)[0]
-		if actual != expect {
-			t.Errorf("%s\n got: %s;\nwant: %s", test.source, actual, expect)
 		}
 	}
 }
