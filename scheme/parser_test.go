@@ -26,10 +26,10 @@ func testTreeStructure(t *testing.T, object Object, source string) {
 	case *Application:
 		procedure := object.(*Application).procedure
 		switch procedure.(type) {
-		case *Variable:
-			testParentRelationship(t, object, procedure, source)
 		case *Procedure:
 			testClosedScope(t, procedure, source)
+		default:
+			testParentRelationship(t, object, procedure, source)
 		}
 		testParentRelationship(t, object, object.(*Application).arguments, source)
 	case *Pair:
@@ -43,7 +43,13 @@ func testTreeStructure(t *testing.T, object Object, source string) {
 		}
 	case *Definition:
 		testParentRelationship(t, object, object.(*Definition).variable, source)
-		testParentRelationship(t, object, object.(*Definition).value, source)
+		value := object.(*Definition).value
+		switch value.(type) {
+		case *Procedure:
+			testClosedScope(t, value, source)
+		default:
+			testParentRelationship(t, object, value, source)
+		}
 	case *Procedure:
 		arguments := object.(*Procedure).arguments
 		body := object.(*Procedure).body

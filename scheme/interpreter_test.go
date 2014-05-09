@@ -118,6 +118,8 @@ var interpreterTests = []interpreterTest{
 	evalTest("(define x 1) ((lambda (y) (+ x y)) 2)", "x", "3"),
 	evalTest("(define x 1) ((lambda (x) (+ x x)) 2)", "x", "4"),
 	evalTest("((lambda (x) (define x 3) x) 2)", "3"),
+	evalTest("((lambda (x y z) (* (+ x y) z)) 1 2 3)", "9"),
+	evalTest("(define x (lambda (a) (* 2 a))) (define y (lambda (a) (* 3 a))) (define z (lambda (a b) (x a) (y b))) (* (x 3) (y 2) (z 4 5))", "x", "y", "z", "540"),
 }
 
 var runtimeErrorTests = []interpreterTest{
