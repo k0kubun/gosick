@@ -92,7 +92,9 @@ func (p *Parser) parseProcedure(parent Object) Object {
 	if p.TokenType() == '(' {
 		p.NextToken()
 		procedure := new(Procedure)
-		procedure.generateFunction(parent, p.parseList(procedure), p.parseList(procedure))
+		procedure.arguments = p.parseList(procedure)
+		procedure.body = p.parseList(procedure)
+		procedure.generateFunction(parent)
 		return procedure
 	} else {
 		runtimeError("Not implemented yet.")

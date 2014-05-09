@@ -24,25 +24,25 @@ func (p *Procedure) ancestor() Object {
 	return p
 }
 
-func (p *Procedure) generateFunction(parent Object, arguments Object, body Object) {
+func (p *Procedure) generateFunction(parent Object) {
 	// Create local binding for procedure
 	localBinding := parent.scopedBinding()
 	p.localBinding = localBinding
 
 	p.function = func(givenArguments Object) Object {
-		if !arguments.isList() || !givenArguments.isList() {
+		if !p.arguments.isList() || !givenArguments.isList() {
 			runtimeError("Given non-list arguments")
 		}
 
 		// assert arguments count
-		expectedLength := arguments.(*Pair).ListLength()
+		expectedLength := p.arguments.(*Pair).ListLength()
 		actualLength := givenArguments.(*Pair).ListLength()
 		if expectedLength != actualLength {
 			compileError("wrong number of arguments: #f requires %d, but got %d", expectedLength, actualLength)
 		}
 
 		// bind arguments to local scope
-		parameters := arguments.(*Pair).Elements()
+		parameters := p.arguments.(*Pair).Elements()
 		objects := evaledObjects(givenArguments.(*Pair).Elements())
 		for i, parameter := range parameters {
 			if parameter.isVariable() {
@@ -52,7 +52,7 @@ func (p *Procedure) generateFunction(parent Object, arguments Object, body Objec
 
 		// returns last eval result
 		var returnValue Object
-		elements := body.(*Pair).Elements()
+		elements := p.body.(*Pair).Elements()
 		for _, element := range elements {
 			returnValue = element.Eval()
 		}
