@@ -11,7 +11,7 @@ type Number struct {
 	value int
 }
 
-func NewNumber(argument interface{}) *Number {
+func NewNumber(argument interface{}, options ...Object) *Number {
 	var value int
 	var err error
 
@@ -27,7 +27,11 @@ func NewNumber(argument interface{}) *Number {
 		runtimeError("Unexpected argument type for NewNumber()")
 	}
 
-	return &Number{value: value}
+	if len(options) > 0 {
+		return &Number{ObjectBase: ObjectBase{parent: options[0]}, value: value}
+	} else {
+		return &Number{value: value}
+	}
 }
 
 func (n *Number) Eval() Object {

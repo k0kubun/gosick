@@ -15,6 +15,15 @@ type Procedure struct {
 	localBinding Binding
 }
 
+// Procedure has closed scope, so it has no parent
+func (p *Procedure) Parent() Object {
+	return nil
+}
+
+func (p *Procedure) ancestor() Object {
+	return p
+}
+
 func (p *Procedure) generateFunction(parent Object, arguments Object, body Object) {
 	// Create local binding for procedure
 	localBinding := parent.scopedBinding()

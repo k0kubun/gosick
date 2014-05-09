@@ -50,13 +50,13 @@ func (p *Parser) parseObject(parent Object) Object {
 	case '\'':
 		return p.parseQuotedObject(parent)
 	case IntToken:
-		return NewNumber(token)
+		return NewNumber(token, parent)
 	case IdentifierToken:
 		return NewVariable(token, parent)
 	case BooleanToken:
 		return NewBoolean(token)
 	case StringToken:
-		return NewString(token[1 : len(token)-1])
+		return NewString(token[1:len(token)-1], parent)
 	default:
 		return nil
 	}
@@ -125,7 +125,7 @@ func (p *Parser) parseQuotedObject(parent Object) Object {
 	case IntToken:
 		return NewNumber(token)
 	case IdentifierToken:
-		return NewSymbol(token)
+		return NewSymbol(token, parent)
 	case BooleanToken:
 		return NewBoolean(token)
 	default:

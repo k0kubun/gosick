@@ -8,8 +8,12 @@ type Symbol struct {
 	identifier string
 }
 
-func NewSymbol(identifier string) *Symbol {
-	return &Symbol{identifier: identifier}
+func NewSymbol(identifier string, options ...Object) *Symbol {
+	if len(options) > 0 {
+		return &Symbol{ObjectBase: ObjectBase{parent: options[0]}, identifier: identifier}
+	} else {
+		return &Symbol{identifier: identifier}
+	}
 }
 
 func (s *Symbol) Eval() Object {

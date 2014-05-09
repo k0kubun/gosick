@@ -118,9 +118,15 @@ var interpreterTests = []interpreterTest{
 	evalTest("(define x 1) ((lambda (y) (+ x y)) 2)", "x", "3"),
 	evalTest("(define x 1) ((lambda (x) (+ x x)) 2)", "x", "4"),
 	evalTest("((lambda (x) (define x 3) x) 2)", "3"),
+}
 
+var runtimeErrorTests = []interpreterTest{
 	evalTest("(1)", "*** ERROR: invalid application"),
 	evalTest("hello", "*** ERROR: Unbound variable: hello"),
+	evalTest("((lambda (x) (define y 1) 1) 1) y", "1", "*** ERROR: Unbound variable: y"),
+}
+
+var compileErrorTests = []interpreterTest{
 	evalTest("(quote)", "*** ERROR: Compile Error: syntax-error: malformed quote"),
 	evalTest("(define)", "*** ERROR: Compile Error: syntax-error: (define)"),
 
@@ -148,16 +154,14 @@ var interpreterTests = []interpreterTest{
 	evalTest("(cdr ())", "*** ERROR: Compile Error: pair required, but got ()"),
 	evalTest("(car)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
 	evalTest("(cdr)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
-
-	evalTest("((lambda (x) (define y 1) 1) 1) y", "1", "*** ERROR: Unbound variable: y"),
 }
 
 func evalTest(source string, results ...string) interpreterTest {
 	return interpreterTest{source: source, results: results}
 }
 
-func TestInterpreter(t *testing.T) {
-	for _, test := range interpreterTests {
+func runTests(t *testing.T, tests []interpreterTest) {
+	for _, test := range tests {
 		i := NewInterpreter(test.source)
 		evalResults := i.EvalSource(false)
 
@@ -169,4 +173,10 @@ func TestInterpreter(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestInterpreter(t *testing.T) {
+	runTests(t, interpreterTests)
+	runTests(t, runtimeErrorTests)
+	runTests(t, compileErrorTests)
 }
