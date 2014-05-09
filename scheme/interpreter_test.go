@@ -156,7 +156,7 @@ func evalTest(source string, results ...string) interpreterTest {
 func TestInterpreter(t *testing.T) {
 	for _, test := range interpreterTests {
 		i := NewInterpreter(test.source)
-		evalResults := i.Eval(false)
+		evalResults := i.EvalSource(false)
 
 		for i := 0; i < len(test.results); i++ {
 			expect := test.results[i]
@@ -173,7 +173,7 @@ func TestEvalError(t *testing.T) {
 		i := NewInterpreter(test.source)
 
 		expect := "*** ERROR: " + test.message
-		actual := i.Eval(false)[0]
+		actual := i.EvalSource(false)[0]
 		if actual != expect {
 			t.Errorf("%s\n got: %s;\nwant: %s", test.source, actual, expect)
 		}

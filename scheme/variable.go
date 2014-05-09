@@ -7,25 +7,28 @@ package scheme
 
 type Variable struct {
 	ObjectBase
-	identifier  string
-	environment *Environment
+	identifier string
 }
 
-func NewVariable(identifier string, environment *Environment) *Variable {
+func NewVariable(identifier string, parent Object) *Variable {
 	return &Variable{
-		identifier:  identifier,
-		environment: environment,
+		ObjectBase: ObjectBase{parent: parent},
+		identifier: identifier,
 	}
 }
 
 func (v *Variable) Eval() Object {
-	return v.environment.boundedObject(v.identifier)
+	object := v.boundedObject(v.identifier)
+	if object == nil {
+		runtimeError("Unbound variable: %s", v.identifier)
+	}
+	return object
 }
 
 func (v *Variable) String() string {
 	return v.Eval().String()
 }
 
-func (v *Variable) IsVariable() bool {
+func (v *Variable) isVariable() bool {
 	return true
 }

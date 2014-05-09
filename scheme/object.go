@@ -5,21 +5,30 @@
 package scheme
 
 type Object interface {
+	Parent() Object
+	setParent(Object)
 	Eval() Object
 	String() string
-	IsNumber() bool
-	IsBoolean() bool
-	IsProcedure() bool
-	IsNull() bool
-	IsPair() bool
-	IsList() bool
-	IsSymbol() bool
-	IsString() bool
-	IsVariable() bool
-	IsApplication() bool
+	isNumber() bool
+	isBoolean() bool
+	isProcedure() bool
+	isNull() bool
+	isPair() bool
+	isList() bool
+	isSymbol() bool
+	isString() bool
+	isVariable() bool
+	isApplication() bool
+	bind(string, Object)
+	scopedBinding() Binding
+	binding() Binding
+	boundedObject(string) Object
 }
 
+type Binding map[string]Object
+
 type ObjectBase struct {
+	parent Object
 }
 
 func (o *ObjectBase) Eval() Object {
@@ -32,42 +41,81 @@ func (o *ObjectBase) String() string {
 	return ""
 }
 
-func (o *ObjectBase) IsNumber() bool {
+func (o *ObjectBase) isNumber() bool {
 	return false
 }
 
-func (o *ObjectBase) IsBoolean() bool {
+func (o *ObjectBase) isBoolean() bool {
 	return false
 }
 
-func (o *ObjectBase) IsProcedure() bool {
+func (o *ObjectBase) isProcedure() bool {
 	return false
 }
 
-func (o *ObjectBase) IsNull() bool {
+func (o *ObjectBase) isNull() bool {
 	return false
 }
 
-func (o *ObjectBase) IsPair() bool {
+func (o *ObjectBase) isPair() bool {
 	return false
 }
 
-func (o *ObjectBase) IsList() bool {
+func (o *ObjectBase) isList() bool {
 	return false
 }
 
-func (o *ObjectBase) IsSymbol() bool {
+func (o *ObjectBase) isSymbol() bool {
 	return false
 }
 
-func (o *ObjectBase) IsString() bool {
+func (o *ObjectBase) isString() bool {
 	return false
 }
 
-func (o *ObjectBase) IsVariable() bool {
+func (o *ObjectBase) isVariable() bool {
 	return false
 }
 
-func (o *ObjectBase) IsApplication() bool {
+func (o *ObjectBase) isApplication() bool {
 	return false
+}
+
+func (o *ObjectBase) binding() Binding {
+	return Binding{}
+}
+
+func (o *ObjectBase) Parent() Object {
+	return o.parent
+}
+
+func (o *ObjectBase) setParent(parent Object) {
+	o.parent = parent
+}
+
+func (o *ObjectBase) scopedBinding() (scopedBinding Binding) {
+	scopedBinding = make(Binding)
+	parent := o.Parent()
+
+	for parent != nil {
+		for identifier, object := range parent.binding() {
+			if scopedBinding[identifier] == nil {
+				scopedBinding[identifier] = object
+			}
+		}
+		parent = parent.Parent()
+	}
+	return
+}
+
+func (o *ObjectBase) bind(identifier string, object Object) {
+	if o.parent == nil {
+		runtimeError("Bind called for object whose parent is nil")
+	} else {
+		o.Parent().bind(identifier, object)
+	}
+}
+
+func (o *ObjectBase) boundedObject(identifier string) Object {
+	return o.scopedBinding()[identifier]
 }

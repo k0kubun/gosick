@@ -38,6 +38,6 @@ func (n *Number) String() string {
 	return strconv.Itoa(n.value)
 }
 
-func (n *Number) IsNumber() bool {
+func (n *Number) isNumber() bool {
 	return true
 }

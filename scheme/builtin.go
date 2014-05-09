@@ -32,16 +32,11 @@ func BuiltinProcedures() Binding {
 }
 
 func builtinProcedure(function func(Object) Object) *Procedure {
-	return &Procedure{
-		environment: nil,
-		function:    function,
-		arguments:   nil,
-		body:        nil,
-	}
+	return &Procedure{function: function}
 }
 
 func assertListMinimum(arguments Object, minimum int) {
-	if !arguments.IsList() {
+	if !arguments.isList() {
 		compileError("proper list required for function application or macro use")
 	} else if arguments.(*Pair).ListLength() < minimum {
 		compileError("procedure requires at least %d argument", minimum)
@@ -49,7 +44,7 @@ func assertListMinimum(arguments Object, minimum int) {
 }
 
 func assertListEqual(arguments Object, length int) {
-	if !arguments.IsList() {
+	if !arguments.isList() {
 		compileError("proper list required for function application or macro use")
 	} else if arguments.(*Pair).ListLength() != length {
 		compileError("wrong number of arguments: number? requires %d, but got %d",
@@ -76,7 +71,7 @@ func typeName(object Object) string {
 	case *Boolean:
 		return "boolean"
 	case *Pair:
-		if object.IsNull() {
+		if object.isNull() {
 			return "null"
 		} else {
 			return "pair"
@@ -176,40 +171,40 @@ func equal(arguments Object) Object {
 }
 
 func isNumber(arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.IsNumber() })
+	return booleanByFunc(arguments, func(object Object) bool { return object.isNumber() })
 }
 
 func isNull(arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.IsNull() })
+	return booleanByFunc(arguments, func(object Object) bool { return object.isNull() })
 }
 
 func isProcedure(arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.IsProcedure() })
+	return booleanByFunc(arguments, func(object Object) bool { return object.isProcedure() })
 }
 
 func isBoolean(arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.IsBoolean() })
+	return booleanByFunc(arguments, func(object Object) bool { return object.isBoolean() })
 }
 
 func isPair(arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.IsPair() })
+	return booleanByFunc(arguments, func(object Object) bool { return object.isPair() })
 }
 
 func isList(arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.IsList() })
+	return booleanByFunc(arguments, func(object Object) bool { return object.isList() })
 }
 
 func isSymbol(arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.IsSymbol() })
+	return booleanByFunc(arguments, func(object Object) bool { return object.isSymbol() })
 }
 
 func isString(arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.IsString() })
+	return booleanByFunc(arguments, func(object Object) bool { return object.isString() })
 }
 
 func not(arguments Object) Object {
 	return booleanByFunc(arguments,
-		func(object Object) bool { return object.IsBoolean() && !object.(*Boolean).value })
+		func(object Object) bool { return object.isBoolean() && !object.(*Boolean).value })
 }
 
 func car(arguments Object) Object {

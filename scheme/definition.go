@@ -2,13 +2,12 @@ package scheme
 
 type Definition struct {
 	ObjectBase
-	environment *Environment
-	variable    *Variable
-	value       Object
+	variable *Variable
+	value    Object
 }
 
 func (d *Definition) Eval() Object {
-	d.environment.topLevel().Bind(d.variable.identifier, d.value.Eval())
+	d.bind(d.variable.identifier, d.value.Eval())
 	return NewSymbol(d.variable.identifier)
 }
 

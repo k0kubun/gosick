@@ -20,6 +20,6 @@ func (s *Symbol) String() string {
 	return s.identifier
 }
 
-func (s *Symbol) IsSymbol() bool {
+func (s *Symbol) isSymbol() bool {
 	return true
 }

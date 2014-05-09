@@ -14,9 +14,12 @@ import (
 
 type Pair struct {
 	ObjectBase
-	Car         Object
-	Cdr         *Pair
-	environment *Environment
+	Car Object
+	Cdr *Pair
+}
+
+func NewNull(parent Object) *Pair {
+	return &Pair{ObjectBase: ObjectBase{parent: parent}, Car: nil, Cdr: nil}
 }
 
 func (p *Pair) Eval() Object {
@@ -24,9 +27,9 @@ func (p *Pair) Eval() Object {
 }
 
 func (p *Pair) String() string {
-	if p.IsNull() {
+	if p.isNull() {
 		return "()"
-	} else if p.IsList() {
+	} else if p.isList() {
 		length := p.ListLength()
 		tokens := []string{}
 		for i := 0; i < length; i++ {
@@ -38,19 +41,19 @@ func (p *Pair) String() string {
 	}
 }
 
-func (p *Pair) IsNull() bool {
+func (p *Pair) isNull() bool {
 	return p.Car == nil && p.Cdr == nil
 }
 
-func (p *Pair) IsPair() bool {
-	return !p.IsNull()
+func (p *Pair) isPair() bool {
+	return !p.isNull()
 }
 
-func (p *Pair) IsList() bool {
+func (p *Pair) isList() bool {
 	pair := p
 
 	for {
-		if pair.IsNull() {
+		if pair.isNull() {
 			return true
 		}
 		pair = pair.Cdr
@@ -78,7 +81,7 @@ func (p *Pair) ElementAt(index int) Object {
 }
 
 func (p *Pair) ListLength() int {
-	if p.IsNull() {
+	if p.isNull() {
 		return 0
 	} else {
 		return p.Cdr.ListLength() + 1

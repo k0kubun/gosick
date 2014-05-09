@@ -6,9 +6,8 @@ package scheme
 
 type Application struct {
 	ObjectBase
-	procedureVariable Object
-	arguments         Object // expect *Pair
-	environment       *Environment
+	procedure Object
+	arguments Object
 }
 
 func (a *Application) Eval() Object {
@@ -24,12 +23,14 @@ func (a *Application) String() string {
 }
 
 func (a *Application) applyProcedure() Object {
-	if a.environment == nil {
-		compileError("Procedure does not have environment")
+	evaledObject := a.procedure.Eval()
+	if !evaledObject.isProcedure() {
+		runtimeError("invalid application")
 	}
-	return a.environment.invokeProcedure(a.procedureVariable, a.arguments)
+	procedure := evaledObject.(*Procedure)
+	return procedure.Invoke(a.arguments)
 }
 
-func (a *Application) IsApplication() bool {
+func (a *Application) isApplication() bool {
 	return true
 }

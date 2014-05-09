@@ -11,17 +11,13 @@ import (
 )
 
 type Interpreter struct {
+	ObjectBase
 	*Parser
-	topLevel *Environment
+	topLevel Binding
 }
 
 func NewInterpreter(source string) *Interpreter {
-	interpreter := &Interpreter{Parser: NewParser(source)}
-	interpreter.topLevel = &Environment{
-		parent:  nil,
-		binding: BuiltinProcedures(),
-	}
-	return interpreter
+	return &Interpreter{Parser: NewParser(source), topLevel: BuiltinProcedures()}
 }
 
 // Load new source code with current environment
@@ -30,12 +26,12 @@ func (i *Interpreter) ReloadSourceCode(source string) {
 }
 
 func (i *Interpreter) PrintResult(dumpAST bool) {
-	for _, result := range i.Eval(dumpAST) {
+	for _, result := range i.EvalSource(dumpAST) {
 		fmt.Println(result)
 	}
 }
 
-func (i *Interpreter) Eval(dumpAST bool) (results []string) {
+func (i *Interpreter) EvalSource(dumpAST bool) (results []string) {
 	defer func() {
 		if err := recover(); err != nil {
 			results = append(results, fmt.Sprintf("*** ERROR: %s", err))
@@ -43,7 +39,7 @@ func (i *Interpreter) Eval(dumpAST bool) (results []string) {
 	}()
 
 	for i.Peek() != scanner.EOF {
-		expression := i.Parser.Parse(i.topLevel)
+		expression := i.Parser.Parse(i)
 		if dumpAST {
 			i.DumpAST(expression, 0)
 		}
@@ -56,6 +52,18 @@ func (i *Interpreter) Eval(dumpAST bool) (results []string) {
 	return
 }
 
+func (i *Interpreter) bind(identifier string, object Object) {
+	i.topLevel[identifier] = object
+}
+
+func (i *Interpreter) binding() Binding {
+	return i.topLevel
+}
+
+func (i *Interpreter) scopedBinding() Binding {
+	return i.topLevel
+}
+
 func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 	if object == nil {
 		return
@@ -63,7 +71,7 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 	switch object.(type) {
 	case *Application:
 		i.printWithIndent("Application", indentLevel)
-		i.DumpAST(object.(*Application).procedureVariable, indentLevel+1)
+		i.DumpAST(object.(*Application).procedure, indentLevel+1)
 		i.DumpAST(object.(*Application).arguments, indentLevel+1)
 	case *Pair:
 		pair := object.(*Pair)

@@ -16,12 +16,12 @@ func NewParser(source string) *Parser {
 	return &Parser{NewLexer(source)}
 }
 
-func (p *Parser) Parse(environment *Environment) Object {
+func (p *Parser) Parse(parent Object) Object {
 	p.ensureAvailability()
-	return p.parseObject(environment)
+	return p.parseObject(parent)
 }
 
-func (p *Parser) parseObject(environment *Environment) Object {
+func (p *Parser) parseObject(parent Object) Object {
 	tokenType := p.TokenType()
 	token := p.NextToken()
 
@@ -30,29 +30,29 @@ func (p *Parser) parseObject(environment *Environment) Object {
 		peekToken := p.PeekToken()
 		if p.TokenType() == ')' {
 			p.NextToken()
-			return new(Pair)
+			return NewNull(parent)
 		} else if peekToken == "define" {
 			p.NextToken()
-			return p.parseDefinition(environment)
+			return p.parseDefinition(parent)
 		} else if peekToken == "quote" {
 			p.NextToken()
-			object := p.parseQuotedList(environment)
-			if !object.IsList() || object.(*Pair).ListLength() != 1 {
+			object := p.parseQuotedList(parent)
+			if !object.isList() || object.(*Pair).ListLength() != 1 {
 				compileError("syntax-error: malformed quote")
 			}
 			return object.(*Pair).Car
 		} else if peekToken == "lambda" {
 			p.NextToken()
-			return p.parseProcedure(environment)
+			return p.parseProcedure(parent)
 		}
 
-		return p.parseApplication(environment)
+		return p.parseApplication(parent)
 	case '\'':
-		return p.parseQuotedObject(environment)
+		return p.parseQuotedObject(parent)
 	case IntToken:
 		return NewNumber(token)
 	case IdentifierToken:
-		return NewVariable(token, environment)
+		return NewVariable(token, parent)
 	case BooleanToken:
 		return NewBoolean(token)
 	case StringToken:
@@ -66,39 +66,39 @@ func (p *Parser) parseObject(environment *Environment) Object {
 // This function returns *Pair of first object and list from second.
 // Returns value is Object because if a method returns nil which is not
 // interface type, the method's result cannot be judged as nil.
-func (p *Parser) parseList(environment *Environment) Object {
-	car := p.parseObject(environment)
+func (p *Parser) parseList(parent Object) Object {
+	car := p.parseObject(parent)
 	if car == nil {
 		return new(Pair)
 	}
-	cdr := p.parseList(environment).(*Pair)
+	cdr := p.parseList(parent).(*Pair)
 	return &Pair{Car: car, Cdr: cdr}
 }
 
-func (p *Parser) parseApplication(environment *Environment) Object {
-	firstObject := p.parseObject(environment)
+func (p *Parser) parseApplication(parent Object) Object {
+	firstObject := p.parseObject(parent)
 	if firstObject == nil {
 		runtimeError("Unexpected flow: procedure application car is nil")
 	}
 
-	list := p.parseList(environment)
+	list := p.parseList(parent)
 	if list == nil {
 		runtimeError("Unexpected flow: procedure application cdr is nil")
 	}
 	return &Application{
-		procedureVariable: firstObject,
-		arguments:         list,
-		environment:       environment,
+		ObjectBase: ObjectBase{parent: parent},
+		procedure:  firstObject,
+		arguments:  list,
 	}
 }
 
-func (p *Parser) parseProcedure(environment *Environment) Object {
+func (p *Parser) parseProcedure(parent Object) Object {
 	if p.TokenType() == '(' {
 		p.NextToken()
 		return NewProcedure(
-			environment,
-			p.parseList(environment),
-			p.parseList(environment),
+			parent,
+			p.parseList(parent),
+			p.parseList(parent),
 		)
 	} else {
 		runtimeError("Not implemented yet.")
@@ -106,9 +106,9 @@ func (p *Parser) parseProcedure(environment *Environment) Object {
 	}
 }
 
-func (p *Parser) parseDefinition(environment *Environment) Object {
-	object := p.parseList(environment)
-	if !object.IsList() || object.(*Pair).ListLength() != 2 {
+func (p *Parser) parseDefinition(parent Object) Object {
+	object := p.parseList(parent)
+	if !object.isList() || object.(*Pair).ListLength() != 2 {
 		runtimeError("Compile Error: syntax-error: (define)")
 	}
 
@@ -117,19 +117,19 @@ func (p *Parser) parseDefinition(environment *Environment) Object {
 	value := list.ElementAt(1)
 
 	return &Definition{
-		environment: environment,
-		variable:    variable,
-		value:       value,
+		ObjectBase: ObjectBase{parent: parent},
+		variable:   variable,
+		value:      value,
 	}
 }
 
-func (p *Parser) parseQuotedObject(environment *Environment) Object {
+func (p *Parser) parseQuotedObject(parent Object) Object {
 	tokenType := p.TokenType()
 	token := p.NextToken()
 
 	switch tokenType {
 	case '(':
-		return p.parseQuotedList(environment)
+		return p.parseQuotedList(parent)
 	case IntToken:
 		return NewNumber(token)
 	case IdentifierToken:
@@ -141,13 +141,13 @@ func (p *Parser) parseQuotedObject(environment *Environment) Object {
 	}
 }
 
-func (p *Parser) parseQuotedList(environment *Environment) Object {
-	car := p.parseQuotedObject(environment)
+func (p *Parser) parseQuotedList(parent Object) Object {
+	car := p.parseQuotedObject(parent)
 	if car == nil {
-		return new(Pair)
+		return NewNull(parent)
 	}
-	cdr := p.parseQuotedList(environment).(*Pair)
-	return &Pair{Car: car, Cdr: cdr}
+	cdr := p.parseQuotedList(parent).(*Pair)
+	return &Pair{ObjectBase: ObjectBase{parent: parent}, Car: car, Cdr: cdr}
 }
 
 func (p *Parser) ensureAvailability() {

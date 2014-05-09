@@ -35,6 +35,6 @@ func (b *Boolean) String() string {
 	}
 }
 
-func (b *Boolean) IsBoolean() bool {
+func (b *Boolean) isBoolean() bool {
 	return true
 }

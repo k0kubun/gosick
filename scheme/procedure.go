@@ -9,15 +9,25 @@ package scheme
 
 type Procedure struct {
 	ObjectBase
-	environment *Environment
-	function    func(Object) Object
-	arguments   Object
-	body        Object
+	function     func(Object) Object
+	arguments    Object
+	body         Object
+	localBinding Binding
 }
 
-func NewProcedure(environment *Environment, arguments Object, body Object) *Procedure {
-	function := func(givenArguments Object) Object {
-		if !arguments.IsList() || !givenArguments.IsList() {
+func NewProcedure(parent Object, arguments Object, body Object) *Procedure {
+	// Create local binding for procedure
+	localBinding := parent.scopedBinding()
+	procedure := &Procedure{
+		ObjectBase:   ObjectBase{parent: nil},
+		function:     nil,
+		arguments:    arguments,
+		body:         body,
+		localBinding: localBinding,
+	}
+
+	procedure.function = func(givenArguments Object) Object {
+		if !arguments.isList() || !givenArguments.isList() {
 			runtimeError("Given non-list arguments")
 		}
 
@@ -32,10 +42,13 @@ func NewProcedure(environment *Environment, arguments Object, body Object) *Proc
 		parameters := arguments.(*Pair).Elements()
 		objects := evaledObjects(givenArguments.(*Pair).Elements())
 		for i, parameter := range parameters {
-			if parameter.IsVariable() {
-				environment.Bind(parameter.(*Variable).identifier, objects[i])
+			if parameter.isVariable() {
+				localBinding[parameter.(*Variable).identifier] = objects[i]
 			}
 		}
+
+		// set procedure as a parent of body to eval elements in local binding
+		body.setParent(procedure)
 
 		// returns last eval result
 		var returnValue Object
@@ -45,13 +58,7 @@ func NewProcedure(environment *Environment, arguments Object, body Object) *Proc
 		}
 		return returnValue
 	}
-
-	return &Procedure{
-		environment: nil,
-		function:    function,
-		arguments:   arguments,
-		body:        body,
-	}
+	return procedure
 }
 
 func (p *Procedure) String() string {
@@ -66,6 +73,10 @@ func (p *Procedure) Invoke(argument Object) Object {
 	return p.function(argument)
 }
 
-func (p *Procedure) IsProcedure() bool {
+func (p *Procedure) isProcedure() bool {
 	return true
+}
+
+func (p *Procedure) binding() Binding {
+	return p.localBinding
 }
