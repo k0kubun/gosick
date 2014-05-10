@@ -203,6 +203,11 @@ var interpreterTests = []interpreterTest{
 
 	evalTest("(define x 2) (set! x 3) x", "x", "#<undef>", "3"),
 	evalTest("(define x 4) ((lambda (x) (set! x 3) x) 2) x", "x", "3", "4"),
+
+	evalTest("(define x (cons 3 2)) (set-car! x 1) x", "x", "#<undef>", "(1 . 2)"),
+	evalTest("(define x (cons 3 2)) (set-cdr! x 1) x", "x", "#<undef>", "(3 . 1)"),
+	evalTest("((lambda (x) (set-car! x 1) x) (cons 2 3))", "(1 . 3)"),
+	evalTest("((lambda (x) (set-cdr! x 1) x) (cons 2 3))", "(2 . 1)"),
 }
 
 var runtimeErrorTests = []interpreterTest{

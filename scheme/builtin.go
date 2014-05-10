@@ -31,6 +31,8 @@ func BuiltinProcedures() Binding {
 		"cons":           builtinProcedure(cons),
 		"car":            builtinProcedure(car),
 		"cdr":            builtinProcedure(cdr),
+		"set-car!":       builtinProcedure(setCar),
+		"set-cdr!":       builtinProcedure(setCdr),
 		"list":           builtinProcedure(list),
 		"length":         builtinProcedure(length),
 		"memq":           builtinProcedure(memq),
@@ -266,6 +268,28 @@ func cdr(arguments Object) Object {
 
 func list(arguments Object) Object {
 	return arguments
+}
+
+func setCar(arguments Object) Object {
+	assertListEqual(arguments, 2)
+
+	object := arguments.(*Pair).ElementAt(1).Eval()
+	pair := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(pair, "pair")
+
+	pair.(*Pair).Car = object
+	return NewSymbol("#<undef>")
+}
+
+func setCdr(arguments Object) Object {
+	assertListEqual(arguments, 2)
+
+	object := arguments.(*Pair).ElementAt(1).Eval()
+	pair := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(pair, "pair")
+
+	pair.(*Pair).Cdr = object
+	return NewSymbol("#<undef>")
 }
 
 func length(arguments Object) Object {
