@@ -34,6 +34,7 @@ func BuiltinProcedures() Binding {
 		"list":           builtinProcedure(list),
 		"length":         builtinProcedure(length),
 		"memq":           builtinProcedure(memq),
+		"last":           builtinProcedure(last),
 		"string-append":  builtinProcedure(stringAppend),
 		"symbol->string": builtinProcedure(symbolToString),
 		"string->symbol": builtinProcedure(stringToSymbol),
@@ -296,6 +297,19 @@ func memq(arguments Object) Object {
 		}
 	}
 	return NewBoolean(false)
+}
+
+func last(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	list := arguments.(*Pair).ElementAt(0).Eval()
+	if !list.isPair() {
+		runtimeError("pair required: %s", list)
+	}
+	assertListMinimum(list, 1)
+
+	elements := list.(*Pair).Elements()
+	return elements[len(elements)-1].Eval()
 }
 
 func stringAppend(arguments Object) Object {
