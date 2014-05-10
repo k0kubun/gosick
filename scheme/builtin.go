@@ -35,6 +35,7 @@ func BuiltinProcedures() Binding {
 		"length":         builtinProcedure(length),
 		"memq":           builtinProcedure(memq),
 		"last":           builtinProcedure(last),
+		"append":         builtinProcedure(appendList),
 		"string-append":  builtinProcedure(stringAppend),
 		"symbol->string": builtinProcedure(symbolToString),
 		"string->symbol": builtinProcedure(stringToSymbol),
@@ -310,6 +311,18 @@ func last(arguments Object) Object {
 
 	elements := list.(*Pair).Elements()
 	return elements[len(elements)-1].Eval()
+}
+
+func appendList(arguments Object) Object {
+	assertListMinimum(arguments, 0)
+	elements := evaledObjects(arguments.(*Pair).Elements())
+
+	appendedList := NewNull(arguments)
+	for _, element := range elements {
+		appendedList = appendedList.Append(element)
+	}
+
+	return appendedList
 }
 
 func stringAppend(arguments Object) Object {

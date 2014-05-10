@@ -116,6 +116,10 @@ var interpreterTests = []interpreterTest{
 	evalTest("(last '(1 2 3))", "3"),
 	evalTest("(last (list 1 (+ 2 3)))", "5"),
 
+	evalTest("(append)", "()"),
+	evalTest("(append '(1))", "(1)"),
+	evalTest("(append '(1 2) '(3 4))", "(1 2 3 4)"),
+
 	evalTest("(string-append)", "\"\""),
 	evalTest("(string-append \"a\" \" \" \"b\")", "\"a b\""),
 
@@ -239,6 +243,7 @@ var compileErrorTests = []interpreterTest{
 
 	evalTest("(length (cons 1 2))", "*** ERROR: Compile Error: proper list required for function application or macro use"),
 	evalTest("(memq 'a '(a b c) 1)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 2, but got 3"),
+	evalTest("(append () 1 ())", "*** ERROR: Compile Error: proper list required for function application or macro use"),
 }
 
 func evalTest(source string, results ...string) interpreterTest {
