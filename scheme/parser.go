@@ -133,7 +133,10 @@ func (p *Parser) parseQuotedObject(parent Object) Object {
 		return NewSymbol(token, parent)
 	case BooleanToken:
 		return NewBoolean(token, parent)
+	case ')':
+		return nil
 	default:
+		runtimeError("unterminated quote")
 		return nil
 	}
 }
