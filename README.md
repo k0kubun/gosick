@@ -39,7 +39,7 @@ $ gosick -h
 | Boolean | | not |
 | String | string->number, number->string | string-append, symbol->string, string->symbol |
 | Type | | null?, boolean?, procedure?, pair?, list?, symbol?, string? |
-| Comparison | eq?, neq?, equal? |  |
+| Comparison | | eq?, neq?, equal? |
 | Syntax | let, let*, letrec | lambda |
 | Statement | if, cond, and, or, begin, do |  |
 | Definition | set!, define-macro | define |

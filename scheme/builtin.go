@@ -3,6 +3,7 @@
 package scheme
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -32,6 +33,9 @@ func BuiltinProcedures() Binding {
 		"string-append":  builtinProcedure(stringAppend),
 		"symbol->string": builtinProcedure(symbolToString),
 		"string->symbol": builtinProcedure(stringToSymbol),
+		"eq?":            builtinProcedure(isEq),
+		"neq?":           builtinProcedure(isNeq),
+		"equal?":         builtinProcedure(isEqual),
 	}
 }
 
@@ -64,16 +68,6 @@ func assertObjectsType(objects []Object, typeName string) {
 
 func typeName(object Object) string {
 	switch object.(type) {
-	case *Number:
-		return "number"
-	case *String:
-		return "string"
-	case *Symbol:
-		return "symbol"
-	case *Procedure:
-		return "procedure"
-	case *Boolean:
-		return "boolean"
 	case *Pair:
 		if object.isNull() {
 			return "null"
@@ -81,7 +75,9 @@ func typeName(object Object) string {
 			return "pair"
 		}
 	default:
-		return "Not Implemented typeName"
+		rawTypeName := fmt.Sprintf("%T", object)
+		typeName := strings.Replace(rawTypeName, "*scheme.", "", 1)
+		return strings.ToLower(typeName)
 	}
 }
 
@@ -279,4 +275,70 @@ func stringToSymbol(arguments Object) Object {
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	assertObjectType(object, "string")
 	return NewSymbol(object.(*String).text)
+}
+
+func areIdentical(a Object, b Object) bool {
+	if typeName(a) != typeName(b) {
+		return false
+	}
+
+	switch a.(type) {
+	case *Number:
+		return a.(*Number).value == b.(*Number).value
+	case *Symbol:
+		return a.(*Symbol).identifier == b.(*Symbol).identifier
+	case *Boolean:
+		return a.(*Boolean).value == b.(*Boolean).value
+	default:
+		return false
+	}
+}
+
+func areEqual(a Object, b Object) bool {
+	if a == nil {
+		return true
+	}
+	if typeName(a) != typeName(b) {
+		return false
+	} else if areIdentical(a, b) {
+		return true
+	}
+
+	switch a.(type) {
+	case *Pair:
+		return areEqual(a.(*Pair).Car, b.(*Pair).Car) && areEqual(a.(*Pair).Cdr, b.(*Pair).Cdr)
+	default:
+		return false
+	}
+}
+
+func areSameList(a Object, b Object) bool {
+	if typeName(a) != typeName(b) {
+		return false
+	}
+
+	switch a.(type) {
+	case *Pair:
+		return areSameList(a.(*Pair).Car, b.(*Pair).Car) && areSameList(a.(*Pair).Cdr, b.(*Pair).Cdr)
+	default:
+		return areIdentical(a, b)
+	}
+}
+
+func isEq(arguments Object) Object {
+	assertListEqual(arguments, 2)
+
+	objects := evaledObjects(arguments.(*Pair).Elements())
+	return NewBoolean(areIdentical(objects[0], objects[1]))
+}
+
+func isNeq(arguments Object) Object {
+	return NewBoolean(!isEq(arguments).(*Boolean).value)
+}
+
+func isEqual(arguments Object) Object {
+	assertListEqual(arguments, 2)
+
+	objects := evaledObjects(arguments.(*Pair).Elements())
+	return NewBoolean(areEqual(objects[0], objects[1]))
 }
