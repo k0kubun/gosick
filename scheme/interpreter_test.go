@@ -105,6 +105,10 @@ var interpreterTests = []interpreterTest{
 	evalTest("(list 1 2 3)", "(1 2 3)"),
 	evalTest("(cdr (list 1 2 3))", "(2 3)"),
 
+	evalTest("(length ())", "0"),
+	evalTest("(length '(1 2))", "2"),
+	evalTest("(length (list 1 '(2 3) 4))", "3"),
+
 	evalTest("(string-append)", "\"\""),
 	evalTest("(string-append \"a\" \" \" \"b\")", "\"a b\""),
 
@@ -225,6 +229,8 @@ var compileErrorTests = []interpreterTest{
 	evalTest("(cdr ())", "*** ERROR: Compile Error: pair required, but got ()"),
 	evalTest("(car)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
 	evalTest("(cdr)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
+
+	evalTest("(length (cons 1 2))", "*** ERROR: Compile Error: proper list required for function application or macro use"),
 }
 
 func evalTest(source string, results ...string) interpreterTest {

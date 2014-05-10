@@ -32,6 +32,7 @@ func BuiltinProcedures() Binding {
 		"car":            builtinProcedure(car),
 		"cdr":            builtinProcedure(cdr),
 		"list":           builtinProcedure(list),
+		"length":         builtinProcedure(length),
 		"string-append":  builtinProcedure(stringAppend),
 		"symbol->string": builtinProcedure(symbolToString),
 		"string->symbol": builtinProcedure(stringToSymbol),
@@ -262,6 +263,15 @@ func cdr(arguments Object) Object {
 
 func list(arguments Object) Object {
 	return arguments
+}
+
+func length(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	list := arguments.(*Pair).ElementAt(0).Eval()
+	assertListMinimum(list, 0)
+
+	return NewNumber(list.(*Pair).ListLength())
 }
 
 func stringAppend(arguments Object) Object {
