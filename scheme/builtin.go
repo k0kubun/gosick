@@ -4,6 +4,7 @@ package scheme
 
 import (
 	"fmt"
+	"io/ioutil"
 	"strings"
 )
 
@@ -38,6 +39,7 @@ func BuiltinProcedures() Binding {
 		"eq?":            builtinProcedure(isEq),
 		"neq?":           builtinProcedure(isNeq),
 		"equal?":         builtinProcedure(isEqual),
+		"load":           builtinProcedure(load),
 	}
 }
 
@@ -359,4 +361,27 @@ func isEqual(arguments Object) Object {
 
 	objects := evaledObjects(arguments.(*Pair).Elements())
 	return NewBoolean(areEqual(objects[0], objects[1]))
+}
+
+func load(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(object, "string")
+
+	buffer, err := ioutil.ReadFile(object.(*String).text)
+	if err != nil {
+		runtimeError("cannot find \"%s\"", object.(*String).text)
+		return nil
+	}
+
+	parser := NewParser(string(buffer))
+	for parser.Peek() != EOF {
+		expression := parser.Parse(arguments.Parent())
+		if expression != nil {
+			expression.Eval()
+		}
+	}
+
+	return NewBoolean(true)
 }

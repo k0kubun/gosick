@@ -1,6 +1,9 @@
 package scheme
 
 import (
+	"fmt"
+	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -12,6 +15,12 @@ type interpreterTest struct {
 type evalErrorTest struct {
 	source  string
 	message string
+}
+
+type loadTest struct {
+	loadSource string
+	source     string
+	message    string
 }
 
 var interpreterTests = []interpreterTest{
@@ -237,4 +246,27 @@ func TestInterpreter(t *testing.T) {
 	runTests(t, interpreterTests)
 	runTests(t, runtimeErrorTests)
 	runTests(t, compileErrorTests)
+}
+
+func TestLoad(t *testing.T) {
+	file, err := ioutil.TempFile(os.TempDir(), "load_test")
+	if err != nil {
+		panic(err)
+	}
+	fileSource := "(define x 3)"
+	ioutil.WriteFile(file.Name(), []byte(fileSource), os.ModeAppend)
+	defer os.Remove(file.Name())
+
+	source := fmt.Sprintf("(load \"%s\") x (load invalid)", file.Name())
+	interpreter := NewInterpreter(source)
+	expects := []string{"#t", "3", "*** ERROR: Unbound variable: invalid"}
+	actuals := interpreter.EvalSource(false)
+
+	for i := 0; i < len(actuals); i++ {
+		expect := expects[i]
+		actual := actuals[i]
+		if actual != expect {
+			t.Errorf("%s => %s; want %s", source, actual, expect)
+		}
+	}
 }

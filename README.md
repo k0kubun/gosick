@@ -43,7 +43,7 @@ $ gosick -h
 | Syntax | let, let*, letrec | lambda |
 | Statement | if, cond, and, or, begin, do |  |
 | Definition | set!, define-macro | define |
-| Others | load |  |
+| Others | | load |
 
 ## License
 
