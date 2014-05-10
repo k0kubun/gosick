@@ -33,6 +33,7 @@ func BuiltinProcedures() Binding {
 		"cdr":            builtinProcedure(cdr),
 		"list":           builtinProcedure(list),
 		"length":         builtinProcedure(length),
+		"memq":           builtinProcedure(memq),
 		"string-append":  builtinProcedure(stringAppend),
 		"symbol->string": builtinProcedure(symbolToString),
 		"string->symbol": builtinProcedure(stringToSymbol),
@@ -272,6 +273,29 @@ func length(arguments Object) Object {
 	assertListMinimum(list, 0)
 
 	return NewNumber(list.(*Pair).ListLength())
+}
+
+func memq(arguments Object) Object {
+	assertListEqual(arguments, 2)
+
+	searchObject := arguments.(*Pair).ElementAt(0).Eval()
+	list := arguments.(*Pair).ElementAt(1).Eval()
+
+	for {
+		switch list.(type) {
+		case *Pair:
+			if areIdentical(list.(*Pair).Car, searchObject) {
+				return list
+			}
+		default:
+			break
+		}
+
+		if list = list.(*Pair).Cdr; list == nil {
+			break
+		}
+	}
+	return NewBoolean(false)
 }
 
 func stringAppend(arguments Object) Object {
