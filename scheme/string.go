@@ -12,7 +12,16 @@ type String struct {
 	text string
 }
 
-func NewString(text string, options ...Object) *String {
+func NewString(object interface{}, options ...Object) *String {
+	text := ""
+	switch object.(type) {
+	case string:
+		text = object.(string)
+	case int:
+		text = fmt.Sprintf("%d", object.(int))
+	default:
+		runtimeError("Unexpected conversion")
+	}
 	if len(options) > 0 {
 		return &String{ObjectBase: ObjectBase{parent: options[0]}, text: text}
 	} else {

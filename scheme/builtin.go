@@ -33,6 +33,8 @@ func BuiltinProcedures() Binding {
 		"string-append":  builtinProcedure(stringAppend),
 		"symbol->string": builtinProcedure(symbolToString),
 		"string->symbol": builtinProcedure(stringToSymbol),
+		"number->string": builtinProcedure(numberToString),
+		"string->number": builtinProcedure(stringToNumber),
 		"eq?":            builtinProcedure(isEq),
 		"neq?":           builtinProcedure(isNeq),
 		"equal?":         builtinProcedure(isEqual),
@@ -275,6 +277,22 @@ func stringToSymbol(arguments Object) Object {
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	assertObjectType(object, "string")
 	return NewSymbol(object.(*String).text)
+}
+
+func stringToNumber(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(object, "string")
+	return NewNumber(object.(*String).text)
+}
+
+func numberToString(arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(object, "number")
+	return NewString(object.(*Number).value)
 }
 
 func areIdentical(a Object, b Object) bool {

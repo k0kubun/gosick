@@ -98,6 +98,9 @@ var interpreterTests = []interpreterTest{
 	evalTest("(string->symbol \"a\")", "a"),
 	evalTest("(symbol->string 'a)", "\"a\""),
 
+	evalTest("(string->number \"1\")", "1"),
+	evalTest("(number->string 1)", "\"1\""),
+
 	evalTest("(number? 100", "#t"),
 	evalTest("(number? (+ 3(* 2 8)))", "#t"),
 	evalTest("(number? #t)", "#f"),
@@ -200,6 +203,8 @@ var compileErrorTests = []interpreterTest{
 	evalTest("(string->symbol 'hello)", "*** ERROR: Compile Error: string required, but got hello"),
 	evalTest("(symbol->string)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
 	evalTest("(symbol->string \"\")", "*** ERROR: Compile Error: symbol required, but got \"\""),
+	evalTest("(string->number 1)", "*** ERROR: Compile Error: string required, but got 1"),
+	evalTest("(number->string \"1\")", "*** ERROR: Compile Error: number required, but got \"1\""),
 
 	evalTest("(car ())", "*** ERROR: Compile Error: pair required, but got ()"),
 	evalTest("(cdr ())", "*** ERROR: Compile Error: pair required, but got ()"),
