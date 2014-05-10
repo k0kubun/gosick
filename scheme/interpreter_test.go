@@ -92,6 +92,10 @@ var interpreterTests = []interpreterTest{
 	evalTest("(not 1)", "#f"),
 	evalTest("(not ())", "#f"),
 
+	evalTest("(cons 1 2)", "(1 . 2)"),
+	evalTest("(car (cons 1 2))", "1"),
+	evalTest("(cons '(1 2) (list 1 2 3))", "((1 2) 1 2 3)"),
+	evalTest("(cons (cons 1 2) 3)", "((1 . 2) . 3)"),
 	evalTest("(car '(1))", "1"),
 	evalTest("(cdr '(1))", "()"),
 	evalTest("(car '(1 2))", "1"),

@@ -37,7 +37,7 @@ func (p *Pair) String() string {
 		}
 		return fmt.Sprintf("(%s)", strings.Join(tokens, " "))
 	} else {
-		return "Not implemented. (Pair.String())"
+		return fmt.Sprintf("(%s . %s)", p.Car, p.Cdr)
 	}
 }
 
@@ -56,7 +56,12 @@ func (p *Pair) isList() bool {
 		if pair.isNull() {
 			return true
 		}
-		pair = pair.Cdr.(*Pair)
+		switch pair.Cdr.(type) {
+		case *Pair:
+			pair = pair.Cdr.(*Pair)
+		default:
+			return false
+		}
 	}
 	return false
 }
