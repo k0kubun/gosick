@@ -13,6 +13,10 @@ func BuiltinProcedures() Binding {
 		"*":              builtinProcedure(multiply),
 		"/":              builtinProcedure(divide),
 		"=":              builtinProcedure(equal),
+		"<":              builtinProcedure(lessThan),
+		"<=":             builtinProcedure(lessEqual),
+		">":              builtinProcedure(greaterThan),
+		">=":             builtinProcedure(greaterEqual),
 		"number?":        builtinProcedure(isNumber),
 		"null?":          builtinProcedure(isNull),
 		"procedure?":     builtinProcedure(isProcedure),
@@ -103,6 +107,22 @@ func booleanByFunc(arguments Object, typeCheckFunc func(Object) bool) Object {
 	return NewBoolean(typeCheckFunc(object))
 }
 
+func compareNumbers(arguments Object, compareFunc func(int, int) bool) Object {
+	assertListMinimum(arguments, 2)
+
+	numbers := evaledObjects(arguments.(*Pair).Elements())
+	assertObjectsType(numbers, "number")
+
+	oldValue := numbers[0].(*Number).value
+	for _, number := range numbers[1:] {
+		if !compareFunc(oldValue, number.(*Number).value) {
+			return NewBoolean(false)
+		}
+		oldValue = number.(*Number).value
+	}
+	return NewBoolean(true)
+}
+
 func plus(arguments Object) Object {
 	assertListMinimum(arguments, 0)
 
@@ -156,18 +176,23 @@ func divide(arguments Object) Object {
 }
 
 func equal(arguments Object) Object {
-	assertListMinimum(arguments, 2)
+	return compareNumbers(arguments, func(a, b int) bool { return a == b })
+}
 
-	numbers := evaledObjects(arguments.(*Pair).Elements())
-	assertObjectsType(numbers, "number")
+func lessThan(arguments Object) Object {
+	return compareNumbers(arguments, func(a, b int) bool { return a < b })
+}
 
-	firstValue := numbers[0].(*Number).value
-	for _, number := range numbers[1:] {
-		if firstValue != number.(*Number).value {
-			return NewBoolean(false)
-		}
-	}
-	return NewBoolean(true)
+func lessEqual(arguments Object) Object {
+	return compareNumbers(arguments, func(a, b int) bool { return a <= b })
+}
+
+func greaterThan(arguments Object) Object {
+	return compareNumbers(arguments, func(a, b int) bool { return a > b })
+}
+
+func greaterEqual(arguments Object) Object {
+	return compareNumbers(arguments, func(a, b int) bool { return a >= b })
 }
 
 func isNumber(arguments Object) Object {

@@ -53,6 +53,30 @@ var interpreterTests = []interpreterTest{
 	evalTest("(= 2 1)", "#f"),
 	evalTest("(= (* 100 3) 300)", "#t"),
 
+	evalTest("(< 2 1)", "#f"),
+	evalTest("(< 1 2)", "#t"),
+	evalTest("(< 1 2 1)", "#f"),
+	evalTest("(< 1 2 3)", "#t"),
+
+	evalTest("(<= 2 1)", "#f"),
+	evalTest("(<= 1 2)", "#t"),
+	evalTest("(<= 2 2)", "#t"),
+	evalTest("(<= 1 2 1)", "#f"),
+	evalTest("(<= 1 2 3)", "#t"),
+	evalTest("(<= 1 1 1)", "#t"),
+
+	evalTest("(> 1 2)", "#f"),
+	evalTest("(> 2 1)", "#t"),
+	evalTest("(> 1 2 1)", "#f"),
+	evalTest("(> 3 2 1)", "#t"),
+
+	evalTest("(>= 1 2)", "#f"),
+	evalTest("(>= 2 1)", "#t"),
+	evalTest("(>= 2 2)", "#t"),
+	evalTest("(>= 1 2 1)", "#f"),
+	evalTest("(>= 3 2 1)", "#t"),
+	evalTest("(>= 1 1 1)", "#t"),
+
 	evalTest("(not #f)", "#t"),
 	evalTest("(not #t)", "#f"),
 	evalTest("(not (number? ()))", "#t"),
