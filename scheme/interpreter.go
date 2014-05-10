@@ -41,7 +41,7 @@ func (i *Interpreter) EvalSource(dumpAST bool) (results []string) {
 	for i.Peek() != scanner.EOF {
 		expression := i.Parser.Parse(i)
 		if dumpAST {
-			fmt.Printf("*** AST ***\n")
+			fmt.Printf("\n*** AST ***\n")
 			i.DumpAST(expression, 0)
 			fmt.Printf("\n*** Result ***\n")
 		}
@@ -100,6 +100,10 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 		i.printWithIndent("Procedure", indentLevel)
 		i.DumpAST(object.(*Procedure).arguments, indentLevel+1)
 		i.DumpAST(object.(*Procedure).body, indentLevel+1)
+	case *Set:
+		i.printWithIndent("Set", indentLevel)
+		i.DumpAST(object.(*Set).variable, indentLevel+1)
+		i.DumpAST(object.(*Set).value, indentLevel+1)
 	}
 }
 

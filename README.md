@@ -42,7 +42,7 @@ $ gosick -h
 | Comparison | | eq?, neq?, equal? |
 | Syntax | let, let*, letrec | lambda |
 | Statement | if, cond, and, or, begin, do |  |
-| Definition | set!, define-macro | define |
+| Definition | define-macro | define, set! |
 | Others | | load |
 
 ## License

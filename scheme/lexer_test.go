@@ -57,8 +57,9 @@ var tokenizeTests = []tokenizeTest{
 	{"'hello", makeTokens("',hello")},
 	{"'(1 2 3)", makeTokens("',(,1,2,3,)")},
 	{"'(1(2 3))", makeTokens("',(,1,(,2,3,),)")},
-
 	{"\"a b\"", makeTokens("\"a b\"")},
+
+	{"(set! x 1)", makeTokens("(,set!,x,1,)")},
 }
 
 func TestTokenType(t *testing.T) {

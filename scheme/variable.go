@@ -22,11 +22,12 @@ func (v *Variable) Eval() Object {
 	if object == nil {
 		runtimeError("Unbound variable: %s", v.identifier)
 	}
+	object.setBounder(v)
 	return object
 }
 
 func (v *Variable) String() string {
-	return v.Eval().String()
+	return v.identifier
 }
 
 func (v *Variable) isVariable() bool {

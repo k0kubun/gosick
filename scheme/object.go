@@ -6,7 +6,9 @@ package scheme
 
 type Object interface {
 	Parent() Object
+	Bounder() *Variable
 	setParent(Object)
+	setBounder(*Variable)
 	Eval() Object
 	String() string
 	isNumber() bool
@@ -20,6 +22,7 @@ type Object interface {
 	isVariable() bool
 	isApplication() bool
 	bind(string, Object)
+	updateBinding(string, Object)
 	scopedBinding() Binding
 	binding() Binding
 	boundedObject(string) Object
@@ -29,7 +32,8 @@ type Object interface {
 type Binding map[string]Object
 
 type ObjectBase struct {
-	parent Object
+	parent  Object
+	bounder *Variable // Variable.Eval() sets itself into this
 }
 
 func (o *ObjectBase) Eval() Object {
@@ -90,8 +94,16 @@ func (o *ObjectBase) Parent() Object {
 	return o.parent
 }
 
+func (o *ObjectBase) Bounder() *Variable {
+	return o.bounder
+}
+
 func (o *ObjectBase) setParent(parent Object) {
 	o.parent = parent
+}
+
+func (o *ObjectBase) setBounder(bounder *Variable) {
+	o.bounder = bounder
 }
 
 func (o *ObjectBase) scopedBinding() (scopedBinding Binding) {
@@ -109,12 +121,33 @@ func (o *ObjectBase) scopedBinding() (scopedBinding Binding) {
 	return
 }
 
+// This is for define syntax.
+// Define variable in the top level.
 func (o *ObjectBase) bind(identifier string, object Object) {
 	if o.parent == nil {
 		runtimeError("Bind called for object whose parent is nil")
 	} else {
 		o.ancestor().bind(identifier, object)
 	}
+}
+
+// This is for set! syntax.
+// Update the variable's value when it is defined.
+func (o *ObjectBase) updateBinding(identifier string, object Object) {
+	target := o.Parent()
+	for {
+		if target == nil {
+			break
+		}
+
+		if target.binding()[identifier] != nil {
+			target.binding()[identifier] = object
+			return
+		}
+
+		target = target.Parent()
+	}
+	runtimeError("symbol not defined")
 }
 
 func (o *ObjectBase) boundedObject(identifier string) Object {
