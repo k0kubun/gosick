@@ -95,7 +95,6 @@ func (p *Pair) ListLength() int {
 
 func (p *Pair) Append(object Object) *Pair {
 	assertListMinimum(p, 0)
-	assertListMinimum(object, 0)
 
 	listTail := p
 	for {
@@ -106,7 +105,25 @@ func (p *Pair) Append(object Object) *Pair {
 		}
 	}
 
-	listTail.Car = object.(*Pair).Car
-	listTail.Cdr = object.(*Pair).Cdr
+	listTail.Car = object
+	listTail.Cdr = new(Pair)
+	return p
+}
+
+func (p *Pair) AppendList(list Object) *Pair {
+	assertListMinimum(p, 0)
+	assertListMinimum(list, 0)
+
+	listTail := p
+	for {
+		if listTail.isNull() {
+			break
+		} else {
+			listTail = listTail.Cdr.(*Pair)
+		}
+	}
+
+	listTail.Car = list.(*Pair).Car
+	listTail.Cdr = list.(*Pair).Cdr
 	return p
 }

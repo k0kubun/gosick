@@ -10,6 +10,12 @@ type Application struct {
 	arguments Object
 }
 
+func NewApplication(parent Object) *Application {
+	return &Application{
+		ObjectBase: ObjectBase{parent: parent},
+	}
+}
+
 func (a *Application) Eval() Object {
 	return a.applyProcedure()
 }

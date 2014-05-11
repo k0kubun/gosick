@@ -210,6 +210,16 @@ var interpreterTests = []interpreterTest{
 	evalTest("((lambda (x) (set-cdr! x 1) x) (cons 2 3))", "(2 . 1)"),
 }
 
+// let parsing break tree structure, so not to apply parser test
+var letTests = []interpreterTest{
+	evalTest("(let ((x 1)) x)", "1"),
+	evalTest("(let ((x 1) (y 2)) (+ x y))", "3"),
+	evalTest("(let* ((x 1)) x)", "1"),
+	evalTest("(let* ((x 1) (y 2)) (+ x y))", "3"),
+	evalTest("(letrec ((x 1)) x)", "1"),
+	evalTest("(letrec ((x 1) (y 2)) (+ x y))", "3"),
+}
+
 var runtimeErrorTests = []interpreterTest{
 	evalTest("(1)", "*** ERROR: invalid application"),
 	evalTest("hello", "*** ERROR: Unbound variable: hello"),
@@ -277,6 +287,7 @@ func runTests(t *testing.T, tests []interpreterTest) {
 
 func TestInterpreter(t *testing.T) {
 	runTests(t, interpreterTests)
+	runTests(t, letTests)
 	runTests(t, runtimeErrorTests)
 	runTests(t, compileErrorTests)
 }

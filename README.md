@@ -40,7 +40,7 @@ $ gosick -h
 | String | | string-append, symbol->string, string->symbol, string->number, number->string |
 | Type | | null?, boolean?, procedure?, pair?, list?, symbol?, string? |
 | Comparison | | eq?, neq?, equal? |
-| Syntax | let, let*, letrec | lambda |
+| Syntax | | lambda, let, let*, letrec |
 | Statement | if, cond, and, or, begin, do |  |
 | Definition | define-macro | define, set! |
 | Others | | load |
