@@ -104,6 +104,11 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 		i.printWithIndent("Set", indentLevel)
 		i.DumpAST(object.(*Set).variable, indentLevel+1)
 		i.DumpAST(object.(*Set).value, indentLevel+1)
+	case *If:
+		i.printWithIndent("If", indentLevel)
+		i.DumpAST(object.(*If).condition, indentLevel+1)
+		i.DumpAST(object.(*If).trueBody, indentLevel+1)
+		i.DumpAST(object.(*If).falseBody, indentLevel+1)
 	}
 }
 

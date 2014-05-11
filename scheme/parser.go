@@ -176,10 +176,15 @@ func (p *Parser) parseIf(parent Object) Object {
 	ifStatement.condition = p.parseObject(ifStatement)
 	ifStatement.trueBody = p.parseObject(ifStatement)
 	if p.PeekToken() == ")" {
+		p.NextToken()
 		ifStatement.falseBody = NewSymbol("#<undef>")
 	} else {
 		ifStatement.falseBody = p.parseObject(ifStatement)
+		if p.NextToken() != ")" {
+			compileError("syntax-error: malformed if")
+		}
 	}
+
 	return ifStatement
 }
 
