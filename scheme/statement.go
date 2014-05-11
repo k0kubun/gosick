@@ -25,3 +25,23 @@ func (s *Set) Eval() Object {
 	s.ObjectBase.updateBinding(variable.(*Variable).identifier, value)
 	return NewSymbol("#<undef>")
 }
+
+type If struct {
+	ObjectBase
+	condition Object
+	trueBody  Object
+	falseBody Object
+}
+
+func NewIf(parent Object) *If {
+	return &If{ObjectBase: ObjectBase{parent: parent}}
+}
+
+func (i *If) Eval() Object {
+	result := i.condition.Eval()
+	if result.isBoolean() && result.(*Boolean).value {
+		return i.trueBody.Eval()
+	} else {
+		return i.falseBody.Eval()
+	}
+}

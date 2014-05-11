@@ -27,42 +27,7 @@ func (p *Parser) parseObject(parent Object) Object {
 
 	switch tokenType {
 	case '(':
-		peekToken := p.PeekToken()
-		if p.TokenType() == ')' {
-			p.NextToken()
-			return NewNull(parent)
-		} else if peekToken == "define" {
-			p.NextToken()
-			return p.parseDefinition(parent)
-		} else if peekToken == "quote" {
-			p.NextToken()
-			object := p.parseQuotedList(parent)
-			if !object.isList() || object.(*Pair).ListLength() != 1 {
-				compileError("syntax-error: malformed quote")
-			}
-			quotedObject := object.(*Pair).Car
-			quotedObject.setParent(parent)
-			return quotedObject
-		} else if peekToken == "lambda" {
-			p.NextToken()
-			return p.parseProcedure(parent)
-		} else if peekToken == "let" || peekToken == "let*" || peekToken == "letrec" {
-			p.NextToken()
-			return p.parseLet(parent)
-		} else if peekToken == "set!" {
-			p.NextToken()
-			set := NewSet(parent)
-			object := p.parseList(set)
-			if !object.isList() || object.(*Pair).ListLength() != 2 {
-				compileError("syntax-error: malformed set!")
-			}
-
-			set.variable = object.(*Pair).ElementAt(0)
-			set.value = object.(*Pair).ElementAt(1)
-			return set
-		}
-
-		return p.parseApplication(parent)
+		return p.parseBlock(parent)
 	case '\'':
 		return p.parseQuotedObject(parent)
 	case IntToken:
@@ -77,6 +42,48 @@ func (p *Parser) parseObject(parent Object) Object {
 		return nil
 	}
 	return nil
+}
+
+func (p *Parser) parseBlock(parent Object) Object {
+	peekToken := p.PeekToken()
+	if p.TokenType() == ')' {
+		p.NextToken()
+		return NewNull(parent)
+	} else if peekToken == "define" {
+		p.NextToken()
+		return p.parseDefinition(parent)
+	} else if peekToken == "quote" {
+		p.NextToken()
+		object := p.parseQuotedList(parent)
+		if !object.isList() || object.(*Pair).ListLength() != 1 {
+			compileError("syntax-error: malformed quote")
+		}
+		quotedObject := object.(*Pair).Car
+		quotedObject.setParent(parent)
+		return quotedObject
+	} else if peekToken == "lambda" {
+		p.NextToken()
+		return p.parseProcedure(parent)
+	} else if peekToken == "let" || peekToken == "let*" || peekToken == "letrec" {
+		p.NextToken()
+		return p.parseLet(parent)
+	} else if peekToken == "set!" {
+		p.NextToken()
+		set := NewSet(parent)
+		object := p.parseList(set)
+		if !object.isList() || object.(*Pair).ListLength() != 2 {
+			compileError("syntax-error: malformed set!")
+		}
+
+		set.variable = object.(*Pair).ElementAt(0)
+		set.value = object.(*Pair).ElementAt(1)
+		return set
+	} else if peekToken == "if" {
+		p.NextToken()
+		return p.parseIf(parent)
+	}
+
+	return p.parseApplication(parent)
 }
 
 // This function returns *Pair of first object and list from second.
@@ -162,6 +169,18 @@ func (p *Parser) parseDefinition(parent Object) Object {
 	definition.value.setParent(definition)
 
 	return definition
+}
+
+func (p *Parser) parseIf(parent Object) Object {
+	ifStatement := NewIf(parent)
+	ifStatement.condition = p.parseObject(ifStatement)
+	ifStatement.trueBody = p.parseObject(ifStatement)
+	if p.PeekToken() == ")" {
+		ifStatement.falseBody = NewSymbol("#<undef>")
+	} else {
+		ifStatement.falseBody = p.parseObject(ifStatement)
+	}
+	return ifStatement
 }
 
 func (p *Parser) parseQuotedObject(parent Object) Object {

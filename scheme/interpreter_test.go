@@ -208,6 +208,12 @@ var interpreterTests = []interpreterTest{
 	evalTest("(define x (cons 3 2)) (set-cdr! x 1) x", "x", "#<undef>", "(3 . 1)"),
 	evalTest("((lambda (x) (set-car! x 1) x) (cons 2 3))", "(1 . 3)"),
 	evalTest("((lambda (x) (set-cdr! x 1) x) (cons 2 3))", "(2 . 1)"),
+
+	evalTest("(if #t 1 2)", "1"),
+	evalTest("(if #f 1 2)", "2"),
+	evalTest("(if (null? ()) 1 2)", "1"),
+	evalTest("(if (null? 3) 1)", "#<undef>"),
+	evalTest("(if (number? 3) 'num)", "num"),
 }
 
 // let parsing break tree structure, so not to apply parser test
