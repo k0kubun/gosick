@@ -22,6 +22,7 @@ var tokenTypeTests = []tokenTypeTest{
 	{"'", '\''},
 
 	{"100", IntToken},
+	{"-1", IntToken},
 
 	{"#f", BooleanToken},
 	{"#t", BooleanToken},
@@ -36,6 +37,7 @@ var tokenTypeTests = []tokenTypeTest{
 
 var tokenizeTests = []tokenizeTest{
 	{"1", makeTokens("1")},
+	{"-1", makeTokens("-1")},
 	{"#f", makeTokens("#f")},
 	{"#t", makeTokens("#t")},
 

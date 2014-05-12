@@ -41,7 +41,7 @@ func (l Lexer) TokenType() rune {
 		return EOF
 	} else if l.matchRegexp(token, fmt.Sprintf("^(%s|\\+|-)$", identifierExp)) {
 		return IdentifierToken
-	} else if l.matchRegexp(token, "^[0-9]+$") {
+	} else if l.matchRegexp(token, "^-?[0-9]+$") {
 		return IntToken
 	} else if l.matchRegexp(token, "^#(f|t)$") {
 		return BooleanToken
@@ -116,6 +116,11 @@ func (l *Lexer) nextToken() string {
 			l.Scan()
 			text = fmt.Sprintf("%s%s", text, l.TokenText())
 		}
+		return text
+	} else if l.TokenText() == "-" && l.matchRegexp(fmt.Sprintf("%c", l.Peek()), "[0-9]") {
+		text := l.TokenText()
+		l.Scan()
+		text = text + l.TokenText()
 		return text
 	}
 	return l.TokenText()

@@ -25,6 +25,7 @@ type loadTest struct {
 
 var interpreterTests = []interpreterTest{
 	evalTest("12", "12"),
+	evalTest("-12", "-12"),
 	evalTest("()", "()"),
 	evalTest("#f #t", "#f", "#t"),
 	evalTest("1234567890", "1234567890"),
@@ -52,6 +53,9 @@ var interpreterTests = []interpreterTest{
 	evalTest("(/ 1)", "1"),
 
 	evalTest("(+ 1 20 300 4000)", "4321"),
+	evalTest("(+ -2 -3)", "-5"),
+	evalTest("(- -2 -3)", "1"),
+	evalTest("(+ -2 3)", "1"),
 	evalTest(" ( + 1 2 3 ) ", "6"),
 	evalTest("(+ 1 (+ 2 3) (+ 3 4))", "13"),
 	evalTest("(- 3(- 2 3)(+ 3 0))", "1"),
