@@ -45,3 +45,40 @@ func (i *If) Eval() Object {
 		return i.falseBody.Eval()
 	}
 }
+
+type Cond struct {
+	ObjectBase
+	cases    []Object
+	elseBody Object
+}
+
+func NewCond(parent Object) *Cond {
+	return &Cond{ObjectBase: ObjectBase{parent: parent}}
+}
+
+func (c *Cond) Eval() Object {
+	for _, caseBody := range c.cases {
+		elements := caseBody.(*Pair).Elements()
+		lastResult := elements[0].Eval()
+
+		if lastResult.isBoolean() && lastResult.(*Boolean).value == false {
+			continue
+		}
+
+		for _, element := range elements {
+			lastResult = element.Eval()
+		}
+		return lastResult
+	}
+
+	if c.elseBody == nil {
+		return NewSymbol("#<undef>")
+	}
+
+	elements := c.elseBody.(*Pair).Elements()
+	lastResult := Object(NewSymbol("#<undef>"))
+	for _, element := range elements {
+		lastResult = element.Eval()
+	}
+	return lastResult
+}

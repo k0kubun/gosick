@@ -214,6 +214,12 @@ var interpreterTests = []interpreterTest{
 	evalTest("(if (null? ()) 1 2)", "1"),
 	evalTest("(if (null? 3) 1)", "#<undef>"),
 	evalTest("(if (number? 3) 'num)", "num"),
+
+	evalTest("(cond (#t))", "#t"),
+	evalTest("(cond (()))", "()"),
+	evalTest("(cond (else))", "#<undef>"),
+	evalTest("(cond (#f 1) (#t 2) (else 3))", "2"),
+	evalTest("(cond ((number? 3) 'hello) (else 'no))", "hello"),
 }
 
 // let parsing break tree structure, so not to apply parser test
@@ -270,6 +276,10 @@ var compileErrorTests = []interpreterTest{
 	evalTest("(memq 'a '(a b c) 1)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 2, but got 3"),
 	evalTest("(append () 1 ())", "*** ERROR: Compile Error: proper list required for function application or macro use"),
 	evalTest("(set! x 1 1)", "*** ERROR: Compile Error: syntax-error: malformed set!"),
+
+	evalTest("(cond)", "*** ERROR: Compile Error: at least one clause is required for cond"),
+	evalTest("(cond ())", "*** ERROR: Compile Error: syntax-error: bad clause in cond"),
+	evalTest("(cond (#t) (else) ())", "*** ERROR: Compile Error: syntax-error: 'else' clause followed by more clauses"),
 }
 
 func evalTest(source string, results ...string) interpreterTest {

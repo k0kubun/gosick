@@ -45,14 +45,14 @@ func (p *Parser) parseObject(parent Object) Object {
 }
 
 func (p *Parser) parseBlock(parent Object) Object {
-	peekToken := p.PeekToken()
-	if p.TokenType() == ')' {
+	switch p.PeekToken() {
+	case ")":
 		p.NextToken()
 		return NewNull(parent)
-	} else if peekToken == "define" {
+	case "define":
 		p.NextToken()
 		return p.parseDefinition(parent)
-	} else if peekToken == "quote" {
+	case "quote":
 		p.NextToken()
 		object := p.parseQuotedList(parent)
 		if !object.isList() || object.(*Pair).ListLength() != 1 {
@@ -61,13 +61,13 @@ func (p *Parser) parseBlock(parent Object) Object {
 		quotedObject := object.(*Pair).Car
 		quotedObject.setParent(parent)
 		return quotedObject
-	} else if peekToken == "lambda" {
+	case "lambda":
 		p.NextToken()
 		return p.parseProcedure(parent)
-	} else if peekToken == "let" || peekToken == "let*" || peekToken == "letrec" {
+	case "let", "let*", "letrec":
 		p.NextToken()
 		return p.parseLet(parent)
-	} else if peekToken == "set!" {
+	case "set!":
 		p.NextToken()
 		set := NewSet(parent)
 		object := p.parseList(set)
@@ -78,9 +78,12 @@ func (p *Parser) parseBlock(parent Object) Object {
 		set.variable = object.(*Pair).ElementAt(0)
 		set.value = object.(*Pair).ElementAt(1)
 		return set
-	} else if peekToken == "if" {
+	case "if":
 		p.NextToken()
 		return p.parseIf(parent)
+	case "cond":
+		p.NextToken()
+		return p.parseCond(parent)
 	}
 
 	return p.parseApplication(parent)
@@ -186,6 +189,45 @@ func (p *Parser) parseIf(parent Object) Object {
 	}
 
 	return ifStatement
+}
+
+func (p *Parser) parseCond(parent Object) Object {
+	cond := NewCond(parent)
+
+	caseExists := false
+	elseExists := false
+	for {
+		firstToken := p.NextToken()
+		if firstToken == ")" {
+			break
+		} else if firstToken != "(" {
+			compileError("syntax-error: bad clause in cond")
+		}
+
+		if elseExists {
+			compileError("syntax-error: 'else' clause followed by more clauses")
+		}
+		switch p.PeekToken() {
+		case "else":
+			p.NextToken()
+			cond.elseBody = p.parseList(cond)
+			elseExists = true
+		case ")":
+			compileError("syntax-error: bad clause in cond")
+		default:
+			caseBody := p.parseList(cond)
+			if !caseBody.isList() || caseBody.(*Pair).ListLength() == 0 {
+				compileError("syntax-error: bad clause in cond3")
+			}
+			cond.cases = append(cond.cases, caseBody)
+		}
+		caseExists = true
+	}
+
+	if !caseExists {
+		compileError("at least one clause is required for cond")
+	}
+	return cond
 }
 
 func (p *Parser) parseQuotedObject(parent Object) Object {
