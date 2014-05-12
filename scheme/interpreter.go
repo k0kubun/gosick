@@ -26,7 +26,11 @@ func (i *Interpreter) ReloadSourceCode(source string) {
 }
 
 func (i *Interpreter) PrintResult(dumpAST bool) {
-	for _, result := range i.EvalSource(dumpAST) {
+	results := i.EvalSource(dumpAST)
+	if dumpAST {
+		fmt.Printf("\n*** Result ***\n")
+	}
+	for _, result := range results {
 		fmt.Println(result)
 	}
 }
@@ -43,7 +47,6 @@ func (i *Interpreter) EvalSource(dumpAST bool) (results []string) {
 		if dumpAST {
 			fmt.Printf("\n*** AST ***\n")
 			i.DumpAST(expression, 0)
-			fmt.Printf("\n*** Result ***\n")
 		}
 
 		if expression == nil {
@@ -110,11 +113,34 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 		i.DumpAST(object.(*If).trueBody, indentLevel+1)
 		i.DumpAST(object.(*If).falseBody, indentLevel+1)
 	case *Cond:
+		i.printWithIndent("Cond", indentLevel)
+		for _, element := range object.(*Cond).cases {
+			i.DumpAST(element, indentLevel+1)
+		}
+		if object.(*Cond).elseBody != nil {
+			i.DumpAST(object.(*Cond).elseBody, indentLevel+1)
+		}
 	case *And:
+		i.printWithIndent("And", indentLevel)
+		i.DumpAST(object.(*And).body, indentLevel+1)
 	case *Or:
+		i.printWithIndent("Or", indentLevel)
+		i.DumpAST(object.(*Or).body, indentLevel+1)
 	case *Begin:
+		i.printWithIndent("Begin", indentLevel)
+		i.DumpAST(object.(*Begin).body, indentLevel+1)
 	case *Do:
+		i.printWithIndent("Do", indentLevel)
+		for _, iterator := range object.(*Do).iterators {
+			i.DumpAST(iterator, indentLevel+1)
+		}
+		i.DumpAST(object.(*Do).testBody, indentLevel+1)
+		i.DumpAST(object.(*Do).continueBody, indentLevel+1)
 	case *Iterator:
+		i.printWithIndent("Iterator", indentLevel)
+		i.DumpAST(object.(*Iterator).variable, indentLevel+1)
+		i.DumpAST(object.(*Iterator).value, indentLevel+1)
+		i.DumpAST(object.(*Iterator).update, indentLevel+1)
 	}
 }
 
