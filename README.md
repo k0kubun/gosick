@@ -46,8 +46,11 @@ $ gosick -h
 | write, print | second argument (choosing output port) is not implemented |
 
 ### To be done
-- Tail Call Optimization
 - define-macro
+
+## Pending features
+- Tail Call Optimization
+- Not integer number
 
 ## License
 
