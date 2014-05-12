@@ -102,8 +102,7 @@ func (p *Parser) parseBlock(parent Object) Object {
 }
 
 // This function returns *Pair of first object and list from second.
-// Returns value is Object because if a method returns nil which is not
-// interface type, the method's result cannot be judged as nil.
+// Scanner position ends with the next of close parentheses.
 func (p *Parser) parseList(parent Object) Object {
 	pair := NewNull(parent)
 	pair.Car = p.parseObject(pair)
@@ -209,6 +208,7 @@ func (p *Parser) parseCond(parent Object) Object {
 	caseExists := false
 	elseExists := false
 	for {
+		// judge case continues or not
 		firstToken := p.NextToken()
 		if firstToken == ")" {
 			break
@@ -216,6 +216,7 @@ func (p *Parser) parseCond(parent Object) Object {
 			compileError("syntax-error: bad clause in cond")
 		}
 
+		// parse list body
 		if elseExists {
 			compileError("syntax-error: 'else' clause followed by more clauses")
 		}
@@ -237,7 +238,7 @@ func (p *Parser) parseCond(parent Object) Object {
 	}
 
 	if !caseExists {
-		compileError("at least one clause is required for cond")
+		compileError("syntax-error: at least one clause is required for cond")
 	}
 	return cond
 }
@@ -261,7 +262,67 @@ func (p *Parser) parseBegin(parent Object) Object {
 }
 
 func (p *Parser) parseDo(parent Object) Object {
-	return nil
+	do := NewDo(parent)
+
+	// parse iterators
+	if p.NextToken() != "(" {
+		compileError("syntax-error: malformed do")
+	}
+	do.iterators = p.parseIterators(do)
+
+	// parse test and a body for the case test is true
+	if p.NextToken() != "(" {
+		compileError("syntax-error: malformed do")
+	}
+	do.testBody = p.parseList(do)
+	if do.testBody.(*Pair).ListLength() == 0 {
+		compileError("syntax-error: malformed do")
+	}
+
+	// parse a body for the case test is false
+	do.continueBody = p.parseList(do)
+	return do
+}
+
+func (p *Parser) parseIterators(parent Object) []*Iterator {
+	iterators := []*Iterator{}
+	for {
+		// check first is '('
+		firstToken := p.NextToken()
+		if firstToken == ")" {
+			break
+		} else if firstToken != "(" {
+			compileError("syntax-error: malformed do")
+		}
+
+		// get element list and assert their number
+		elementList := p.parseList(parent)
+		if !elementList.isList() || elementList.(*Pair).ListLength() < 2 {
+			compileError("syntax-error: malformed do")
+		} else if elementList.(*Pair).ListLength() > 3 {
+			compileError("syntax-error: bad update expr in do")
+		}
+
+		iterator := NewIterator(parent)
+
+		// get variable
+		iterator.variable = elementList.(*Pair).ElementAt(0)
+		iterator.variable.setParent(iterator)
+
+		// get value
+		iterator.value = elementList.(*Pair).ElementAt(1)
+		iterator.value.setParent(iterator)
+
+		// get update
+		if elementList.(*Pair).ListLength() == 3 {
+			iterator.update = elementList.(*Pair).ElementAt(2)
+			iterator.update.setParent(iterator)
+		}
+
+		iterators = append(iterators, iterator)
+	}
+
+	return iterators
 }
 
 func (p *Parser) parseQuotedObject(parent Object) Object {
@@ -306,4 +367,8 @@ func compileError(format string, a ...interface{}) {
 
 func runtimeError(format string, a ...interface{}) {
 	panic(fmt.Sprintf(format, a...))
+}
+
+func dumpObject(object interface{}) {
+	fmt.Printf("%#v\n", object)
 }

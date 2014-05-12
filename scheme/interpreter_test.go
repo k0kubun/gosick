@@ -236,6 +236,10 @@ var interpreterTests = []interpreterTest{
 	evalTest("(begin)", "#<undef>"),
 	evalTest("(begin 1 2 3)", "3"),
 	evalTest("(begin (define x 2) (set! x 3) x) x", "3", "3"),
+
+	evalTest("(do () (#t)))", "#t"),
+	evalTest("(do ((i 1) (j 1)) (#t)))", "#t"),
+	evalTest("(define x \"\") (do ((i 1 (+ i 1)) (j 1 (* j 2))) ((> i 3) x) (begin (set! x (string-append x (number->string i))) (set! x (string-append x (number->string j)))))", "x", "\"112234\""),
 }
 
 // let parsing break tree structure, so not to apply parser test
@@ -293,9 +297,11 @@ var compileErrorTests = []interpreterTest{
 	evalTest("(append () 1 ())", "*** ERROR: Compile Error: proper list required for function application or macro use"),
 	evalTest("(set! x 1 1)", "*** ERROR: Compile Error: syntax-error: malformed set!"),
 
-	evalTest("(cond)", "*** ERROR: Compile Error: at least one clause is required for cond"),
+	evalTest("(cond)", "*** ERROR: Compile Error: syntax-error: at least one clause is required for cond"),
 	evalTest("(cond ())", "*** ERROR: Compile Error: syntax-error: bad clause in cond"),
 	evalTest("(cond (#t) (else) ())", "*** ERROR: Compile Error: syntax-error: 'else' clause followed by more clauses"),
+
+	evalTest("(do () ()))", "*** ERROR: Compile Error: syntax-error: malformed do"),
 }
 
 func evalTest(source string, results ...string) interpreterTest {

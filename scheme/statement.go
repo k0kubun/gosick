@@ -139,3 +139,85 @@ func (b *Begin) Eval() Object {
 	}
 	return lastResult
 }
+
+type Do struct {
+	ObjectBase
+	iterators    []*Iterator
+	testBody     Object
+	continueBody Object
+	localBinding Binding
+}
+
+func NewDo(parent Object) *Do {
+	return &Do{ObjectBase: ObjectBase{parent: parent}, localBinding: Binding{}}
+}
+
+func (d *Do) binding() Binding {
+	return d.localBinding
+}
+
+func (d *Do) scopedBinding() Binding {
+	scopedBinding := make(Binding)
+	for identifier, object := range d.localBinding {
+		scopedBinding[identifier] = object
+	}
+
+	parent := d.Parent()
+	for parent != nil {
+		for identifier, object := range parent.binding() {
+			if scopedBinding[identifier] == nil {
+				scopedBinding[identifier] = object
+			}
+		}
+		parent = parent.Parent()
+	}
+	return scopedBinding
+}
+
+func (d *Do) Eval() Object {
+	// bind iterators
+	for _, iterator := range d.iterators {
+		if iterator.variable.isVariable() {
+			d.localBinding[iterator.variable.(*Variable).identifier] = iterator.value.Eval()
+		}
+	}
+
+	// eval test ->
+	//   true: eval testBody and returns its result
+	//  false: eval continueBody, eval iterator's update
+	testElements := d.testBody.(*Pair).Elements()
+	continueElements := d.continueBody.(*Pair).Elements()
+	for {
+		testResult := testElements[0].Eval()
+		if !testResult.isBoolean() || testResult.(*Boolean).value == true {
+			for _, element := range testElements[1:] {
+				testResult = element.Eval()
+			}
+			return testResult
+		} else {
+			// eval continueBody
+			for _, element := range continueElements {
+				element.Eval()
+			}
+
+			// update iterators
+			for _, iterator := range d.iterators {
+				if iterator.variable.isVariable() {
+					d.localBinding[iterator.variable.(*Variable).identifier] = iterator.update.Eval()
+				}
+			}
+		}
+	}
+	return NewSymbol("#<undef>")
+}
+
+type Iterator struct {
+	ObjectBase
+	variable Object
+	value    Object
+	update   Object
+}
+
+func NewIterator(parent Object) *Iterator {
+	return &Iterator{ObjectBase: ObjectBase{parent: parent}}
+}

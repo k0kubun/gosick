@@ -41,7 +41,7 @@ $ gosick -h
 | Type | | null?, boolean?, procedure?, pair?, list?, symbol?, string? |
 | Comparison | | eq?, neq?, equal? |
 | Syntax | | lambda, let, let*, letrec |
-| Statement | do | if, cond, and, or, begin |
+| Statement | | if, cond, and, or, begin, do |
 | Definition | define-macro | define, set! |
 | Others | | load |
 
