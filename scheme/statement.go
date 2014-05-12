@@ -122,3 +122,20 @@ func (o *Or) Eval() Object {
 	}
 	return lastResult
 }
+
+type Begin struct {
+	ObjectBase
+	body Object
+}
+
+func NewBegin(parent Object) *Begin {
+	return &Begin{ObjectBase: ObjectBase{parent: parent}}
+}
+
+func (b *Begin) Eval() Object {
+	lastResult := Object(NewSymbol("#<undef>"))
+	for _, object := range b.body.(*Pair).Elements() {
+		lastResult = object.Eval()
+	}
+	return lastResult
+}

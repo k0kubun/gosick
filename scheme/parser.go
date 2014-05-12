@@ -90,6 +90,12 @@ func (p *Parser) parseBlock(parent Object) Object {
 	case "or":
 		p.NextToken()
 		return p.parseOr(parent)
+	case "begin":
+		p.NextToken()
+		return p.parseBegin(parent)
+	case "do":
+		p.NextToken()
+		return p.parseDo(parent)
 	}
 
 	return p.parseApplication(parent)
@@ -246,6 +252,16 @@ func (p *Parser) parseOr(parent Object) Object {
 	orStatement := NewOr(parent)
 	orStatement.body = p.parseList(orStatement)
 	return orStatement
+}
+
+func (p *Parser) parseBegin(parent Object) Object {
+	begin := NewBegin(parent)
+	begin.body = p.parseList(begin)
+	return begin
+}
+
+func (p *Parser) parseDo(parent Object) Object {
+	return nil
 }
 
 func (p *Parser) parseQuotedObject(parent Object) Object {

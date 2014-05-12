@@ -232,6 +232,10 @@ var interpreterTests = []interpreterTest{
 	evalTest("(or #f 3 #f)", "3"),
 	evalTest("(or (number? 3) (boolean? 3))", "#t"),
 	evalTest("(or (number? #f) (boolean? 3))", "#f"),
+
+	evalTest("(begin)", "#<undef>"),
+	evalTest("(begin 1 2 3)", "3"),
+	evalTest("(begin (define x 2) (set! x 3) x) x", "3", "3"),
 }
 
 // let parsing break tree structure, so not to apply parser test
