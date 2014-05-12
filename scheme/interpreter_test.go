@@ -220,6 +220,18 @@ var interpreterTests = []interpreterTest{
 	evalTest("(cond (else))", "#<undef>"),
 	evalTest("(cond (#f 1) (#t 2) (else 3))", "2"),
 	evalTest("(cond ((number? 3) 'hello) (else 'no))", "hello"),
+
+	evalTest("(and)", "#t"),
+	evalTest("(and #t 3)", "3"),
+	evalTest("(and (number? 3) (boolean? #f))", "#t"),
+	evalTest("(and (number? 3) (boolean? 3))", "#f"),
+
+	evalTest("(or)", "#f"),
+	evalTest("(or #f 3)", "3"),
+	evalTest("(or 3)", "3"),
+	evalTest("(or #f 3 #f)", "3"),
+	evalTest("(or (number? 3) (boolean? 3))", "#t"),
+	evalTest("(or (number? #f) (boolean? 3))", "#f"),
 }
 
 // let parsing break tree structure, so not to apply parser test

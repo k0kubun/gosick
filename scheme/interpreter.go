@@ -109,6 +109,9 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 		i.DumpAST(object.(*If).condition, indentLevel+1)
 		i.DumpAST(object.(*If).trueBody, indentLevel+1)
 		i.DumpAST(object.(*If).falseBody, indentLevel+1)
+	case *Cond:
+	case *And:
+	case *Or:
 	}
 }
 

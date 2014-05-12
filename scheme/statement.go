@@ -82,3 +82,43 @@ func (c *Cond) Eval() Object {
 	}
 	return lastResult
 }
+
+type And struct {
+	ObjectBase
+	body Object
+}
+
+func NewAnd(parent Object) *And {
+	return &And{ObjectBase: ObjectBase{parent: parent}}
+}
+
+func (a *And) Eval() Object {
+	lastResult := Object(NewBoolean(true))
+	for _, object := range a.body.(*Pair).Elements() {
+		lastResult = object.Eval()
+		if lastResult.isBoolean() && lastResult.(*Boolean).value == false {
+			return NewBoolean(false)
+		}
+	}
+	return lastResult
+}
+
+type Or struct {
+	ObjectBase
+	body Object
+}
+
+func NewOr(parent Object) *Or {
+	return &Or{ObjectBase: ObjectBase{parent: parent}}
+}
+
+func (o *Or) Eval() Object {
+	lastResult := Object(NewBoolean(false))
+	for _, object := range o.body.(*Pair).Elements() {
+		lastResult = object.Eval()
+		if !lastResult.isBoolean() || lastResult.(*Boolean).value != false {
+			return lastResult
+		}
+	}
+	return lastResult
+}
