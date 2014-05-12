@@ -28,22 +28,26 @@ $ gosick -a
 $ gosick -h
 ```
 
-## Specification
+## Implemented syntax and functions
+### Done
+- +, -, *, /, =, <, <=, >, >=
+- cons, car, cdr, list, length, last, append, set-car!, set-cdr!
+- if, cond, and, or, not, begin, do
+- null?, number?, boolean?, procedure?, pair?, list?, symbol?, string?
+- string-append, symbol->string, string->symbol, string->number, number->string
+- lambda, define, set!
+- load
 
-### Implemented syntax and functions
+### Pending
+| Name | Description |
+|:-----|:------------|
+| let, let*, letrec | eval order is incorrect, and they are the same implementation |
+| memq, eq?, neq?, equal? | only Number and Symbol are supported |
+| write, print | second argument (choosing output port) is not implemented |
 
-| Type | To be done | Implemented |
-|:-----|:-----|:-----------:|
-| Number | | number?, +, -, *, /, =, <, <=, >, >= |
-| List | | cons, car, cdr, list, length, memq, last, append, set-car!, set-cdr! |
-| Boolean | | not |
-| String | | string-append, symbol->string, string->symbol, string->number, number->string |
-| Type | | null?, boolean?, procedure?, pair?, list?, symbol?, string? |
-| Comparison | | eq?, neq?, equal? |
-| Syntax | | lambda, let, let*, letrec |
-| Statement | | if, cond, and, or, begin, do |
-| Definition | define-macro | define, set! |
-| Others | | load |
+### To be done
+- Tail Call Optimization
+- define-macro
 
 ## License
 
