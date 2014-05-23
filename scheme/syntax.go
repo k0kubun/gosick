@@ -2,6 +2,10 @@
 
 package scheme
 
+import (
+	"fmt"
+)
+
 type Syntax struct {
 	ObjectBase
 	function func(*Syntax, Object) Object
@@ -13,6 +17,10 @@ func NewSyntax(function func(*Syntax, Object) Object) *Syntax {
 
 func (s *Syntax) Invoke(arguments Object) Object {
 	return s.function(s, arguments)
+}
+
+func (s *Syntax) String() string {
+	return fmt.Sprintf("#<syntax %s>", s.Bounder())
 }
 
 func (s *Syntax) isSyntax() bool {

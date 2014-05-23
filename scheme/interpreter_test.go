@@ -249,6 +249,8 @@ var interpreterTests = []interpreterTest{
 	evalTest("(do () (#t)))", "#t"),
 	evalTest("(do ((i 1) (j 1)) (#t)))", "#t"),
 	evalTest("(define x \"\") (do ((i 1 (+ i 1)) (j 1 (* j 2))) ((> i 3) x) (begin (set! x (string-append x (number->string i))) (set! x (string-append x (number->string j)))))", "x", "\"112234\""),
+
+	evalTest("set!", "#<syntax set!>"),
 }
 
 // let parsing break tree structure, so not to apply parser test
