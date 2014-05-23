@@ -67,9 +67,6 @@ func (p *Parser) parseBlock(parent Object) Object {
 	case "let", "let*", "letrec":
 		p.NextToken()
 		return p.parseLet(parent)
-	case "if":
-		p.NextToken()
-		return p.parseIf(parent)
 	case "cond":
 		p.NextToken()
 		return p.parseCond(parent)
@@ -172,23 +169,6 @@ func (p *Parser) parseDefinition(parent Object) Object {
 	definition.value.setParent(definition)
 
 	return definition
-}
-
-func (p *Parser) parseIf(parent Object) Object {
-	ifStatement := NewIf(parent)
-	ifStatement.condition = p.parseObject(ifStatement)
-	ifStatement.trueBody = p.parseObject(ifStatement)
-	if p.PeekToken() == ")" {
-		p.NextToken()
-		ifStatement.falseBody = undef
-	} else {
-		ifStatement.falseBody = p.parseObject(ifStatement)
-		if p.NextToken() != ")" {
-			compileError("syntax-error: malformed if")
-		}
-	}
-
-	return ifStatement
 }
 
 func (p *Parser) parseCond(parent Object) Object {
