@@ -398,12 +398,10 @@ func areIdentical(a Object, b Object) bool {
 	switch a.(type) {
 	case *Number:
 		return a.(*Number).value == b.(*Number).value
-	case *Symbol:
-		return a.(*Symbol).identifier == b.(*Symbol).identifier
 	case *Boolean:
 		return a.(*Boolean).value == b.(*Boolean).value
 	default:
-		return false
+		return a == b
 	}
 }
 
