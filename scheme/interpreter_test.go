@@ -255,6 +255,7 @@ var interpreterTests = []interpreterTest{
 	evalTest("if", "#<syntax if>"),
 	evalTest("and", "#<syntax and>"),
 	evalTest("or", "#<syntax or>"),
+	evalTest("begin", "#<syntax begin>"),
 }
 
 // let parsing break tree structure, so not to apply parser test

@@ -8,10 +8,11 @@ import (
 
 var (
 	builtinSyntaxes = Binding{
-		"set!": NewSyntax(setSyntax),
-		"if":   NewSyntax(ifSyntax),
-		"and":  NewSyntax(andSyntax),
-		"or":   NewSyntax(orSyntax),
+		"set!":  NewSyntax(setSyntax),
+		"if":    NewSyntax(ifSyntax),
+		"and":   NewSyntax(andSyntax),
+		"or":    NewSyntax(orSyntax),
+		"begin": NewSyntax(beginSyntax),
 	}
 )
 
@@ -120,6 +121,16 @@ func orSyntax(s *Syntax, arguments Object) Object {
 	return lastResult
 }
 
+func beginSyntax(s *Syntax, arguments Object) Object {
+	s.assertListMinimum(arguments, 0)
+
+	lastResult := Object(undef)
+	for _, object := range arguments.(*Pair).Elements() {
+		lastResult = object.Eval()
+	}
+	return lastResult
+}
+
 type Cond struct {
 	ObjectBase
 	cases    []Object
@@ -153,23 +164,6 @@ func (c *Cond) Eval() Object {
 	lastResult := Object(undef)
 	for _, element := range elements {
 		lastResult = element.Eval()
-	}
-	return lastResult
-}
-
-type Begin struct {
-	ObjectBase
-	body Object
-}
-
-func NewBegin(parent Object) *Begin {
-	return &Begin{ObjectBase: ObjectBase{parent: parent}}
-}
-
-func (b *Begin) Eval() Object {
-	lastResult := Object(undef)
-	for _, object := range b.body.(*Pair).Elements() {
-		lastResult = object.Eval()
 	}
 	return lastResult
 }

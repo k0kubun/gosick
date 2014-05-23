@@ -105,9 +105,6 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 		if object.(*Cond).elseBody != nil {
 			i.DumpAST(object.(*Cond).elseBody, indentLevel+1)
 		}
-	case *Begin:
-		i.printWithIndent("Begin", indentLevel)
-		i.DumpAST(object.(*Begin).body, indentLevel+1)
 	case *Do:
 		i.printWithIndent("Do", indentLevel)
 		for _, iterator := range object.(*Do).iterators {
