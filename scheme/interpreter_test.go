@@ -275,10 +275,10 @@ var compileErrorTests = []interpreterTest{
 
 	evalTest("(-)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),
 	evalTest("(/)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),
-	evalTest("(number?)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
-	evalTest("(null?)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
-	evalTest("(null? 1 2)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 2"),
-	evalTest("(not)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
+	evalTest("(number?)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
+	evalTest("(null?)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
+	evalTest("(null? 1 2)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 2"),
+	evalTest("(not)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
 
 	evalTest("(+ 1 #t)", "*** ERROR: Compile Error: number required, but got #t"),
 	evalTest("(- #t)", "*** ERROR: Compile Error: number required, but got #t"),
@@ -288,20 +288,20 @@ var compileErrorTests = []interpreterTest{
 	evalTest("(string-append #f)", "*** ERROR: Compile Error: string required, but got #f"),
 	evalTest("(string-append 1)", "*** ERROR: Compile Error: string required, but got 1"),
 
-	evalTest("(string->symbol)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
+	evalTest("(string->symbol)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
 	evalTest("(string->symbol 'hello)", "*** ERROR: Compile Error: string required, but got hello"),
-	evalTest("(symbol->string)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
+	evalTest("(symbol->string)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
 	evalTest("(symbol->string \"\")", "*** ERROR: Compile Error: symbol required, but got \"\""),
 	evalTest("(string->number 1)", "*** ERROR: Compile Error: string required, but got 1"),
 	evalTest("(number->string \"1\")", "*** ERROR: Compile Error: number required, but got \"1\""),
 
 	evalTest("(car ())", "*** ERROR: Compile Error: pair required, but got ()"),
 	evalTest("(cdr ())", "*** ERROR: Compile Error: pair required, but got ()"),
-	evalTest("(car)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
-	evalTest("(cdr)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 1, but got 0"),
+	evalTest("(car)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
+	evalTest("(cdr)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
 
 	evalTest("(length (cons 1 2))", "*** ERROR: Compile Error: proper list required for function application or macro use"),
-	evalTest("(memq 'a '(a b c) 1)", "*** ERROR: Compile Error: wrong number of arguments: number? requires 2, but got 3"),
+	evalTest("(memq 'a '(a b c) 1)", "*** ERROR: Compile Error: wrong number of arguments: requires 2, but got 3"),
 	evalTest("(append () 1 ())", "*** ERROR: Compile Error: proper list required for function application or macro use"),
 	evalTest("(set! x 1 1)", "*** ERROR: Compile Error: syntax-error: malformed set!"),
 

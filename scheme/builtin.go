@@ -27,7 +27,6 @@ func BuiltinProcedures() Binding {
 		"list?":          builtinProcedure(isListProc),
 		"symbol?":        builtinProcedure(isSymbolProc),
 		"string?":        builtinProcedure(isStringProc),
-		"not":            builtinProcedure(notProc),
 		"cons":           builtinProcedure(consProc),
 		"car":            builtinProcedure(carProc),
 		"cdr":            builtinProcedure(cdrProc),
@@ -68,7 +67,7 @@ func assertListEqual(arguments Object, length int) {
 	if !arguments.isList() {
 		compileError("proper list required for function application or macro use")
 	} else if arguments.(*Pair).ListLength() != length {
-		compileError("wrong number of arguments: number? requires %d, but got %d",
+		compileError("wrong number of arguments: requires %d, but got %d",
 			length, arguments.(*Pair).ListLength())
 	}
 }
@@ -234,11 +233,6 @@ func isSymbolProc(arguments Object) Object {
 
 func isStringProc(arguments Object) Object {
 	return booleanByFunc(arguments, func(object Object) bool { return object.isString() })
-}
-
-func notProc(arguments Object) Object {
-	return booleanByFunc(arguments,
-		func(object Object) bool { return object.isBoolean() && !object.(*Boolean).value })
 }
 
 func consProc(arguments Object) Object {

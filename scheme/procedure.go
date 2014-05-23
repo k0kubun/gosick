@@ -38,7 +38,7 @@ func (p *Procedure) generateFunction(parent Object) {
 		expectedLength := p.arguments.(*Pair).ListLength()
 		actualLength := givenArguments.(*Pair).ListLength()
 		if expectedLength != actualLength {
-			compileError("wrong number of arguments: #f requires %d, but got %d", expectedLength, actualLength)
+			compileError("wrong number of arguments: requires %d, but got %d", expectedLength, actualLength)
 		}
 
 		// bind arguments to local scope

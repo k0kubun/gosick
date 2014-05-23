@@ -8,3 +8,9 @@
     (cdr (cdr x))
   )
 )
+
+(define not
+  (lambda (x)
+    (eq? x #f)
+  )
+)
