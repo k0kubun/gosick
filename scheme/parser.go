@@ -48,7 +48,7 @@ func (p *Parser) parseBlock(parent Object) Object {
 	switch p.PeekToken() {
 	case ")":
 		p.NextToken()
-		return NewNull(parent)
+		return Null
 	case "define":
 		p.NextToken()
 		return p.parseDefinition(parent)
@@ -104,7 +104,7 @@ func (p *Parser) parseBlock(parent Object) Object {
 // This function returns *Pair of first object and list from second.
 // Scanner position ends with the next of close parentheses.
 func (p *Parser) parseList(parent Object) Object {
-	pair := NewNull(parent)
+	pair := NewPair(parent)
 	pair.Car = p.parseObject(pair)
 	if pair.Car == nil {
 		return pair
@@ -145,8 +145,8 @@ func (p *Parser) parseLet(parent Object) Object {
 	application := NewApplication(parent)
 	procedure := new(Procedure)
 
-	procedureArguments := NewNull(procedure)
-	applicationArguments := NewNull(application)
+	procedureArguments := NewPair(procedure)
+	applicationArguments := NewPair(application)
 
 	argumentSets := p.parseList(application)
 	for _, set := range argumentSets.(*Pair).Elements() {
@@ -347,7 +347,7 @@ func (p *Parser) parseQuotedObject(parent Object) Object {
 }
 
 func (p *Parser) parseQuotedList(parent Object) Object {
-	pair := NewNull(parent)
+	pair := NewPair(parent)
 	pair.Car = p.parseQuotedObject(pair)
 	if pair.Car == nil {
 		return pair

@@ -12,13 +12,17 @@ import (
 	"strings"
 )
 
+var (
+	Null = &Pair{ObjectBase: ObjectBase{parent: nil}, Car: nil, Cdr: nil}
+)
+
 type Pair struct {
 	ObjectBase
 	Car Object
 	Cdr Object
 }
 
-func NewNull(parent Object) *Pair {
+func NewPair(parent Object) *Pair {
 	return &Pair{ObjectBase: ObjectBase{parent: parent}, Car: nil, Cdr: nil}
 }
 

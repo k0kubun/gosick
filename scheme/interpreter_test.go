@@ -173,6 +173,7 @@ var interpreterTests = []interpreterTest{
 	evalTest("(eq? 1 2)", "#f"),
 	evalTest("(eq? 1 #f)", "#f"),
 	evalTest("(eq? #f #f)", "#t"),
+	evalTest("(eq? () ())", "#t"),
 	evalTest("(eq? 'foo 'foo)", "#t"),
 	evalTest("(eq? \"foo\" \"foo\")", "#f"),
 	evalTest("(eq? '(1 2) '(1 2))", "#f"),
