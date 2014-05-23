@@ -8,51 +8,57 @@ import (
 	"strings"
 )
 
-func BuiltinProcedures() Binding {
-	return Binding{
-		"+":              builtinProcedure(plusProc),
-		"-":              builtinProcedure(minusProc),
-		"*":              builtinProcedure(multiplyProc),
-		"/":              builtinProcedure(divideProc),
-		"=":              builtinProcedure(equalProc),
-		"<":              builtinProcedure(lessThanProc),
-		"<=":             builtinProcedure(lessEqualProc),
-		">":              builtinProcedure(greaterThanProc),
-		">=":             builtinProcedure(greaterEqualProc),
-		"append":         builtinProcedure(appendProc),
-		"boolean?":       builtinProcedure(isBooleanProc),
-		"car":            builtinProcedure(carProc),
-		"cdr":            builtinProcedure(cdrProc),
-		"cons":           builtinProcedure(consProc),
-		"eq?":            builtinProcedure(isEqProc),
-		"equal?":         builtinProcedure(isEqualProc),
-		"last":           builtinProcedure(lastProc),
-		"length":         builtinProcedure(lengthProc),
-		"list":           builtinProcedure(listProc),
-		"list?":          builtinProcedure(isListProc),
-		"load":           builtinProcedure(loadProc),
-		"memq":           builtinProcedure(memqProc),
-		"neq?":           builtinProcedure(isNeqProc),
-		"number?":        builtinProcedure(isNumberProc),
-		"number->string": builtinProcedure(numberToStringProc),
-		"pair?":          builtinProcedure(isPairProc),
-		"print":          builtinProcedure(printProc),
-		"procedure?":     builtinProcedure(isProcedureProc),
-		"set!":           NewSyntax(setSyntax),
-		"set-car!":       builtinProcedure(setCarProc),
-		"set-cdr!":       builtinProcedure(setCdrProc),
-		"string?":        builtinProcedure(isStringProc),
-		"string-append":  builtinProcedure(stringAppendProc),
-		"string->number": builtinProcedure(stringToNumberProc),
-		"symbol->string": builtinProcedure(symbolToStringProc),
-		"string->symbol": builtinProcedure(stringToSymbolProc),
-		"symbol?":        builtinProcedure(isSymbolProc),
-		"write":          builtinProcedure(writeProc),
+var (
+	builtinProcedures = Binding{
+		"+":              NewProcedure(plusProc),
+		"-":              NewProcedure(minusProc),
+		"*":              NewProcedure(multiplyProc),
+		"/":              NewProcedure(divideProc),
+		"=":              NewProcedure(equalProc),
+		"<":              NewProcedure(lessThanProc),
+		"<=":             NewProcedure(lessEqualProc),
+		">":              NewProcedure(greaterThanProc),
+		">=":             NewProcedure(greaterEqualProc),
+		"append":         NewProcedure(appendProc),
+		"boolean?":       NewProcedure(isBooleanProc),
+		"car":            NewProcedure(carProc),
+		"cdr":            NewProcedure(cdrProc),
+		"cons":           NewProcedure(consProc),
+		"eq?":            NewProcedure(isEqProc),
+		"equal?":         NewProcedure(isEqualProc),
+		"last":           NewProcedure(lastProc),
+		"length":         NewProcedure(lengthProc),
+		"list":           NewProcedure(listProc),
+		"list?":          NewProcedure(isListProc),
+		"load":           NewProcedure(loadProc),
+		"memq":           NewProcedure(memqProc),
+		"neq?":           NewProcedure(isNeqProc),
+		"number?":        NewProcedure(isNumberProc),
+		"number->string": NewProcedure(numberToStringProc),
+		"pair?":          NewProcedure(isPairProc),
+		"print":          NewProcedure(printProc),
+		"procedure?":     NewProcedure(isProcedureProc),
+		"set-car!":       NewProcedure(setCarProc),
+		"set-cdr!":       NewProcedure(setCdrProc),
+		"string?":        NewProcedure(isStringProc),
+		"string-append":  NewProcedure(stringAppendProc),
+		"string->number": NewProcedure(stringToNumberProc),
+		"string->symbol": NewProcedure(stringToSymbolProc),
+		"symbol?":        NewProcedure(isSymbolProc),
+		"symbol->string": NewProcedure(symbolToStringProc),
+		"write":          NewProcedure(writeProc),
 	}
-}
+)
 
-func builtinProcedure(function func(Object) Object) *Procedure {
-	return &Procedure{function: function}
+func DefaultBinding() Binding {
+	binding := make(Binding)
+	for key, value := range builtinProcedures {
+		binding[key] = value
+	}
+	for key, value := range builtinSyntaxes {
+		binding[key] = value
+	}
+	return binding
 }
 
 func assertListMinimum(arguments Object, minimum int) {

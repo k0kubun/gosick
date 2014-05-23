@@ -15,6 +15,10 @@ type Procedure struct {
 	localBinding Binding
 }
 
+func NewProcedure(function func(Object) Object) *Procedure {
+	return &Procedure{function: function}
+}
+
 // Procedure has closed scope, so it has no parent
 func (p *Procedure) Parent() Object {
 	return nil

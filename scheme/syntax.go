@@ -6,6 +6,12 @@ import (
 	"fmt"
 )
 
+var (
+	builtinSyntaxes = Binding{
+		"set!": NewSyntax(setSyntax),
+	}
+)
+
 type Syntax struct {
 	ObjectBase
 	function func(*Syntax, Object) Object
