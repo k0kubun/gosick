@@ -105,9 +105,6 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 		if object.(*Cond).elseBody != nil {
 			i.DumpAST(object.(*Cond).elseBody, indentLevel+1)
 		}
-	case *Or:
-		i.printWithIndent("Or", indentLevel)
-		i.DumpAST(object.(*Or).body, indentLevel+1)
 	case *Begin:
 		i.printWithIndent("Begin", indentLevel)
 		i.DumpAST(object.(*Begin).body, indentLevel+1)

@@ -11,6 +11,7 @@ var (
 		"set!": NewSyntax(setSyntax),
 		"if":   NewSyntax(ifSyntax),
 		"and":  NewSyntax(andSyntax),
+		"or":   NewSyntax(orSyntax),
 	}
 )
 
@@ -106,6 +107,19 @@ func andSyntax(s *Syntax, arguments Object) Object {
 	return lastResult
 }
 
+func orSyntax(s *Syntax, arguments Object) Object {
+	s.assertListMinimum(arguments, 0)
+
+	lastResult := Object(NewBoolean(false))
+	for _, object := range arguments.(*Pair).Elements() {
+		lastResult = object.Eval()
+		if !lastResult.isBoolean() || lastResult.(*Boolean).value != false {
+			return lastResult
+		}
+	}
+	return lastResult
+}
+
 type Cond struct {
 	ObjectBase
 	cases    []Object
@@ -139,26 +153,6 @@ func (c *Cond) Eval() Object {
 	lastResult := Object(undef)
 	for _, element := range elements {
 		lastResult = element.Eval()
-	}
-	return lastResult
-}
-
-type Or struct {
-	ObjectBase
-	body Object
-}
-
-func NewOr(parent Object) *Or {
-	return &Or{ObjectBase: ObjectBase{parent: parent}}
-}
-
-func (o *Or) Eval() Object {
-	lastResult := Object(NewBoolean(false))
-	for _, object := range o.body.(*Pair).Elements() {
-		lastResult = object.Eval()
-		if !lastResult.isBoolean() || lastResult.(*Boolean).value != false {
-			return lastResult
-		}
 	}
 	return lastResult
 }

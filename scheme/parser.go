@@ -70,9 +70,6 @@ func (p *Parser) parseBlock(parent Object) Object {
 	case "cond":
 		p.NextToken()
 		return p.parseCond(parent)
-	case "or":
-		p.NextToken()
-		return p.parseOr(parent)
 	case "begin":
 		p.NextToken()
 		return p.parseBegin(parent)
@@ -207,12 +204,6 @@ func (p *Parser) parseCond(parent Object) Object {
 		compileError("syntax-error: at least one clause is required for cond")
 	}
 	return cond
-}
-
-func (p *Parser) parseOr(parent Object) Object {
-	orStatement := NewOr(parent)
-	orStatement.body = p.parseList(orStatement)
-	return orStatement
 }
 
 func (p *Parser) parseBegin(parent Object) Object {
