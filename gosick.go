@@ -11,19 +11,19 @@ import (
 )
 
 type Options struct {
-	FileName   string   `short:"f" long:"file" description:"interpret selected scheme source file"`
 	Expression []string `short:"e" long:"expression" description:"excecute given expression"`
 	DumpAST    bool     `short:"a" long:"ast" default:"false" description:"whether leaf nodes are plotted"`
 }
 
 func main() {
 	options := new(Options)
-	if _, err := flags.Parse(options); err != nil {
+	args, err := flags.Parse(options)
+	if err != nil {
 		return
 	}
 
-	if len(options.FileName) > 0 {
-		executeSourceCode(options)
+	if len(args) > 0 {
+		executeSourceCode(args[0], options)
 	} else if len(options.Expression) > 0 {
 		executeExpression(strings.Join(options.Expression, " "), options.DumpAST)
 	} else {
@@ -31,8 +31,8 @@ func main() {
 	}
 }
 
-func executeSourceCode(options *Options) {
-	buffer, err := ioutil.ReadFile(options.FileName)
+func executeSourceCode(filename string, options *Options) {
+	buffer, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
 	}

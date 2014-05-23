@@ -16,7 +16,7 @@ $ go get github.com/k0kubun/gosick
 $ gosick
 
 # Excecute scheme source code
-$ gosick -f source.scm
+$ gosick source.scm
 
 # One liner
 $ gosick -e "(+ 1 2)"
