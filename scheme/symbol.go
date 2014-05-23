@@ -3,17 +3,21 @@
 
 package scheme
 
+var (
+	symbols = make(map[string]*Symbol)
+	undef   = &Symbol{identifier: "#<undef>"}
+)
+
 type Symbol struct {
 	ObjectBase
 	identifier string
 }
 
-func NewSymbol(identifier string, options ...Object) *Symbol {
-	if len(options) > 0 {
-		return &Symbol{ObjectBase: ObjectBase{parent: options[0]}, identifier: identifier}
-	} else {
-		return &Symbol{identifier: identifier}
+func NewSymbol(identifier string) *Symbol {
+	if symbols[identifier] == nil {
+		symbols[identifier] = &Symbol{ObjectBase: ObjectBase{parent: nil}, identifier: identifier}
 	}
+	return symbols[identifier]
 }
 
 func (s *Symbol) Eval() Object {

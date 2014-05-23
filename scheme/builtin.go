@@ -274,7 +274,7 @@ func setCarProc(arguments Object) Object {
 	assertObjectType(pair, "pair")
 
 	pair.(*Pair).Car = object
-	return NewSymbol("#<undef>")
+	return undef
 }
 
 func setCdrProc(arguments Object) Object {
@@ -285,7 +285,7 @@ func setCdrProc(arguments Object) Object {
 	assertObjectType(pair, "pair")
 
 	pair.(*Pair).Cdr = object
-	return NewSymbol("#<undef>")
+	return undef
 }
 
 func lengthProc(arguments Object) Object {
@@ -484,7 +484,7 @@ func writeProc(arguments Object) Object {
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	fmt.Printf("%s", object)
-	return NewSymbol("#<undef>")
+	return undef
 }
 
 func printProc(arguments Object) Object {
@@ -492,5 +492,5 @@ func printProc(arguments Object) Object {
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	fmt.Printf("%s\n", object)
-	return NewSymbol("#<undef>")
+	return undef
 }

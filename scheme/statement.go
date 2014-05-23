@@ -23,7 +23,7 @@ func (s *Set) Eval() Object {
 
 	value := s.value.Eval()
 	s.ObjectBase.updateBinding(variable.(*Variable).identifier, value)
-	return NewSymbol("#<undef>")
+	return undef
 }
 
 type If struct {
@@ -72,11 +72,11 @@ func (c *Cond) Eval() Object {
 	}
 
 	if c.elseBody == nil {
-		return NewSymbol("#<undef>")
+		return undef
 	}
 
 	elements := c.elseBody.(*Pair).Elements()
-	lastResult := Object(NewSymbol("#<undef>"))
+	lastResult := Object(undef)
 	for _, element := range elements {
 		lastResult = element.Eval()
 	}
@@ -133,7 +133,7 @@ func NewBegin(parent Object) *Begin {
 }
 
 func (b *Begin) Eval() Object {
-	lastResult := Object(NewSymbol("#<undef>"))
+	lastResult := Object(undef)
 	for _, object := range b.body.(*Pair).Elements() {
 		lastResult = object.Eval()
 	}
@@ -208,7 +208,7 @@ func (d *Do) Eval() Object {
 			}
 		}
 	}
-	return NewSymbol("#<undef>")
+	return undef
 }
 
 type Iterator struct {

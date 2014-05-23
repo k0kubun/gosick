@@ -191,7 +191,7 @@ func (p *Parser) parseIf(parent Object) Object {
 	ifStatement.trueBody = p.parseObject(ifStatement)
 	if p.PeekToken() == ")" {
 		p.NextToken()
-		ifStatement.falseBody = NewSymbol("#<undef>")
+		ifStatement.falseBody = undef
 	} else {
 		ifStatement.falseBody = p.parseObject(ifStatement)
 		if p.NextToken() != ")" {
@@ -335,7 +335,7 @@ func (p *Parser) parseQuotedObject(parent Object) Object {
 	case IntToken:
 		return NewNumber(token, parent)
 	case IdentifierToken:
-		return NewSymbol(token, parent)
+		return NewSymbol(token)
 	case BooleanToken:
 		return NewBoolean(token, parent)
 	case ')':
