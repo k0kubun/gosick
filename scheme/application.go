@@ -30,11 +30,17 @@ func (a *Application) String() string {
 
 func (a *Application) applyProcedure() Object {
 	evaledObject := a.procedure.Eval()
-	if !evaledObject.isProcedure() {
+
+	if evaledObject.isProcedure() {
+		procedure := evaledObject.(*Procedure)
+		return procedure.Invoke(a.arguments)
+	} else if evaledObject.isSyntax() {
+		syntax := evaledObject.(*Syntax)
+		return syntax.Invoke(a.arguments)
+	} else {
 		runtimeError("invalid application")
+		return nil
 	}
-	procedure := evaledObject.(*Procedure)
-	return procedure.Invoke(a.arguments)
 }
 
 func (a *Application) isApplication() bool {

@@ -67,17 +67,6 @@ func (p *Parser) parseBlock(parent Object) Object {
 	case "let", "let*", "letrec":
 		p.NextToken()
 		return p.parseLet(parent)
-	case "set!":
-		p.NextToken()
-		set := NewSet(parent)
-		object := p.parseList(set)
-		if !object.isList() || object.(*Pair).ListLength() != 2 {
-			compileError("syntax-error: malformed set!")
-		}
-
-		set.variable = object.(*Pair).ElementAt(0)
-		set.value = object.(*Pair).ElementAt(1)
-		return set
 	case "if":
 		p.NextToken()
 		return p.parseIf(parent)

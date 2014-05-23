@@ -2,27 +2,43 @@
 
 package scheme
 
-type Set struct {
+type Syntax struct {
 	ObjectBase
-	variable Object
-	value    Object
+	function func(*Syntax, Object) Object
 }
 
-func NewSet(parent Object) *Set {
-	return &Set{ObjectBase: ObjectBase{parent: parent}}
+func NewSyntax(function func(*Syntax, Object) Object) *Syntax {
+	return &Syntax{ObjectBase: ObjectBase{parent: nil}, function: function}
 }
 
-func (s *Set) Eval() Object {
-	variable := s.variable.Eval()
-	if !variable.isVariable() {
-		variable = variable.Bounder()
-		if variable == nil {
-			compileError("syntax-error: malformed set!")
-		}
+func (s *Syntax) Invoke(arguments Object) Object {
+	return s.function(s, arguments)
+}
+
+func (s *Syntax) isSyntax() bool {
+	return true
+}
+
+func (s *Syntax) malformedError() {
+	compileError("syntax-error: malformed %s", s.Bounder())
+}
+
+func (s *Syntax) assertListEqual(arguments Object, length int) {
+	if !arguments.isList() || arguments.(*Pair).ListLength() != length {
+		s.malformedError()
 	}
+}
 
-	value := s.value.Eval()
-	s.ObjectBase.updateBinding(variable.(*Variable).identifier, value)
+func setSyntax(s *Syntax, arguments Object) Object {
+	s.assertListEqual(arguments, 2)
+	elements := arguments.(*Pair).Elements()
+
+	variable := elements[0]
+	if !variable.isVariable() {
+		s.malformedError()
+	}
+	value := elements[1].Eval()
+	s.Bounder().updateBinding(variable.(*Variable).identifier, value)
 	return undef
 }
 

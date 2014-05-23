@@ -268,6 +268,8 @@ var runtimeErrorTests = []interpreterTest{
 	evalTest("'1'", "1", "*** ERROR: unterminated quote"),
 	evalTest("(last ())", "*** ERROR: pair required: ()"),
 	evalTest("((lambda (x) (set! x 3) x) 2) x", "3", "*** ERROR: Unbound variable: x"),
+
+	evalTest("(define set! 0) (set! define 0)", "set!", "*** ERROR: invalid application"),
 }
 
 var compileErrorTests = []interpreterTest{
