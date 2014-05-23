@@ -104,6 +104,10 @@ var interpreterTests = []interpreterTest{
 	evalTest("(cdr '(1))", "()"),
 	evalTest("(car '(1 2))", "1"),
 	evalTest("(cdr '(1 2))", "(2)"),
+	evalTest("(cadr (cons 1 (cons 2 3)))", "2"),
+	evalTest("(cadr '(1 2 3))", "2"),
+	evalTest("(cddr (cons 1 (cons 2 3)))", "3"),
+	evalTest("(cddr '(1 2 3))", "(3)"),
 
 	evalTest("(list)", "()"),
 	evalTest("(list 1 2 3)", "(1 2 3)"),
