@@ -41,6 +41,7 @@ var interpreterTests = []interpreterTest{
 	evalTest("(quote 12)", "12"),
 	evalTest("(quote hello)", "hello"),
 	evalTest("(quote 'hello)", "'hello"),
+	evalTest("(quote (cond ()))", "(cond ())"),
 	evalTest("(quote #f)", "#f"),
 	evalTest("(quote #t)", "#t"),
 	evalTest("(quote  ( 1 (3) 4 ))", "(1 (3) 4)"),
@@ -265,6 +266,7 @@ var interpreterTests = []interpreterTest{
 	evalTest("or", "#<syntax or>"),
 	evalTest("begin", "#<syntax begin>"),
 	evalTest("quote", "#<syntax quote>"),
+	evalTest("cond", "#<syntax cond>"),
 }
 
 var runtimeErrorTests = []interpreterTest{

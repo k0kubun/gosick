@@ -55,9 +55,6 @@ func (p *Parser) parseBlock(parent Object) Object {
 	case "let", "let*", "letrec":
 		p.NextToken()
 		return p.parseLet(parent)
-	case "cond":
-		p.NextToken()
-		return p.parseCond(parent)
 	case "do":
 		p.NextToken()
 		return p.parseDo(parent)
@@ -141,47 +138,6 @@ func (p *Parser) parseLet(parent Object) Object {
 	application.arguments = applicationArguments
 	application.procedure = procedure
 	return application
-}
-
-func (p *Parser) parseCond(parent Object) Object {
-	cond := NewCond(parent)
-
-	caseExists := false
-	elseExists := false
-	for {
-		// judge case continues or not
-		firstToken := p.NextToken()
-		if firstToken == ")" {
-			break
-		} else if firstToken != "(" {
-			compileError("syntax-error: bad clause in cond")
-		}
-
-		// parse list body
-		if elseExists {
-			compileError("syntax-error: 'else' clause followed by more clauses")
-		}
-		switch p.PeekToken() {
-		case "else":
-			p.NextToken()
-			cond.elseBody = p.parseList(cond)
-			elseExists = true
-		case ")":
-			compileError("syntax-error: bad clause in cond")
-		default:
-			caseBody := p.parseList(cond)
-			if !caseBody.isList() || caseBody.(*Pair).ListLength() == 0 {
-				compileError("syntax-error: bad clause in cond3")
-			}
-			cond.cases = append(cond.cases, caseBody)
-		}
-		caseExists = true
-	}
-
-	if !caseExists {
-		compileError("syntax-error: at least one clause is required for cond")
-	}
-	return cond
 }
 
 func (p *Parser) parseDo(parent Object) Object {
@@ -284,6 +240,10 @@ func (p *Parser) parseQuotedList(parent Object) Object {
 func (p *Parser) ensureAvailability() {
 	// Error message will be printed by interpreter
 	recover()
+}
+
+func syntaxError(format string, a ...interface{}) {
+	compileError("syntax-error: "+format, a...)
 }
 
 func compileError(format string, a ...interface{}) {

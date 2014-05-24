@@ -6,43 +6,6 @@ import (
 	"fmt"
 )
 
-type Cond struct {
-	ObjectBase
-	cases    []Object
-	elseBody Object
-}
-
-func NewCond(parent Object) *Cond {
-	return &Cond{ObjectBase: ObjectBase{parent: parent}}
-}
-
-func (c *Cond) Eval() Object {
-	for _, caseBody := range c.cases {
-		elements := caseBody.(*Pair).Elements()
-		lastResult := elements[0].Eval()
-
-		if lastResult.isBoolean() && lastResult.(*Boolean).value == false {
-			continue
-		}
-
-		for _, element := range elements {
-			lastResult = element.Eval()
-		}
-		return lastResult
-	}
-
-	if c.elseBody == nil {
-		return undef
-	}
-
-	elements := c.elseBody.(*Pair).Elements()
-	lastResult := Object(undef)
-	for _, element := range elements {
-		lastResult = element.Eval()
-	}
-	return lastResult
-}
-
 type Do struct {
 	ObjectBase
 	iterators    []*Iterator
@@ -131,6 +94,7 @@ var (
 	builtinSyntaxes = Binding{
 		"and":    NewSyntax(andSyntax),
 		"begin":  NewSyntax(beginSyntax),
+		"cond":   NewSyntax(condSyntax),
 		"define": NewSyntax(defineSyntax),
 		"if":     NewSyntax(ifSyntax),
 		"or":     NewSyntax(orSyntax),
@@ -212,12 +176,58 @@ func beginSyntax(s *Syntax, arguments Object) Object {
 	return lastResult
 }
 
+func condSyntax(s *Syntax, arguments Object) Object {
+	if arguments.isApplication() {
+		arguments = NewList(arguments.Parent(), arguments)
+	}
+	s.assertListMinimum(arguments, 0)
+	if arguments.(*Pair).ListLength() == 0 {
+		syntaxError("at least one clause is required for cond")
+	}
+	elements := arguments.(*Pair).Elements()
+
+	// First: syntax check
+	elseExists := false
+	for _, element := range elements {
+		if elseExists {
+			syntaxError("'else' clause followed by more clauses")
+		} else if element.isApplication() && element.(*Application).procedure.isVariable() &&
+			element.(*Application).procedure.(*Variable).identifier == "else" {
+			elseExists = true
+		}
+
+		if element.isNull() || !element.isApplication() {
+			syntaxError("bad clause in cond")
+		}
+	}
+
+	// Second: eval cases
+	for _, element := range elements {
+		lastResult := Object(undef)
+		application := element.(*Application)
+
+		isElse := application.procedure.isVariable() && application.procedure.(*Variable).identifier == "else"
+		if !isElse {
+			lastResult = application.procedure.Eval()
+		}
+
+		// first element is 'else' or not '#f'
+		if isElse || !lastResult.isBoolean() || lastResult.(*Boolean).value == true {
+			for _, object := range application.arguments.(*Pair).Elements() {
+				lastResult = object.Eval()
+			}
+			return lastResult
+		}
+	}
+	return undef
+}
+
 func defineSyntax(s *Syntax, arguments Object) Object {
 	s.assertListEqual(arguments, 2)
 	elements := arguments.(*Pair).Elements()
 
 	if !elements[0].isVariable() {
-		runtimeError("Compile Error: syntax-error: (define)")
+		syntaxError("(define)")
 	}
 	variable := elements[0].(*Variable)
 	s.Bounder().bind(variable.identifier, elements[1].Eval())
