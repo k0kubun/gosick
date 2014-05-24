@@ -281,7 +281,7 @@ var runtimeErrorTests = []interpreterTest{
 
 var compileErrorTests = []interpreterTest{
 	evalTest("(quote)", "*** ERROR: Compile Error: syntax-error: malformed quote"),
-	evalTest("(define)", "*** ERROR: Compile Error: syntax-error: (define)"),
+	evalTest("(define)", "*** ERROR: Compile Error: syntax-error: malformed define"),
 
 	evalTest("(-)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),
 	evalTest("(/)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),

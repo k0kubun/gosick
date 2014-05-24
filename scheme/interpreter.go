@@ -89,10 +89,6 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 		i.printWithIndent(fmt.Sprintf("Boolean(%s)", object), indentLevel)
 	case *Variable:
 		i.printWithIndent(fmt.Sprintf("Variable(%s)", object.(*Variable).identifier), indentLevel)
-	case *Definition:
-		i.printWithIndent("Definition", indentLevel)
-		i.DumpAST(object.(*Definition).variable, indentLevel+1)
-		i.DumpAST(object.(*Definition).value, indentLevel+1)
 	case *Procedure:
 		i.printWithIndent("Procedure", indentLevel)
 		i.DumpAST(object.(*Procedure).arguments, indentLevel+1)

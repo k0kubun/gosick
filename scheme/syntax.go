@@ -129,11 +129,12 @@ func NewIterator(parent Object) *Iterator {
 
 var (
 	builtinSyntaxes = Binding{
-		"set!":  NewSyntax(setSyntax),
-		"if":    NewSyntax(ifSyntax),
-		"and":   NewSyntax(andSyntax),
-		"or":    NewSyntax(orSyntax),
-		"begin": NewSyntax(beginSyntax),
+		"and":    NewSyntax(andSyntax),
+		"begin":  NewSyntax(beginSyntax),
+		"define": NewSyntax(defineSyntax),
+		"if":     NewSyntax(ifSyntax),
+		"or":     NewSyntax(orSyntax),
+		"set!":   NewSyntax(setSyntax),
 	}
 )
 
@@ -250,4 +251,17 @@ func beginSyntax(s *Syntax, arguments Object) Object {
 		lastResult = object.Eval()
 	}
 	return lastResult
+}
+
+func defineSyntax(s *Syntax, arguments Object) Object {
+	s.assertListEqual(arguments, 2)
+	elements := arguments.(*Pair).Elements()
+
+	if !elements[0].isVariable() {
+		runtimeError("Compile Error: syntax-error: (define)")
+	}
+	variable := elements[0].(*Variable)
+	s.Bounder().bind(variable.identifier, elements[1].Eval())
+
+	return NewSymbol(variable.identifier)
 }

@@ -49,9 +49,6 @@ func (p *Parser) parseBlock(parent Object) Object {
 	case ")":
 		p.NextToken()
 		return Null
-	case "define":
-		p.NextToken()
-		return p.parseDefinition(parent)
 	case "quote":
 		p.NextToken()
 		object := p.parseQuotedList(parent)
@@ -142,24 +139,6 @@ func (p *Parser) parseLet(parent Object) Object {
 	application.arguments = applicationArguments
 	application.procedure = procedure
 	return application
-}
-
-func (p *Parser) parseDefinition(parent Object) Object {
-	definition := &Definition{ObjectBase: ObjectBase{parent: parent}}
-
-	object := p.parseList(definition)
-	if !object.isList() || object.(*Pair).ListLength() != 2 {
-		runtimeError("Compile Error: syntax-error: (define)")
-	}
-	list := object.(*Pair)
-
-	definition.variable = list.ElementAt(0).(*Variable)
-	definition.variable.setParent(definition)
-
-	definition.value = list.ElementAt(1)
-	definition.value.setParent(definition)
-
-	return definition
 }
 
 func (p *Parser) parseCond(parent Object) Object {
