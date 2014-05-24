@@ -211,6 +211,9 @@ var interpreterTests = []interpreterTest{
 	evalTest("(define x 1) ((lambda (x) (+ x x)) 2)", "x", "4"),
 	evalTest("((lambda (x) (define x 3) x) 2)", "3"),
 	evalTest("((lambda (x y z) (* (+ x y) z)) 1 2 3)", "9"),
+	evalTest("(define x (lambda (x) y)) (define y 1) (x 2)", "x", "y", "1"),
+	evalTest("(define x 0) (define y 0) (define z (lambda (z) (set! x y) (set! y z) x)) (z 1) x y (z 2) x y", "x", "y", "z", "0", "0", "1", "1", "1", "2"),
+	evalTest("(define x (lambda (x) (set! y x))) (define y 3) (x 2) y", "x", "y", "2", "2"),
 	evalTest("(define x (lambda (a) (* 2 a))) (define y (lambda (a) (* 3 a))) (define z (lambda (a b) (x a) (y b))) (* (x 3) (y 2) (z 4 5))", "x", "y", "z", "540"),
 
 	evalTest("(define x 2) (set! x 3) x", "x", "#<undef>", "3"),
