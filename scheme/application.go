@@ -22,10 +22,15 @@ func (a *Application) Eval() Object {
 
 func (a *Application) String() string {
 	// Exceptional handling for special form: quote
+	// FIXME: This is very dirty. Maybe there is a better way.
 	if a.procedure.isVariable() {
 		variable := a.procedure.(*Variable)
 		if variable.boundedObject(variable.identifier) == builtinSyntaxes["quote"] {
-			return "'" + a.arguments.(*Pair).ElementAt(0).String()
+			if a.arguments.isNull() {
+				return "(quote)"
+			} else {
+				return "'" + a.arguments.(*Pair).ElementAt(0).String()
+			}
 		}
 	}
 

@@ -125,7 +125,7 @@ func (s *Syntax) isSyntax() bool {
 }
 
 func (s *Syntax) malformedError() {
-	syntaxError("malformed %s", s.Bounder())
+	syntaxError("malformed %s", s.Bounder().Parent())
 }
 
 func (s *Syntax) assertListEqual(arguments Object, length int) {

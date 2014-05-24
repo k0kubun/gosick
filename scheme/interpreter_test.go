@@ -41,6 +41,7 @@ var interpreterTests = []interpreterTest{
 	evalTest("(quote 12)", "12"),
 	evalTest("(quote hello)", "hello"),
 	evalTest("(quote 'hello)", "'hello"),
+	evalTest("(quote (quote hello))", "'hello"),
 	evalTest("(quote (cond ()))", "(cond ())"),
 	evalTest("(quote #f)", "#f"),
 	evalTest("(quote #t)", "#t"),
@@ -283,8 +284,8 @@ var runtimeErrorTests = []interpreterTest{
 }
 
 var compileErrorTests = []interpreterTest{
-	evalTest("(quote)", "*** ERROR: Compile Error: syntax-error: malformed quote"),
-	evalTest("(define)", "*** ERROR: Compile Error: syntax-error: malformed define"),
+	evalTest("(quote)", "*** ERROR: Compile Error: syntax-error: malformed (quote)"),
+	evalTest("(define)", "*** ERROR: Compile Error: syntax-error: malformed (define)"),
 
 	evalTest("(-)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),
 	evalTest("(/)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),
@@ -316,7 +317,7 @@ var compileErrorTests = []interpreterTest{
 	evalTest("(length (cons 1 2))", "*** ERROR: Compile Error: proper list required for function application or macro use"),
 	evalTest("(memq 'a '(a b c) 1)", "*** ERROR: Compile Error: wrong number of arguments: requires 2, but got 3"),
 	evalTest("(append () 1 ())", "*** ERROR: Compile Error: proper list required for function application or macro use"),
-	evalTest("(set! x 1 1)", "*** ERROR: Compile Error: syntax-error: malformed set!"),
+	evalTest("(set! x 1 1)", "*** ERROR: Compile Error: syntax-error: malformed (set! x 1 1)"),
 
 	evalTest("(cond)", "*** ERROR: Compile Error: syntax-error: at least one clause is required for cond"),
 	evalTest("(cond ())", "*** ERROR: Compile Error: syntax-error: bad clause in cond"),
