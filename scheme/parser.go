@@ -29,7 +29,7 @@ func (p *Parser) parseObject(parent Object) Object {
 	case '(':
 		return p.parseBlock(parent)
 	case '\'':
-		return p.parseQuotedObject(parent)
+		return p.parseSingleQuote(parent)
 	case IntToken:
 		return NewNumber(token, parent)
 	case IdentifierToken:
@@ -49,15 +49,6 @@ func (p *Parser) parseBlock(parent Object) Object {
 	case ")":
 		p.NextToken()
 		return Null
-	case "quote":
-		p.NextToken()
-		object := p.parseQuotedList(parent)
-		if !object.isList() || object.(*Pair).ListLength() != 1 {
-			compileError("syntax-error: malformed quote")
-		}
-		quotedObject := object.(*Pair).Car
-		quotedObject.setParent(parent)
-		return quotedObject
 	case "lambda":
 		p.NextToken()
 		return p.parseProcedure(parent)
@@ -73,6 +64,17 @@ func (p *Parser) parseBlock(parent Object) Object {
 	}
 
 	return p.parseApplication(parent)
+}
+
+// This is for parsing syntax sugar '*** => (quote ***)
+func (p *Parser) parseSingleQuote(parent Object) Object {
+	if len(p.PeekToken()) == 0 {
+		runtimeError("unterminated quote")
+	}
+	application := NewApplication(parent)
+	application.procedure = NewVariable("quote", application)
+	application.arguments = NewList(application, p.parseObject(application))
+	return application
 }
 
 // This function returns *Pair of first object and list from second.
@@ -253,6 +255,8 @@ func (p *Parser) parseQuotedObject(parent Object) Object {
 	switch tokenType {
 	case '(':
 		return p.parseQuotedList(parent)
+	case '\'':
+		return p.parseSingleQuote(parent)
 	case IntToken:
 		return NewNumber(token, parent)
 	case IdentifierToken:

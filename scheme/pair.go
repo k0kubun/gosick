@@ -26,6 +26,14 @@ func NewPair(parent Object) *Pair {
 	return &Pair{ObjectBase: ObjectBase{parent: parent}, Car: nil, Cdr: nil}
 }
 
+func NewList(parent Object, objects ...Object) *Pair {
+	list := NewPair(parent)
+	for _, object := range objects {
+		list.Append(object)
+	}
+	return list
+}
+
 func (p *Pair) Eval() Object {
 	return p
 }

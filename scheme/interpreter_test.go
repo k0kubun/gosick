@@ -40,6 +40,7 @@ var interpreterTests = []interpreterTest{
 
 	evalTest("(quote 12)", "12"),
 	evalTest("(quote hello)", "hello"),
+	evalTest("(quote 'hello)", "'hello"),
 	evalTest("(quote #f)", "#f"),
 	evalTest("(quote #t)", "#t"),
 	evalTest("(quote  ( 1 (3) 4 ))", "(1 (3) 4)"),
@@ -256,6 +257,7 @@ var interpreterTests = []interpreterTest{
 	evalTest("and", "#<syntax and>"),
 	evalTest("or", "#<syntax or>"),
 	evalTest("begin", "#<syntax begin>"),
+	evalTest("quote", "#<syntax quote>"),
 }
 
 // let parsing break tree structure, so not to apply parser test
@@ -277,6 +279,7 @@ var runtimeErrorTests = []interpreterTest{
 	evalTest("((lambda (x) (set! x 3) x) 2) x", "3", "*** ERROR: Unbound variable: x"),
 
 	evalTest("(define set! 0) (set! define 0)", "set!", "*** ERROR: invalid application"),
+	evalTest("(define quote 1) '1", "quote", "*** ERROR: invalid application"),
 }
 
 var compileErrorTests = []interpreterTest{

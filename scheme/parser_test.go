@@ -11,7 +11,8 @@ type parserTest struct {
 
 var parserTests = []parserTest{
 	parseTest(" x ", "x"),
-	parseTest("'( 1 )", "(1)"),
+	parseTest("'( 1 )", "'(1)"),
+	parseTest("''''hello", "''''hello"),
 	parseTest("( x 1 )", "(x 1)"),
 	parseTest("( x ( 1 ) )", "(x (1))"),
 }

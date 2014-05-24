@@ -21,6 +21,14 @@ func (a *Application) Eval() Object {
 }
 
 func (a *Application) String() string {
+	// Exceptional handling for special form: quote
+	if a.procedure.isVariable() {
+		variable := a.procedure.(*Variable)
+		if variable.boundedObject(variable.identifier) == builtinSyntaxes["quote"] {
+			return "'" + a.arguments.(*Pair).ElementAt(0).String()
+		}
+	}
+
 	pair := NewPair(nil)
 	pair.Car = a.procedure
 	pair.Cdr = a.arguments

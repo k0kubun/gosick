@@ -134,6 +134,7 @@ var (
 		"define": NewSyntax(defineSyntax),
 		"if":     NewSyntax(ifSyntax),
 		"or":     NewSyntax(orSyntax),
+		"quote":  NewSyntax(quoteSyntax),
 		"set!":   NewSyntax(setSyntax),
 	}
 )
@@ -264,4 +265,13 @@ func defineSyntax(s *Syntax, arguments Object) Object {
 	s.Bounder().bind(variable.identifier, elements[1].Eval())
 
 	return NewSymbol(variable.identifier)
+}
+
+func quoteSyntax(s *Syntax, arguments Object) Object {
+	s.assertListEqual(arguments, 1)
+	object := arguments.(*Pair).ElementAt(0)
+
+	p := NewParser(object.String())
+	p.Peek()
+	return p.parseQuotedObject(s.Bounder())
 }
