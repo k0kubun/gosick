@@ -21,11 +21,10 @@ func (a *Application) Eval() Object {
 }
 
 func (a *Application) String() string {
-	result := a.Eval()
-	if result == nil {
-		compileError("Procedure appication returns nil")
-	}
-	return result.String()
+	pair := NewPair(nil)
+	pair.Car = a.procedure
+	pair.Cdr = a.arguments
+	return pair.String()
 }
 
 func (a *Application) applyProcedure() Object {

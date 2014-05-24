@@ -37,7 +37,7 @@ func (p *Pair) String() string {
 		length := p.ListLength()
 		tokens := []string{}
 		for i := 0; i < length; i++ {
-			tokens = append(tokens, p.ElementAt(i).Eval().String())
+			tokens = append(tokens, p.ElementAt(i).String())
 		}
 		return fmt.Sprintf("(%s)", strings.Join(tokens, " "))
 	} else {
