@@ -189,35 +189,6 @@ func (s *Syntax) assertListRange(arguments Object, lengthRange []int) {
 	s.malformedError()
 }
 
-func setSyntax(s *Syntax, arguments Object) Object {
-	s.assertListEqual(arguments, 2)
-	elements := arguments.(*Pair).Elements()
-
-	variable := elements[0]
-	if !variable.isVariable() {
-		s.malformedError()
-	}
-	value := elements[1].Eval()
-	s.Bounder().updateBinding(variable.(*Variable).identifier, value)
-	return undef
-}
-
-func ifSyntax(s *Syntax, arguments Object) Object {
-	s.assertListRange(arguments, []int{2, 3})
-	elements := arguments.(*Pair).Elements()
-
-	result := elements[0].Eval()
-	if result.isBoolean() && !result.(*Boolean).value {
-		if len(elements) == 3 {
-			return elements[2].Eval()
-		} else {
-			return undef
-		}
-	} else {
-		return elements[1].Eval()
-	}
-}
-
 func andSyntax(s *Syntax, arguments Object) Object {
 	s.assertListMinimum(arguments, 0)
 
@@ -226,19 +197,6 @@ func andSyntax(s *Syntax, arguments Object) Object {
 		lastResult = object.Eval()
 		if lastResult.isBoolean() && lastResult.(*Boolean).value == false {
 			return NewBoolean(false)
-		}
-	}
-	return lastResult
-}
-
-func orSyntax(s *Syntax, arguments Object) Object {
-	s.assertListMinimum(arguments, 0)
-
-	lastResult := Object(NewBoolean(false))
-	for _, object := range arguments.(*Pair).Elements() {
-		lastResult = object.Eval()
-		if !lastResult.isBoolean() || lastResult.(*Boolean).value != false {
-			return lastResult
 		}
 	}
 	return lastResult
@@ -267,6 +225,35 @@ func defineSyntax(s *Syntax, arguments Object) Object {
 	return NewSymbol(variable.identifier)
 }
 
+func ifSyntax(s *Syntax, arguments Object) Object {
+	s.assertListRange(arguments, []int{2, 3})
+	elements := arguments.(*Pair).Elements()
+
+	result := elements[0].Eval()
+	if result.isBoolean() && !result.(*Boolean).value {
+		if len(elements) == 3 {
+			return elements[2].Eval()
+		} else {
+			return undef
+		}
+	} else {
+		return elements[1].Eval()
+	}
+}
+
+func orSyntax(s *Syntax, arguments Object) Object {
+	s.assertListMinimum(arguments, 0)
+
+	lastResult := Object(NewBoolean(false))
+	for _, object := range arguments.(*Pair).Elements() {
+		lastResult = object.Eval()
+		if !lastResult.isBoolean() || lastResult.(*Boolean).value != false {
+			return lastResult
+		}
+	}
+	return lastResult
+}
+
 func quoteSyntax(s *Syntax, arguments Object) Object {
 	s.assertListEqual(arguments, 1)
 	object := arguments.(*Pair).ElementAt(0)
@@ -274,4 +261,17 @@ func quoteSyntax(s *Syntax, arguments Object) Object {
 	p := NewParser(object.String())
 	p.Peek()
 	return p.parseQuotedObject(s.Bounder())
+}
+
+func setSyntax(s *Syntax, arguments Object) Object {
+	s.assertListEqual(arguments, 2)
+	elements := arguments.(*Pair).Elements()
+
+	variable := elements[0]
+	if !variable.isVariable() {
+		s.malformedError()
+	}
+	value := elements[1].Eval()
+	s.Bounder().updateBinding(variable.(*Variable).identifier, value)
+	return undef
 }
