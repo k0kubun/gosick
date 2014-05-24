@@ -5,7 +5,7 @@ package scheme
 
 var (
 	symbols = make(map[string]*Symbol)
-	undef   = &Symbol{identifier: "#<undef>"}
+	undef   = Object(&Symbol{identifier: "#<undef>"}) // FIXME: this should not be symbol
 )
 
 type Symbol struct {

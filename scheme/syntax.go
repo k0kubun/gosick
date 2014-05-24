@@ -169,7 +169,7 @@ func andSyntax(s *Syntax, arguments Object) Object {
 func beginSyntax(s *Syntax, arguments Object) Object {
 	s.assertListMinimum(arguments, 0)
 
-	lastResult := Object(undef)
+	lastResult := undef
 	for _, object := range arguments.(*Pair).Elements() {
 		lastResult = object.Eval()
 	}
@@ -203,7 +203,7 @@ func condSyntax(s *Syntax, arguments Object) Object {
 
 	// Second: eval cases
 	for _, element := range elements {
-		lastResult := Object(undef)
+		lastResult := undef
 		application := element.(*Application)
 
 		isElse := application.procedure.isVariable() && application.procedure.(*Variable).identifier == "else"
