@@ -252,22 +252,19 @@ var interpreterTests = []interpreterTest{
 	evalTest("(do ((i 1) (j 1)) (#t)))", "#t"),
 	evalTest("(define x \"\") (do ((i 1 (+ i 1)) (j 1 (* j 2))) ((> i 3) x) (begin (set! x (string-append x (number->string i))) (set! x (string-append x (number->string j)))))", "x", "\"112234\""),
 
-	evalTest("set!", "#<syntax set!>"),
-	evalTest("if", "#<syntax if>"),
-	evalTest("and", "#<syntax and>"),
-	evalTest("or", "#<syntax or>"),
-	evalTest("begin", "#<syntax begin>"),
-	evalTest("quote", "#<syntax quote>"),
-}
-
-// let parsing break tree structure, so not to apply parser test
-var letTests = []interpreterTest{
 	evalTest("(let ((x 1)) x)", "1"),
 	evalTest("(let ((x 1) (y 2)) (+ x y))", "3"),
 	evalTest("(let* ((x 1)) x)", "1"),
 	evalTest("(let* ((x 1) (y 2)) (+ x y))", "3"),
 	evalTest("(letrec ((x 1)) x)", "1"),
 	evalTest("(letrec ((x 1) (y 2)) (+ x y))", "3"),
+
+	evalTest("set!", "#<syntax set!>"),
+	evalTest("if", "#<syntax if>"),
+	evalTest("and", "#<syntax and>"),
+	evalTest("or", "#<syntax or>"),
+	evalTest("begin", "#<syntax begin>"),
+	evalTest("quote", "#<syntax quote>"),
 }
 
 var runtimeErrorTests = []interpreterTest{
@@ -279,6 +276,7 @@ var runtimeErrorTests = []interpreterTest{
 	evalTest("((lambda (x) (set! x 3) x) 2) x", "3", "*** ERROR: Unbound variable: x"),
 
 	evalTest("(define set! 0) (set! define 0)", "set!", "*** ERROR: invalid application"),
+	evalTest("(define if 0) (if #t 0)", "if", "*** ERROR: invalid application"),
 	evalTest("(define quote 1) '1", "quote", "*** ERROR: invalid application"),
 }
 
@@ -346,7 +344,6 @@ func runTests(t *testing.T, tests []interpreterTest) {
 
 func TestInterpreter(t *testing.T) {
 	runTests(t, interpreterTests)
-	runTests(t, letTests)
 	runTests(t, runtimeErrorTests)
 	runTests(t, compileErrorTests)
 }
