@@ -35,7 +35,7 @@ $ gosick -h
 - if, cond, and, or, not, begin, do
 - null?, number?, boolean?, procedure?, pair?, list?, symbol?, string?
 - string-append, symbol->string, string->symbol, string->number, number->string
-- lambda, define, set!
+- lambda, define, set!, quote
 - load
 
 ### Pending
