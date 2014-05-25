@@ -45,9 +45,6 @@ func (p *Parser) parseBlock(parent Object) Object {
 	case ")":
 		p.NextToken()
 		return Null
-	case "let", "let*", "letrec":
-		p.NextToken()
-		return p.parseLet(parent)
 	}
 
 	return p.parseApplication(parent)
@@ -81,38 +78,6 @@ func (p *Parser) parseApplication(parent Object) Object {
 	application.procedure = p.parseObject(application)
 	application.arguments = p.parseList(application)
 
-	return application
-}
-
-func (p *Parser) parseLet(parent Object) Object {
-	if p.TokenType() == '(' {
-		p.NextToken()
-	} else {
-		syntaxError("malformed let")
-	}
-
-	application := NewApplication(parent)
-	procedure := new(Procedure)
-
-	procedureArguments := NewPair(procedure)
-	applicationArguments := NewPair(application)
-
-	argumentSets := p.parseList(application)
-	for _, set := range argumentSets.(*Pair).Elements() {
-		if !set.isApplication() || set.(*Application).arguments.(*Pair).ListLength() != 1 {
-			syntaxError("malformed let")
-		}
-
-		procedureArguments.Append(set.(*Application).procedure)
-		applicationArguments.Append(set.(*Application).arguments.(*Pair).ElementAt(0))
-	}
-
-	procedure.arguments = procedureArguments
-	procedure.body = p.parseList(application)
-	procedure.generateFunction(parent)
-
-	application.arguments = applicationArguments
-	application.procedure = procedure
 	return application
 }
 
