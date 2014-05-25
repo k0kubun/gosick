@@ -94,6 +94,16 @@ func (s *Syntax) elementsExact(list Object, value int) []Object {
 	return list.(*Pair).Elements()
 }
 
+// Eval all given objects and returns last object's eval result.
+// When 'objects' is empty, returns #<undef>.
+func evalAll(objects []Object) Object {
+	lastResult := undef
+	for _, object := range objects {
+		lastResult = object.Eval()
+	}
+	return lastResult
+}
+
 func andSyntax(s *Syntax, arguments Object) Object {
 	s.assertListMinimum(arguments, 0)
 
@@ -108,13 +118,8 @@ func andSyntax(s *Syntax, arguments Object) Object {
 }
 
 func beginSyntax(s *Syntax, arguments Object) Object {
-	s.assertListMinimum(arguments, 0)
-
-	lastResult := undef
-	for _, object := range arguments.(*Pair).Elements() {
-		lastResult = object.Eval()
-	}
-	return lastResult
+	elements := s.elementsMinimum(arguments, 0)
+	return evalAll(elements)
 }
 
 func condSyntax(s *Syntax, arguments Object) Object {
@@ -189,8 +194,6 @@ func doSyntax(s *Syntax, arguments Object) Object {
 	//   true: eval testBody and returns its result
 	//  false: eval continueBody, eval iterator's update
 	testElements := s.elementsMinimum(elements[1], 1)
-	continueElements := elements[2:]
-
 	for {
 		testResult := testElements[0].Eval()
 		if !testResult.isBoolean() || testResult.(*Boolean).value == true {
@@ -200,9 +203,7 @@ func doSyntax(s *Syntax, arguments Object) Object {
 			return testResult
 		} else {
 			// eval continueBody
-			for _, element := range continueElements {
-				element.Eval()
-			}
+			evalAll(elements[2:])
 
 			// update iterators
 			for _, iteratorBody := range iteratorBodies {
@@ -252,11 +253,7 @@ func lambdaSyntax(s *Syntax, arguments Object) Object {
 		}
 
 		// returns last eval result
-		lastResult := undef
-		for _, element := range elements[1:] {
-			lastResult = element.Eval()
-		}
-		return lastResult
+		return evalAll(elements[1:])
 	}
 	return closure
 }
@@ -272,11 +269,7 @@ func letSyntax(s *Syntax, arguments Object) Object {
 	}
 
 	// eval body
-	lastResult := undef
-	for _, element := range elements[1:] {
-		lastResult = element.Eval()
-	}
-	return lastResult
+	return evalAll(elements[1:])
 }
 
 func orSyntax(s *Syntax, arguments Object) Object {
