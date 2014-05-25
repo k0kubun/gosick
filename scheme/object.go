@@ -126,33 +126,23 @@ func (o *ObjectBase) scopedBinding() (scopedBinding Binding) {
 	return
 }
 
-// This is for define syntax.
-// Define variable in the top level.
+// Define variable in the most inner closure
 func (o *ObjectBase) define(identifier string, object Object) {
 	if o.parent == nil {
 		runtimeError("Bind called for object whose parent is nil")
 	} else {
-		o.ancestor().define(identifier, object)
+		o.parent.define(identifier, object)
 	}
 }
 
 // This is for set! syntax.
 // Update the variable's value when it is defined.
 func (o *ObjectBase) set(identifier string, object Object) {
-	target := o.Parent()
-	for {
-		if target == nil {
-			break
-		}
-
-		if target.binding()[identifier] != nil {
-			target.binding()[identifier] = object
-			return
-		}
-
-		target = target.Parent()
+	if o.parent == nil {
+		runtimeError("symbol not defined")
+	} else {
+		o.parent.set(identifier, object)
 	}
-	runtimeError("symbol not defined")
 }
 
 func (o *ObjectBase) boundedObject(identifier string) Object {

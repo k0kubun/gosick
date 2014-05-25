@@ -78,3 +78,17 @@ func (p *Procedure) binding() Binding {
 func (p *Procedure) define(identifier string, object Object) {
 	p.localBinding[identifier] = object
 }
+
+// This method is for set! syntax form.
+// Update most inner scoped closure's binding, otherwise raise error.
+func (p *Procedure) set(identifier string, object Object) {
+	if p.localBinding[identifier] == nil {
+		if p.parent == nil {
+			runtimeError("symbol not defined")
+		} else {
+			p.parent.set(identifier, object)
+		}
+	} else {
+		p.localBinding[identifier] = object
+	}
+}
