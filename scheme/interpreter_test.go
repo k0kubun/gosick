@@ -254,8 +254,11 @@ var interpreterTests = []interpreterTest{
 	evalTest("(begin)", "#<undef>"),
 	evalTest("(begin 1 2 3)", "3"),
 	evalTest("(begin (define x 2) (set! x 3) x) x", "3", "3"),
+	evalTest("(define x 1) (define y x) (set! x 3) y", "x", "y", "3", "1"),
 
 	evalTest("(do () (#t)))", "#t"),
+	evalTest("(do ((x #f)) (x) (set! x #t))", "#t"),
+	evalTest("(do ((i (+ 1 2))) (#t i))", "3"),
 	evalTest("(do ((i 1) (j 1)) (#t)))", "#t"),
 	evalTest("(define x \"\") (do ((i 1 (+ i 1)) (j 1 (* j 2))) ((> i 3) x) (begin (set! x (string-append x (number->string i))) (set! x (string-append x (number->string j)))))", "x", "\"112234\""),
 
@@ -291,8 +294,8 @@ var runtimeErrorTests = []interpreterTest{
 }
 
 var compileErrorTests = []interpreterTest{
-	evalTest("(quote)", "*** ERROR: Compile Error: syntax-error: malformed (quote)"),
-	evalTest("(define)", "*** ERROR: Compile Error: syntax-error: malformed (define)"),
+	evalTest("(quote)", "*** ERROR: Compile Error: syntax-error: malformed quote: (quote)"),
+	evalTest("(define)", "*** ERROR: Compile Error: syntax-error: malformed define: (define)"),
 
 	evalTest("(-)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),
 	evalTest("(/)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),
@@ -324,13 +327,14 @@ var compileErrorTests = []interpreterTest{
 	evalTest("(length (cons 1 2))", "*** ERROR: Compile Error: proper list required for function application or macro use"),
 	evalTest("(memq 'a '(a b c) 1)", "*** ERROR: Compile Error: wrong number of arguments: requires 2, but got 3"),
 	evalTest("(append () 1 ())", "*** ERROR: Compile Error: proper list required for function application or macro use"),
-	evalTest("(set! x 1 1)", "*** ERROR: Compile Error: syntax-error: malformed (set! x 1 1)"),
+	evalTest("(set! x 1 1)", "*** ERROR: Compile Error: syntax-error: malformed set!: (set! x 1 1)"),
 
 	evalTest("(cond)", "*** ERROR: Compile Error: syntax-error: at least one clause is required for cond"),
 	evalTest("(cond ())", "*** ERROR: Compile Error: syntax-error: bad clause in cond"),
 	evalTest("(cond (#t) (else) ())", "*** ERROR: Compile Error: syntax-error: 'else' clause followed by more clauses"),
 
-	evalTest("(do () ()))", "*** ERROR: Compile Error: syntax-error: malformed do"),
+	evalTest("(do () ()))", "*** ERROR: Compile Error: syntax-error: malformed do: (do () ())"),
+	evalTest("(do ((i 1 1 1)) (#t))", "*** ERROR: Compile Error: bad update expr in do: (do ((i 1 1 1)) (#t))"),
 }
 
 func evalTest(source string, results ...string) interpreterTest {

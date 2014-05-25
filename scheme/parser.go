@@ -48,9 +48,6 @@ func (p *Parser) parseBlock(parent Object) Object {
 	case "let", "let*", "letrec":
 		p.NextToken()
 		return p.parseLet(parent)
-	case "do":
-		p.NextToken()
-		return p.parseDo(parent)
 	}
 
 	return p.parseApplication(parent)
@@ -117,70 +114,6 @@ func (p *Parser) parseLet(parent Object) Object {
 	application.arguments = applicationArguments
 	application.procedure = procedure
 	return application
-}
-
-func (p *Parser) parseDo(parent Object) Object {
-	do := NewDo(parent)
-
-	// parse iterators
-	if p.NextToken() != "(" {
-		syntaxError("malformed do")
-	}
-	do.iterators = p.parseIterators(do)
-
-	// parse test and a body for the case test is true
-	if p.NextToken() != "(" {
-		syntaxError("malformed do")
-	}
-	do.testBody = p.parseList(do)
-	if do.testBody.(*Pair).ListLength() == 0 {
-		syntaxError("malformed do")
-	}
-
-	// parse a body for the case test is false
-	do.continueBody = p.parseList(do)
-	return do
-}
-
-func (p *Parser) parseIterators(parent Object) []*Iterator {
-	iterators := []*Iterator{}
-	for {
-		// check first is '('
-		firstToken := p.NextToken()
-		if firstToken == ")" {
-			break
-		} else if firstToken != "(" {
-			syntaxError("malformed do")
-		}
-
-		// get element list and assert their number
-		elementList := p.parseList(parent)
-		if !elementList.isList() || elementList.(*Pair).ListLength() < 2 {
-			syntaxError("malformed do")
-		} else if elementList.(*Pair).ListLength() > 3 {
-			syntaxError("bad update expr in do")
-		}
-
-		iterator := NewIterator(parent)
-
-		// get variable
-		iterator.variable = elementList.(*Pair).ElementAt(0)
-		iterator.variable.setParent(iterator)
-
-		// get value
-		iterator.value = elementList.(*Pair).ElementAt(1)
-		iterator.value.setParent(iterator)
-
-		// get update
-		if elementList.(*Pair).ListLength() == 3 {
-			iterator.update = elementList.(*Pair).ElementAt(2)
-			iterator.update.setParent(iterator)
-		}
-
-		iterators = append(iterators, iterator)
-	}
-
-	return iterators
 }
 
 func (p *Parser) parseQuotedObject(parent Object) Object {

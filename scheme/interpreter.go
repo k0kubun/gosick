@@ -98,18 +98,6 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 		i.printWithIndent("Procedure", indentLevel)
 		i.DumpAST(object.(*Procedure).arguments, indentLevel+1)
 		i.DumpAST(object.(*Procedure).body, indentLevel+1)
-	case *Do:
-		i.printWithIndent("Do", indentLevel)
-		for _, iterator := range object.(*Do).iterators {
-			i.DumpAST(iterator, indentLevel+1)
-		}
-		i.DumpAST(object.(*Do).testBody, indentLevel+1)
-		i.DumpAST(object.(*Do).continueBody, indentLevel+1)
-	case *Iterator:
-		i.printWithIndent("Iterator", indentLevel)
-		i.DumpAST(object.(*Iterator).variable, indentLevel+1)
-		i.DumpAST(object.(*Iterator).value, indentLevel+1)
-		i.DumpAST(object.(*Iterator).update, indentLevel+1)
 	}
 }
 

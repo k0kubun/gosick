@@ -6,96 +6,13 @@ import (
 	"fmt"
 )
 
-type Do struct {
-	ObjectBase
-	iterators    []*Iterator
-	testBody     Object
-	continueBody Object
-	localBinding Binding
-}
-
-func NewDo(parent Object) *Do {
-	return &Do{ObjectBase: ObjectBase{parent: parent}, localBinding: Binding{}}
-}
-
-func (d *Do) binding() Binding {
-	return d.localBinding
-}
-
-func (d *Do) scopedBinding() Binding {
-	scopedBinding := make(Binding)
-	for identifier, object := range d.localBinding {
-		scopedBinding[identifier] = object
-	}
-
-	parent := d.Parent()
-	for parent != nil {
-		for identifier, object := range parent.binding() {
-			if scopedBinding[identifier] == nil {
-				scopedBinding[identifier] = object
-			}
-		}
-		parent = parent.Parent()
-	}
-	return scopedBinding
-}
-
-func (d *Do) Eval() Object {
-	// bind iterators
-	for _, iterator := range d.iterators {
-		if iterator.variable.isVariable() {
-			d.localBinding[iterator.variable.(*Variable).identifier] = iterator.value.Eval()
-		}
-	}
-
-	// eval test ->
-	//   true: eval testBody and returns its result
-	//  false: eval continueBody, eval iterator's update
-	testElements := d.testBody.(*Pair).Elements()
-	continueElements := d.continueBody.(*Pair).Elements()
-	for {
-		testResult := testElements[0].Eval()
-		if !testResult.isBoolean() || testResult.(*Boolean).value == true {
-			for _, element := range testElements[1:] {
-				testResult = element.Eval()
-			}
-			return testResult
-		} else {
-			// eval continueBody
-			for _, element := range continueElements {
-				element.Eval()
-			}
-
-			// update iterators
-			for _, iterator := range d.iterators {
-				if iterator.variable.isVariable() {
-					d.localBinding[iterator.variable.(*Variable).identifier] = iterator.update.Eval()
-				}
-			}
-		}
-	}
-	return undef
-}
-
-type Iterator struct {
-	ObjectBase
-	variable Object
-	value    Object
-	update   Object
-}
-
-func NewIterator(parent Object) *Iterator {
-	return &Iterator{ObjectBase: ObjectBase{parent: parent}}
-}
-
-// *** upper from here is legacy code ***
-
 var (
 	builtinSyntaxes = Binding{
 		"and":    NewSyntax(andSyntax),
 		"begin":  NewSyntax(beginSyntax),
 		"cond":   NewSyntax(condSyntax),
 		"define": NewSyntax(defineSyntax),
+		"do":     NewSyntax(doSyntax),
 		"if":     NewSyntax(ifSyntax),
 		"lambda": NewSyntax(lambdaSyntax),
 		"or":     NewSyntax(orSyntax),
@@ -126,7 +43,7 @@ func (s *Syntax) isSyntax() bool {
 }
 
 func (s *Syntax) malformedError() {
-	syntaxError("malformed %s", s.Bounder().Parent())
+	syntaxError("malformed %s: %s", s.Bounder(), s.Bounder().Parent())
 }
 
 func (s *Syntax) assertListEqual(arguments Object, length int) {
@@ -228,12 +145,86 @@ func defineSyntax(s *Syntax, arguments Object) Object {
 	elements := arguments.(*Pair).Elements()
 
 	if !elements[0].isVariable() {
-		syntaxError("(define)")
+		s.malformedError()
 	}
 	variable := elements[0].(*Variable)
 	s.Bounder().define(variable.identifier, elements[1].Eval())
 
 	return NewSymbol(variable.identifier)
+}
+
+// FIXME: This implementation is extremely dirty...
+func doSyntax(s *Syntax, arguments Object) Object {
+	s.assertListMinimum(arguments, 2)
+	elements := arguments.(*Pair).Elements()
+
+	// Insert closure betweetn application and its parent
+	application := arguments.Parent()
+	closure := NewClosure(application.Parent())
+	application.setParent(closure)
+
+	// Parse iterator list and define first variable
+	iteratorList := elements[0]
+	if iteratorList.isApplication() {
+		iteratorList = iteratorList.(*Application).toList()
+	}
+	s.assertListMinimum(iteratorList, 0)
+	iteratorBodies := iteratorList.(*Pair).Elements()
+	for _, iteratorBody := range iteratorBodies {
+		if iteratorBody.isApplication() {
+			iteratorBody = iteratorBody.(*Application).toList()
+		}
+		s.assertListMinimum(iteratorBody, 2)
+		if iteratorBody.(*Pair).ListLength() > 3 {
+			compileError("bad update expr in %s: %s", s.Bounder(), s.Bounder().Parent())
+		}
+
+		variable := iteratorBody.(*Pair).ElementAt(0)
+		value := iteratorBody.(*Pair).ElementAt(1)
+		if variable.isVariable() {
+			closure.localBinding[variable.(*Variable).identifier] = value.Eval()
+		}
+	}
+
+	// eval test ->
+	//   true: eval testBody and returns its result
+	//  false: eval continueBody, eval iterator's update
+	testBody := elements[1]
+	if testBody.isApplication() {
+		testBody = testBody.(*Application).toList()
+	}
+	s.assertListMinimum(testBody, 1)
+	testElements := testBody.(*Pair).Elements()
+	continueElements := elements[2:]
+	for {
+		testResult := testElements[0].Eval()
+		if !testResult.isBoolean() || testResult.(*Boolean).value == true {
+			for _, element := range testElements[1:] {
+				testResult = element.Eval()
+			}
+			return testResult
+		} else {
+			// eval continueBody
+			for _, element := range continueElements {
+				element.Eval()
+			}
+
+			// update iterators
+			for _, iteratorBody := range iteratorBodies {
+				if iteratorBody.isApplication() {
+					iteratorBody = iteratorBody.(*Application).toList()
+				}
+				iteratorElements := iteratorBody.(*Pair).Elements()
+				if len(iteratorElements) == 3 {
+					variable := iteratorElements[0]
+					if variable.isVariable() {
+						closure.localBinding[variable.(*Variable).identifier] = iteratorElements[2].Eval()
+					}
+				}
+			}
+		}
+	}
+	return undef
 }
 
 func ifSyntax(s *Syntax, arguments Object) Object {
