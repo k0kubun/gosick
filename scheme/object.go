@@ -27,7 +27,6 @@ type Object interface {
 	scopedBinding() Binding
 	binding() Binding
 	boundedObject(string) Object
-	ancestor() Object
 }
 
 type Binding map[string]Object
@@ -159,16 +158,4 @@ func (o *ObjectBase) boundedObject(identifier string) Object {
 	}
 
 	return scopedBinding[identifier]
-}
-
-func (o *ObjectBase) ancestor() Object {
-	ancestor := o.Parent()
-	for {
-		if ancestor.Parent() == nil {
-			break
-		} else {
-			ancestor = ancestor.Parent()
-		}
-	}
-	return ancestor
 }
