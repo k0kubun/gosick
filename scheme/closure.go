@@ -13,6 +13,14 @@ func NewClosure(parent Object) *Closure {
 	return &Closure{ObjectBase: ObjectBase{parent: parent}, localBinding: make(Binding)}
 }
 
+// Cover the given object with a new closure.
+// Insert this into tree structure between given object and its parent.
+func WrapClosure(wrappedObject Object) *Closure {
+	closure := NewClosure(wrappedObject.Parent())
+	wrappedObject.setParent(closure)
+	return closure
+}
+
 func (c *Closure) String() string {
 	return "#<closure #f>"
 }

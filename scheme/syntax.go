@@ -74,6 +74,14 @@ func (s *Syntax) assertListRange(arguments Object, lengthRange []int) {
 	s.malformedError()
 }
 
+func applicationToList(object Object) Object {
+	if object.isApplication() {
+		return object.(*Application).toList()
+	} else {
+		return object
+	}
+}
+
 func andSyntax(s *Syntax, arguments Object) Object {
 	s.assertListMinimum(arguments, 0)
 
@@ -98,9 +106,7 @@ func beginSyntax(s *Syntax, arguments Object) Object {
 }
 
 func condSyntax(s *Syntax, arguments Object) Object {
-	if arguments.isApplication() {
-		arguments = NewList(arguments.Parent(), arguments)
-	}
+	arguments = applicationToList(arguments)
 	s.assertListMinimum(arguments, 0)
 	if arguments.(*Pair).ListLength() == 0 {
 		syntaxError("at least one clause is required for cond")
@@ -148,7 +154,7 @@ func defineSyntax(s *Syntax, arguments Object) Object {
 	elements := arguments.(*Pair).Elements()
 
 	if !elements[0].isVariable() {
-		s.malformedError()
+		syntaxError("%s", s.Bounder().Parent())
 	}
 	variable := elements[0].(*Variable)
 	s.Bounder().define(variable.identifier, elements[1].Eval())
@@ -162,21 +168,15 @@ func doSyntax(s *Syntax, arguments Object) Object {
 	elements := arguments.(*Pair).Elements()
 
 	// Insert closure betweetn application and its parent
-	application := arguments.Parent()
-	closure := NewClosure(application.Parent())
-	application.setParent(closure)
+	closure := WrapClosure(arguments.Parent())
 
 	// Parse iterator list and define first variable
-	iteratorList := elements[0]
-	if iteratorList.isApplication() {
-		iteratorList = iteratorList.(*Application).toList()
-	}
+	iteratorList := applicationToList(elements[0])
 	s.assertListMinimum(iteratorList, 0)
 	iteratorBodies := iteratorList.(*Pair).Elements()
+
 	for _, iteratorBody := range iteratorBodies {
-		if iteratorBody.isApplication() {
-			iteratorBody = iteratorBody.(*Application).toList()
-		}
+		iteratorBody = applicationToList(iteratorBody)
 		s.assertListMinimum(iteratorBody, 2)
 		if iteratorBody.(*Pair).ListLength() > 3 {
 			compileError("bad update expr in %s: %s", s.Bounder(), s.Bounder().Parent())
@@ -192,13 +192,11 @@ func doSyntax(s *Syntax, arguments Object) Object {
 	// eval test ->
 	//   true: eval testBody and returns its result
 	//  false: eval continueBody, eval iterator's update
-	testBody := elements[1]
-	if testBody.isApplication() {
-		testBody = testBody.(*Application).toList()
-	}
+	testBody := applicationToList(elements[1])
 	s.assertListMinimum(testBody, 1)
 	testElements := testBody.(*Pair).Elements()
 	continueElements := elements[2:]
+
 	for {
 		testResult := testElements[0].Eval()
 		if !testResult.isBoolean() || testResult.(*Boolean).value == true {
@@ -214,10 +212,9 @@ func doSyntax(s *Syntax, arguments Object) Object {
 
 			// update iterators
 			for _, iteratorBody := range iteratorBodies {
-				if iteratorBody.isApplication() {
-					iteratorBody = iteratorBody.(*Application).toList()
-				}
+				iteratorBody = applicationToList(iteratorBody)
 				iteratorElements := iteratorBody.(*Pair).Elements()
+
 				if len(iteratorElements) == 3 {
 					variable := iteratorElements[0]
 					if variable.isVariable() {
@@ -251,15 +248,10 @@ func lambdaSyntax(s *Syntax, arguments Object) Object {
 	elements := arguments.(*Pair).Elements()
 
 	// Insert closure between application and its parent
-	application := arguments.Parent()
-	closure := NewClosure(application.Parent())
-	application.setParent(closure)
+	closure := WrapClosure(arguments.Parent())
 
 	// Parse argument list
-	argumentList := elements[0]
-	if argumentList.isApplication() {
-		argumentList = argumentList.(*Application).toList()
-	}
+	argumentList := applicationToList(elements[0])
 	s.assertListMinimum(argumentList, 0)
 	variables := argumentList.(*Pair).Elements()
 
@@ -295,23 +287,17 @@ func letSyntax(s *Syntax, arguments Object) Object {
 	elements := arguments.(*Pair).Elements()
 
 	// Insert closure between application and its parent
-	application := arguments.Parent()
-	closure := NewClosure(application.Parent())
-	application.setParent(closure)
+	closure := WrapClosure(arguments.Parent())
 
 	// parse argument list
 	argumentList := elements[0]
-	if argumentList.isApplication() {
-		argumentList = argumentList.(*Application).toList()
-	}
+	argumentList = applicationToList(argumentList)
 	s.assertListMinimum(argumentList, 0)
 	argumentElements := argumentList.(*Pair).Elements()
 
 	// define arguments to local scope
 	for _, argumentElement := range argumentElements {
-		if argumentElement.isApplication() {
-			argumentElement = argumentElement.(*Application).toList()
-		}
+		argumentElement = applicationToList(argumentElement)
 		s.assertListEqual(argumentElement, 2)
 		variable := argumentElement.(*Pair).ElementAt(0)
 		if variable.isVariable() {
