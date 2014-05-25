@@ -156,7 +156,19 @@ func (o *ObjectBase) set(identifier string, object Object) {
 }
 
 func (o *ObjectBase) boundedObject(identifier string) Object {
-	return o.scopedBinding()[identifier]
+	scopedBinding := make(Binding)
+	parent := o.Parent()
+
+	for parent != nil {
+		for identifier, object := range parent.binding() {
+			if scopedBinding[identifier] == nil {
+				scopedBinding[identifier] = object
+			}
+		}
+		parent = parent.Parent()
+	}
+
+	return scopedBinding[identifier]
 }
 
 func (o *ObjectBase) ancestor() Object {

@@ -19,15 +19,6 @@ func NewProcedure(function func(Object) Object) *Procedure {
 	return &Procedure{function: function}
 }
 
-// Procedure has closed scope, so it has no parent
-func (p *Procedure) Parent() Object {
-	return nil
-}
-
-func (p *Procedure) ancestor() Object {
-	return p
-}
-
 func (p *Procedure) generateFunction(parent Object) {
 	// Create local binding for procedure
 	localBinding := parent.scopedBinding()
@@ -81,10 +72,6 @@ func (p *Procedure) isProcedure() bool {
 }
 
 func (p *Procedure) binding() Binding {
-	return p.localBinding
-}
-
-func (p *Procedure) scopedBinding() Binding {
 	return p.localBinding
 }
 
