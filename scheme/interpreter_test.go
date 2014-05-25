@@ -276,6 +276,9 @@ var interpreterTests = []interpreterTest{
 	evalTest("begin", "#<syntax begin>"),
 	evalTest("quote", "#<syntax quote>"),
 	evalTest("cond", "#<syntax cond>"),
+	evalTest("lambda", "#<syntax lambda>"),
+	evalTest("let", "#<syntax let>"),
+	evalTest("do", "#<syntax do>"),
 
 	evalTest("+", "#<subr +>"),
 }

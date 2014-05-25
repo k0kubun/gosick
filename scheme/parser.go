@@ -23,7 +23,7 @@ func (p *Parser) parseObject(parent Object) Object {
 
 	switch tokenType {
 	case '(':
-		return p.parseBlock(parent)
+		return p.parseApplication(parent)
 	case '\'':
 		return p.parseSingleQuote(parent)
 	case IntToken:
@@ -38,16 +38,6 @@ func (p *Parser) parseObject(parent Object) Object {
 		return nil
 	}
 	return nil
-}
-
-func (p *Parser) parseBlock(parent Object) Object {
-	switch p.PeekToken() {
-	case ")":
-		p.NextToken()
-		return Null
-	}
-
-	return p.parseApplication(parent)
 }
 
 // This is for parsing syntax sugar '*** => (quote ***)
@@ -74,6 +64,10 @@ func (p *Parser) parseList(parent Object) Object {
 }
 
 func (p *Parser) parseApplication(parent Object) Object {
+	if p.PeekToken() == ")" {
+		p.NextToken()
+		return Null
+	}
 	application := NewApplication(parent)
 	application.procedure = p.parseObject(application)
 	application.arguments = p.parseList(application)
