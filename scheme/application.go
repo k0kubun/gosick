@@ -10,6 +10,10 @@ type Application struct {
 	arguments Object
 }
 
+type Invoker interface {
+	Invoke(Object) Object
+}
+
 func NewApplication(parent Object) *Application {
 	return &Application{
 		ObjectBase: ObjectBase{parent: parent},
@@ -40,16 +44,22 @@ func (a *Application) String() string {
 	return pair.String()
 }
 
+func (a *Application) toList() *Pair {
+	list := NewPair(a.Parent())
+	list.Car = a.procedure
+	list.Car.setParent(list)
+	list.Cdr = a.arguments
+	list.Cdr.setParent(list)
+	return list
+}
+
 func (a *Application) applyProcedure() Object {
 	evaledObject := a.procedure.Eval()
 
-	if evaledObject.isProcedure() {
-		procedure := evaledObject.(*Procedure)
-		return procedure.Invoke(a.arguments)
-	} else if evaledObject.isSyntax() {
-		syntax := evaledObject.(*Syntax)
-		return syntax.Invoke(a.arguments)
-	} else {
+	switch evaledObject.(type) {
+	case Invoker:
+		return evaledObject.(Invoker).Invoke(a.arguments)
+	default:
 		runtimeError("invalid application")
 		return nil
 	}
