@@ -74,6 +74,17 @@ func (s *Syntax) assertListRange(arguments Object, lengthRange []int) {
 	s.malformedError()
 }
 
+// Returns elements in list object.
+// With type assertion (syntax form specific error message)
+// and auto cast to list from application
+func (s *Syntax) elementsMinimum(list Object, minimum int) []Object {
+	if list.isApplication() {
+		list = list.(*Application).toList()
+	}
+	s.assertListMinimum(list, minimum)
+	return list.(*Pair).Elements()
+}
+
 func applicationToList(object Object) Object {
 	if object.isApplication() {
 		return object.(*Application).toList()
@@ -106,12 +117,10 @@ func beginSyntax(s *Syntax, arguments Object) Object {
 }
 
 func condSyntax(s *Syntax, arguments Object) Object {
-	arguments = applicationToList(arguments)
-	s.assertListMinimum(arguments, 0)
-	if arguments.(*Pair).ListLength() == 0 {
+	elements := s.elementsMinimum(arguments, 0)
+	if len(elements) == 0 {
 		syntaxError("at least one clause is required for cond")
 	}
-	elements := arguments.(*Pair).Elements()
 
 	// First: syntax check
 	elseExists := false
@@ -162,28 +171,20 @@ func defineSyntax(s *Syntax, arguments Object) Object {
 	return NewSymbol(variable.identifier)
 }
 
-// FIXME: This implementation is extremely dirty...
 func doSyntax(s *Syntax, arguments Object) Object {
-	s.assertListMinimum(arguments, 2)
-	elements := arguments.(*Pair).Elements()
-
-	// Insert closure betweetn application and its parent
 	closure := WrapClosure(arguments.Parent())
 
 	// Parse iterator list and define first variable
-	iteratorList := applicationToList(elements[0])
-	s.assertListMinimum(iteratorList, 0)
-	iteratorBodies := iteratorList.(*Pair).Elements()
-
+	elements := s.elementsMinimum(arguments, 2)
+	iteratorBodies := s.elementsMinimum(elements[0], 0)
 	for _, iteratorBody := range iteratorBodies {
-		iteratorBody = applicationToList(iteratorBody)
-		s.assertListMinimum(iteratorBody, 2)
-		if iteratorBody.(*Pair).ListLength() > 3 {
+		iteratorElements := s.elementsMinimum(iteratorBody, 2)
+		if len(iteratorElements) > 3 {
 			compileError("bad update expr in %s: %s", s.Bounder(), s.Bounder().Parent())
 		}
 
-		variable := iteratorBody.(*Pair).ElementAt(0)
-		value := iteratorBody.(*Pair).ElementAt(1)
+		variable := iteratorElements[0]
+		value := iteratorElements[1]
 		if variable.isVariable() {
 			closure.localBinding[variable.(*Variable).identifier] = value.Eval()
 		}
@@ -192,9 +193,7 @@ func doSyntax(s *Syntax, arguments Object) Object {
 	// eval test ->
 	//   true: eval testBody and returns its result
 	//  false: eval continueBody, eval iterator's update
-	testBody := applicationToList(elements[1])
-	s.assertListMinimum(testBody, 1)
-	testElements := testBody.(*Pair).Elements()
+	testElements := s.elementsMinimum(elements[1], 1)
 	continueElements := elements[2:]
 
 	for {
@@ -212,8 +211,7 @@ func doSyntax(s *Syntax, arguments Object) Object {
 
 			// update iterators
 			for _, iteratorBody := range iteratorBodies {
-				iteratorBody = applicationToList(iteratorBody)
-				iteratorElements := iteratorBody.(*Pair).Elements()
+				iteratorElements := s.elementsMinimum(iteratorBody, 2)
 
 				if len(iteratorElements) == 3 {
 					variable := iteratorElements[0]
@@ -244,22 +242,15 @@ func ifSyntax(s *Syntax, arguments Object) Object {
 }
 
 func lambdaSyntax(s *Syntax, arguments Object) Object {
-	s.assertListMinimum(arguments, 1)
-	elements := arguments.(*Pair).Elements()
-
-	// Insert closure between application and its parent
 	closure := WrapClosure(arguments.Parent())
 
-	// Parse argument list
-	argumentList := applicationToList(elements[0])
-	s.assertListMinimum(argumentList, 0)
-	variables := argumentList.(*Pair).Elements()
+	elements := s.elementsMinimum(arguments, 1)
+	variables := s.elementsMinimum(elements[0], 0)
 
 	// generate function
 	closure.function = func(givenArguments Object) Object {
 		// assert given arguments
-		s.assertListMinimum(givenArguments, 0)
-		givenElements := givenArguments.(*Pair).Elements()
+		givenElements := s.elementsMinimum(givenArguments, 0)
 		if len(variables) != len(givenElements) {
 			compileError("wrong number of arguments: requires %d, but got %d", len(variables), len(givenElements))
 		}
@@ -283,25 +274,17 @@ func lambdaSyntax(s *Syntax, arguments Object) Object {
 }
 
 func letSyntax(s *Syntax, arguments Object) Object {
-	s.assertListMinimum(arguments, 1)
-	elements := arguments.(*Pair).Elements()
-
-	// Insert closure between application and its parent
 	closure := WrapClosure(arguments.Parent())
 
-	// parse argument list
-	argumentList := elements[0]
-	argumentList = applicationToList(argumentList)
-	s.assertListMinimum(argumentList, 0)
-	argumentElements := argumentList.(*Pair).Elements()
+	elements := s.elementsMinimum(arguments, 1)
+	argumentElements := s.elementsMinimum(elements[0], 0)
 
 	// define arguments to local scope
 	for _, argumentElement := range argumentElements {
-		argumentElement = applicationToList(argumentElement)
-		s.assertListEqual(argumentElement, 2)
-		variable := argumentElement.(*Pair).ElementAt(0)
+		variableElements := s.elementsMinimum(argumentElement, 2)
+		variable := variableElements[0]
 		if variable.isVariable() {
-			closure.localBinding[variable.(*Variable).identifier] = argumentElement.(*Pair).ElementAt(1).Eval()
+			closure.localBinding[variable.(*Variable).identifier] = variableElements[1].Eval()
 		}
 	}
 
