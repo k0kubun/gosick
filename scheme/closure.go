@@ -43,6 +43,13 @@ func (c *Closure) define(identifier string, object Object) {
 	c.localBinding[identifier] = object
 }
 
+// If variable is *Variable, define value.
+func (c *Closure) tryDefine(variable Object, object Object) {
+	if variable.isVariable() {
+		c.localBinding[variable.(*Variable).identifier] = object
+	}
+}
+
 // This method is for set! syntax form.
 // Update most inner scoped closure's binding, otherwise raise error.
 func (c *Closure) set(identifier string, object Object) {

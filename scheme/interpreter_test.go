@@ -340,6 +340,7 @@ var compileErrorTests = []interpreterTest{
 	evalTest("(do ((i 1 1 1)) (#t))", "*** ERROR: Compile Error: bad update expr in do: (do ((i 1 1 1)) (#t))"),
 
 	evalTest("(define 1 1)", "*** ERROR: Compile Error: syntax-error: (define 1 1)"),
+	evalTest("(let ((x 1 1)))", "*** ERROR: Compile Error: syntax-error: malformed let: (let ((x 1 1)))"),
 }
 
 func evalTest(source string, results ...string) interpreterTest {

@@ -74,9 +74,8 @@ func (s *Syntax) assertListRange(arguments Object, lengthRange []int) {
 	s.malformedError()
 }
 
-// Returns elements in list object.
-// With type assertion (syntax form specific error message)
-// and auto cast to list from application
+// Returns elements in list object with type assertion (syntax form specific error message)
+// Assertion is minimum
 func (s *Syntax) elementsMinimum(list Object, minimum int) []Object {
 	if list.isApplication() {
 		list = list.(*Application).toList()
@@ -85,12 +84,14 @@ func (s *Syntax) elementsMinimum(list Object, minimum int) []Object {
 	return list.(*Pair).Elements()
 }
 
-func applicationToList(object Object) Object {
-	if object.isApplication() {
-		return object.(*Application).toList()
-	} else {
-		return object
+// Returns elements in list object with type assertion (syntax form specific error message)
+// Assertion is equal
+func (s *Syntax) elementsExact(list Object, value int) []Object {
+	if list.isApplication() {
+		list = list.(*Application).toList()
 	}
+	s.assertListEqual(list, value)
+	return list.(*Pair).Elements()
 }
 
 func andSyntax(s *Syntax, arguments Object) Object {
@@ -159,8 +160,7 @@ func condSyntax(s *Syntax, arguments Object) Object {
 }
 
 func defineSyntax(s *Syntax, arguments Object) Object {
-	s.assertListEqual(arguments, 2)
-	elements := arguments.(*Pair).Elements()
+	elements := s.elementsExact(arguments, 2)
 
 	if !elements[0].isVariable() {
 		syntaxError("%s", s.Bounder().Parent())
@@ -182,12 +182,7 @@ func doSyntax(s *Syntax, arguments Object) Object {
 		if len(iteratorElements) > 3 {
 			compileError("bad update expr in %s: %s", s.Bounder(), s.Bounder().Parent())
 		}
-
-		variable := iteratorElements[0]
-		value := iteratorElements[1]
-		if variable.isVariable() {
-			closure.localBinding[variable.(*Variable).identifier] = value.Eval()
-		}
+		closure.tryDefine(iteratorElements[0], iteratorElements[1].Eval())
 	}
 
 	// eval test ->
@@ -212,12 +207,8 @@ func doSyntax(s *Syntax, arguments Object) Object {
 			// update iterators
 			for _, iteratorBody := range iteratorBodies {
 				iteratorElements := s.elementsMinimum(iteratorBody, 2)
-
 				if len(iteratorElements) == 3 {
-					variable := iteratorElements[0]
-					if variable.isVariable() {
-						closure.localBinding[variable.(*Variable).identifier] = iteratorElements[2].Eval()
-					}
+					closure.tryDefine(iteratorElements[0], iteratorElements[2].Eval())
 				}
 			}
 		}
@@ -257,10 +248,7 @@ func lambdaSyntax(s *Syntax, arguments Object) Object {
 
 		// define arguments to local scope
 		for index, variable := range variables {
-			object := givenElements[index].Eval()
-			if variable.isVariable() {
-				closure.localBinding[variable.(*Variable).identifier] = object
-			}
+			closure.tryDefine(variable, givenElements[index].Eval())
 		}
 
 		// returns last eval result
@@ -275,17 +263,12 @@ func lambdaSyntax(s *Syntax, arguments Object) Object {
 
 func letSyntax(s *Syntax, arguments Object) Object {
 	closure := WrapClosure(arguments.Parent())
-
 	elements := s.elementsMinimum(arguments, 1)
-	argumentElements := s.elementsMinimum(elements[0], 0)
 
 	// define arguments to local scope
-	for _, argumentElement := range argumentElements {
-		variableElements := s.elementsMinimum(argumentElement, 2)
-		variable := variableElements[0]
-		if variable.isVariable() {
-			closure.localBinding[variable.(*Variable).identifier] = variableElements[1].Eval()
-		}
+	for _, argumentElement := range s.elementsMinimum(elements[0], 0) {
+		variableElements := s.elementsExact(argumentElement, 2)
+		closure.tryDefine(variableElements[0], variableElements[1])
 	}
 
 	// eval body
@@ -319,8 +302,7 @@ func quoteSyntax(s *Syntax, arguments Object) Object {
 }
 
 func setSyntax(s *Syntax, arguments Object) Object {
-	s.assertListEqual(arguments, 2)
-	elements := arguments.(*Pair).Elements()
+	elements := s.elementsExact(arguments, 2)
 
 	variable := elements[0]
 	if !variable.isVariable() {
