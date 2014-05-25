@@ -147,6 +147,8 @@ var interpreterTests = []interpreterTest{
 
 	evalTest("(procedure? 1)", "#f"),
 	evalTest("(procedure? +)", "#t"),
+	evalTest("(procedure? (lambda (x)))", "#t"),
+	evalTest("(procedure? define)", "#f"),
 
 	evalTest("(boolean? 1)", "#f"),
 	evalTest("(boolean? ())", "#f"),
@@ -271,6 +273,8 @@ var interpreterTests = []interpreterTest{
 	evalTest("begin", "#<syntax begin>"),
 	evalTest("quote", "#<syntax quote>"),
 	evalTest("cond", "#<syntax cond>"),
+
+	evalTest("+", "#<subr +>"),
 }
 
 var runtimeErrorTests = []interpreterTest{

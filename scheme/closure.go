@@ -25,6 +25,10 @@ func (c *Closure) isClosure() bool {
 	return true
 }
 
+func (c *Closure) isProcedure() bool {
+	return true
+}
+
 // This method is for define syntax form.
 // Define a local variable in the most inner closure.
 func (c *Closure) define(identifier string, object Object) {
