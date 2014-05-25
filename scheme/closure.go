@@ -67,7 +67,3 @@ func (c *Closure) set(identifier string, object Object) {
 func (c *Closure) binding() Binding {
 	return c.localBinding
 }
-
-func (c *Closure) scopedBinding() Binding {
-	return c.localBinding
-}
