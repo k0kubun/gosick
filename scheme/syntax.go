@@ -230,7 +230,7 @@ func defineSyntax(s *Syntax, arguments Object) Object {
 		syntaxError("(define)")
 	}
 	variable := elements[0].(*Variable)
-	s.Bounder().bind(variable.identifier, elements[1].Eval())
+	s.Bounder().define(variable.identifier, elements[1].Eval())
 
 	return NewSymbol(variable.identifier)
 }
@@ -282,6 +282,6 @@ func setSyntax(s *Syntax, arguments Object) Object {
 		s.malformedError()
 	}
 	value := elements[1].Eval()
-	s.Bounder().updateBinding(variable.(*Variable).identifier, value)
+	s.Bounder().set(variable.(*Variable).identifier, value)
 	return undef
 }

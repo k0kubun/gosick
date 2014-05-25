@@ -26,7 +26,7 @@ func TestParser(t *testing.T) {
 		i := NewInterpreter(test.source)
 		parseResults := []string{}
 		for i.Peek() != EOF {
-			object := i.Parse(i)
+			object := i.Parse(i.closure)
 			if object != nil {
 				parseResults = append(parseResults, object.String())
 			}

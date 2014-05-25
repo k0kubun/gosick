@@ -15,13 +15,18 @@ import (
 )
 
 type Interpreter struct {
-	ObjectBase
 	*Parser
-	topLevel Binding
+	closure *Closure
 }
 
 func NewInterpreter(source string) *Interpreter {
-	i := &Interpreter{Parser: NewParser(source), topLevel: DefaultBinding()}
+	i := &Interpreter{
+		Parser: NewParser(source),
+		closure: &Closure{
+			ObjectBase:   ObjectBase{parent: nil},
+			localBinding: DefaultBinding(),
+		},
+	}
 	i.loadBuiltinLibrary("builtin")
 	return i
 }
@@ -49,7 +54,7 @@ func (i *Interpreter) EvalSource(dumpAST bool) (results []string) {
 	}()
 
 	for i.Peek() != scanner.EOF {
-		expression := i.Parser.Parse(i)
+		expression := i.Parser.Parse(i.closure)
 		if dumpAST {
 			fmt.Printf("\n*** AST ***\n")
 			i.DumpAST(expression, 0)
@@ -106,18 +111,6 @@ func (i *Interpreter) DumpAST(object Object, indentLevel int) {
 		i.DumpAST(object.(*Iterator).value, indentLevel+1)
 		i.DumpAST(object.(*Iterator).update, indentLevel+1)
 	}
-}
-
-func (i *Interpreter) bind(identifier string, object Object) {
-	i.topLevel[identifier] = object
-}
-
-func (i *Interpreter) binding() Binding {
-	return i.topLevel
-}
-
-func (i *Interpreter) scopedBinding() Binding {
-	return i.topLevel
 }
 
 func (i *Interpreter) printWithIndent(text string, indentLevel int) {

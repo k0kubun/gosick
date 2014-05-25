@@ -22,8 +22,8 @@ type Object interface {
 	isString() bool
 	isVariable() bool
 	isApplication() bool
-	bind(string, Object)
-	updateBinding(string, Object)
+	define(string, Object)
+	set(string, Object)
 	scopedBinding() Binding
 	binding() Binding
 	boundedObject(string) Object
@@ -128,17 +128,17 @@ func (o *ObjectBase) scopedBinding() (scopedBinding Binding) {
 
 // This is for define syntax.
 // Define variable in the top level.
-func (o *ObjectBase) bind(identifier string, object Object) {
+func (o *ObjectBase) define(identifier string, object Object) {
 	if o.parent == nil {
 		runtimeError("Bind called for object whose parent is nil")
 	} else {
-		o.ancestor().bind(identifier, object)
+		o.ancestor().define(identifier, object)
 	}
 }
 
 // This is for set! syntax.
 // Update the variable's value when it is defined.
-func (o *ObjectBase) updateBinding(identifier string, object Object) {
+func (o *ObjectBase) set(identifier string, object Object) {
 	target := o.Parent()
 	for {
 		if target == nil {

@@ -88,6 +88,6 @@ func (p *Procedure) scopedBinding() Binding {
 	return p.localBinding
 }
 
-func (p *Procedure) bind(identifier string, object Object) {
+func (p *Procedure) define(identifier string, object Object) {
 	p.localBinding[identifier] = object
 }
