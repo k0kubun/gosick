@@ -35,13 +35,12 @@ $ gosick -h
 - if, cond, and, or, not, begin, do
 - null?, number?, boolean?, procedure?, pair?, list?, symbol?, string?
 - string-append, symbol->string, string->symbol, string->number, number->string
-- lambda, define, set!, quote
+- let, let*, letrec, lambda, define, set!, quote
 - load
 
 ### Pending
 | Name | Description |
 |:-----|:------------|
-| let, let*, letrec | eval order is incorrect, and they are the same implementation |
 | memq, eq?, neq?, equal? | only Number and Symbol are supported |
 | write, print | second argument (choosing output port) is not implemented |
 

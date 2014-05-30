@@ -262,12 +262,17 @@ var interpreterTests = []interpreterTest{
 	evalTest("(do ((i 1) (j 1)) (#t)))", "#t"),
 	evalTest("(define x \"\") (do ((i 1 (+ i 1)) (j 1 (* j 2))) ((> i 3) x) (begin (set! x (string-append x (number->string i))) (set! x (string-append x (number->string j)))))", "x", "\"112234\""),
 
-	evalTest("(let ((x 1)) x)", "1"),
 	evalTest("(let ((x 1) (y 2)) (+ x y))", "3"),
-	evalTest("(let* ((x 1)) x)", "1"),
+	evalTest("(let ((x 1) (y x)) y)", "*** ERROR: unbound variable: x"),
+	evalTest("(let ((x (lambda () x))) (x))", "*** ERROR: unbound variable: x"),
+
 	evalTest("(let* ((x 1) (y 2)) (+ x y))", "3"),
-	evalTest("(letrec ((x 1)) x)", "1"),
+	evalTest("(let* ((x 1) (y x)) y)", "1"),
+	evalTest("(let* ((x (lambda () x))) (x))", "*** ERROR: unbound variable: x"),
+
 	evalTest("(letrec ((x 1) (y 2)) (+ x y))", "3"),
+	evalTest("(letrec ((x 1) (y x)) y)", "*** ERROR: unbound variable: x"),
+	evalTest("(letrec ((x (lambda () x))) (x))", "#<closure x>"),
 
 	evalTest("set!", "#<syntax set!>"),
 	evalTest("if", "#<syntax if>"),
@@ -285,11 +290,11 @@ var interpreterTests = []interpreterTest{
 
 var runtimeErrorTests = []interpreterTest{
 	evalTest("(1)", "*** ERROR: invalid application"),
-	evalTest("hello", "*** ERROR: Unbound variable: hello"),
-	evalTest("((lambda (x) (define y 1) 1) 1) y", "1", "*** ERROR: Unbound variable: y"),
+	evalTest("hello", "*** ERROR: unbound variable: hello"),
+	evalTest("((lambda (x) (define y 1) 1) 1) y", "1", "*** ERROR: unbound variable: y"),
 	evalTest("'1'", "1", "*** ERROR: unterminated quote"),
 	evalTest("(last ())", "*** ERROR: pair required: ()"),
-	evalTest("((lambda (x) (set! x 3) x) 2) x", "3", "*** ERROR: Unbound variable: x"),
+	evalTest("((lambda (x) (set! x 3) x) 2) x", "3", "*** ERROR: unbound variable: x"),
 
 	evalTest("(define set! 0) (set! define 0)", "set!", "*** ERROR: invalid application"),
 	evalTest("(define if 0) (if #t 0)", "if", "*** ERROR: invalid application"),
@@ -379,7 +384,7 @@ func TestLoad(t *testing.T) {
 
 	source := fmt.Sprintf("(load \"%s\") x (load invalid)", file.Name())
 	interpreter := NewInterpreter(source)
-	expects := []string{"#t", "3", "*** ERROR: Unbound variable: invalid"}
+	expects := []string{"#t", "3", "*** ERROR: unbound variable: invalid"}
 	actuals := interpreter.EvalSource(false)
 
 	for i := 0; i < len(actuals); i++ {

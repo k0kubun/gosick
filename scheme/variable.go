@@ -18,9 +18,9 @@ func NewVariable(identifier string, parent Object) *Variable {
 }
 
 func (v *Variable) Eval() Object {
-	object := v.boundedObject(v.identifier)
+	object := v.content()
 	if object == nil {
-		runtimeError("Unbound variable: %s", v.identifier)
+		runtimeError("unbound variable: %s", v.identifier)
 	}
 	object.setBounder(v)
 	return object
@@ -28,6 +28,10 @@ func (v *Variable) Eval() Object {
 
 func (v *Variable) String() string {
 	return v.identifier
+}
+
+func (v *Variable) content() Object {
+	return v.boundedObject(v.identifier)
 }
 
 func (v *Variable) isVariable() bool {

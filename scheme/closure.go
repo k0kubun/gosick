@@ -3,6 +3,10 @@
 
 package scheme
 
+import (
+	"fmt"
+)
+
 type Closure struct {
 	ObjectBase
 	localBinding Binding
@@ -22,7 +26,10 @@ func WrapClosure(wrappedObject Object) *Closure {
 }
 
 func (c *Closure) String() string {
-	return "#<closure #f>"
+	if c.Bounder() == nil {
+		return "#<closure #f>"
+	}
+	return fmt.Sprintf("#<closure %s>", c.Bounder())
 }
 
 func (c *Closure) Invoke(argument Object) Object {

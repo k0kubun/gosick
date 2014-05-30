@@ -16,8 +16,8 @@ var (
 		"if":     NewSyntax(ifSyntax),
 		"lambda": NewSyntax(lambdaSyntax),
 		"let":    NewSyntax(letSyntax),
-		"let*":   NewSyntax(letSyntax),
-		"letrec": NewSyntax(letSyntax),
+		"let*":   NewSyntax(letStarSyntax),
+		"letrec": NewSyntax(letrecSyntax),
 		"or":     NewSyntax(orSyntax),
 		"quote":  NewSyntax(quoteSyntax),
 		"set!":   NewSyntax(setSyntax),
@@ -263,9 +263,57 @@ func letSyntax(s *Syntax, arguments Object) Object {
 	elements := s.elementsMinimum(arguments, 1)
 
 	// define arguments to local scope
+	variables := []Object{}
+	results := []Object{}
 	for _, argumentElement := range s.elementsMinimum(elements[0], 0) {
 		variableElements := s.elementsExact(argumentElement, 2)
-		closure.tryDefine(variableElements[0], variableElements[1])
+
+		variableElements[1].setParent(closure.Parent())
+		variables = append(variables, variableElements[0])
+		results = append(results, variableElements[1].Eval())
+	}
+
+	for index, variable := range variables {
+		closure.tryDefine(variable, results[index])
+	}
+
+	// eval body
+	return evalAll(elements[1:])
+}
+
+func letStarSyntax(s *Syntax, arguments Object) Object {
+	closure := WrapClosure(arguments.Parent())
+	elements := s.elementsMinimum(arguments, 1)
+
+	// define arguments to local scope
+	for _, argumentElement := range s.elementsMinimum(elements[0], 0) {
+		variableElements := s.elementsExact(argumentElement, 2)
+		variable, result := variableElements[0], variableElements[1].Eval()
+
+		closure.tryDefine(variable, result)
+		result.setParent(closure.Parent())
+	}
+
+	// eval body
+	return evalAll(elements[1:])
+}
+
+func letrecSyntax(s *Syntax, arguments Object) Object {
+	closure := WrapClosure(arguments.Parent())
+	elements := s.elementsMinimum(arguments, 1)
+
+	// define arguments to local scope
+	variables := []Object{}
+	results := []Object{}
+	for _, argumentElement := range s.elementsMinimum(elements[0], 0) {
+		variableElements := s.elementsExact(argumentElement, 2)
+		variables = append(variables, variableElements[0])
+
+		results = append(results, variableElements[1].Eval())
+	}
+
+	for index, variable := range variables {
+		closure.tryDefine(variable, results[index])
 	}
 
 	// eval body

@@ -26,22 +26,17 @@ func (a *Application) Eval() Object {
 
 func (a *Application) String() string {
 	// Exceptional handling for special form: quote
-	// FIXME: This is very dirty. Maybe there is a better way.
-	if a.procedure.isVariable() {
-		variable := a.procedure.(*Variable)
-		if variable.boundedObject(variable.identifier) == builtinSyntaxes["quote"] {
-			if a.arguments.isNull() {
-				return "(quote)"
-			} else {
-				return "'" + a.arguments.(*Pair).ElementAt(0).String()
-			}
+	list := a.toList()
+	firstObject := list.ElementAt(0)
+	if firstObject.isVariable() && firstObject.(*Variable).content() == builtinSyntaxes["quote"] {
+		if a.arguments.isNull() {
+			return "(quote)"
+		} else {
+			return "'" + a.arguments.(*Pair).ElementAt(0).String()
 		}
 	}
 
-	pair := NewPair(nil)
-	pair.Car = a.procedure
-	pair.Cdr = a.arguments
-	return pair.String()
+	return list.String()
 }
 
 func (a *Application) toList() *Pair {
