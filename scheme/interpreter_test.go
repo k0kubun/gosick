@@ -256,6 +256,10 @@ var interpreterTests = []interpreterTest{
 	evalTest("(begin (define x 2) (set! x 3) x) x", "3", "3"),
 	evalTest("(define x 1) (define y x) (set! x 3) y", "x", "y", "3", "1"),
 
+	evalTest("(define (func x) x) (func 1)", "func", "1"),
+	evalTest("(define (func x y) (+ x y)) (func 1 2)", "func", "3"),
+	evalTest("(define () x)", "*** ERROR: Compile Error: syntax-error: (define () x)"),
+
 	evalTest("(do () (#t)))", "#t"),
 	evalTest("(do ((x #f)) (x) (set! x #t))", "#t"),
 	evalTest("(do ((i (+ 1 2))) (#t i))", "3"),

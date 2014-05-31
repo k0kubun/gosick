@@ -126,14 +126,15 @@ func (i *Interpreter) libraryPath(name string) string {
 	)
 }
 
-func syntaxError(format string, a ...interface{}) {
-	compileError("syntax-error: "+format, a...)
+func syntaxError(format string, a ...interface{}) Object {
+	return compileError("syntax-error: "+format, a...)
 }
 
-func compileError(format string, a ...interface{}) {
-	runtimeError("Compile Error: "+format, a...)
+func compileError(format string, a ...interface{}) Object {
+	return runtimeError("Compile Error: "+format, a...)
 }
 
-func runtimeError(format string, a ...interface{}) {
+func runtimeError(format string, a ...interface{}) Object {
 	panic(fmt.Sprintf(format, a...))
+	return undef
 }
