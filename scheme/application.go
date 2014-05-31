@@ -21,7 +21,15 @@ func NewApplication(parent Object) *Application {
 }
 
 func (a *Application) Eval() Object {
-	return a.applyProcedure()
+	evaledObject := a.procedure.Eval()
+
+	switch evaledObject.(type) {
+	case Invoker:
+		return evaledObject.(Invoker).Invoke(a.arguments)
+	default:
+		runtimeError("invalid application")
+		return nil
+	}
 }
 
 func (a *Application) String() string {
@@ -46,18 +54,6 @@ func (a *Application) toList() *Pair {
 	list.Cdr = a.arguments
 	list.Cdr.setParent(list)
 	return list
-}
-
-func (a *Application) applyProcedure() Object {
-	evaledObject := a.procedure.Eval()
-
-	switch evaledObject.(type) {
-	case Invoker:
-		return evaledObject.(Invoker).Invoke(a.arguments)
-	default:
-		runtimeError("invalid application")
-		return nil
-	}
 }
 
 func (a *Application) isApplication() bool {

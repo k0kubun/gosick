@@ -292,6 +292,7 @@ var interpreterTests = []interpreterTest{
 	evalTest("+", "#<subr +>"),
 
 	// Tail Call Optimization
+	evalTest("(letrec ((rec (lambda (x) (if (= x 0) #t (rec (- x 1)))))) (rec 1))", "#t"),
 	evalTest(`
 	  (define (even? x)
 	    (if (= x 0)
