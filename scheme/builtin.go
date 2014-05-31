@@ -10,86 +10,74 @@ import (
 
 var (
 	builtinProcedures = Binding{
-		"+":              NewSubroutine(plusProc),
-		"-":              NewSubroutine(minusProc),
-		"*":              NewSubroutine(multiplyProc),
-		"/":              NewSubroutine(divideProc),
-		"=":              NewSubroutine(equalProc),
-		"<":              NewSubroutine(lessThanProc),
-		"<=":             NewSubroutine(lessEqualProc),
-		">":              NewSubroutine(greaterThanProc),
-		">=":             NewSubroutine(greaterEqualProc),
-		"append":         NewSubroutine(appendProc),
-		"boolean?":       NewSubroutine(isBooleanProc),
-		"car":            NewSubroutine(carProc),
-		"cdr":            NewSubroutine(cdrProc),
-		"cons":           NewSubroutine(consProc),
-		"eq?":            NewSubroutine(isEqProc),
-		"equal?":         NewSubroutine(isEqualProc),
-		"last":           NewSubroutine(lastProc),
-		"length":         NewSubroutine(lengthProc),
-		"list":           NewSubroutine(listProc),
-		"list?":          NewSubroutine(isListProc),
-		"load":           NewSubroutine(loadProc),
-		"memq":           NewSubroutine(memqProc),
-		"neq?":           NewSubroutine(isNeqProc),
-		"number?":        NewSubroutine(isNumberProc),
-		"number->string": NewSubroutine(numberToStringProc),
-		"pair?":          NewSubroutine(isPairProc),
-		"print":          NewSubroutine(printProc),
-		"procedure?":     NewSubroutine(isProcedureProc),
-		"set-car!":       NewSubroutine(setCarProc),
-		"set-cdr!":       NewSubroutine(setCdrProc),
-		"string?":        NewSubroutine(isStringProc),
-		"string-append":  NewSubroutine(stringAppendProc),
-		"string->number": NewSubroutine(stringToNumberProc),
-		"string->symbol": NewSubroutine(stringToSymbolProc),
-		"symbol?":        NewSubroutine(isSymbolProc),
-		"symbol->string": NewSubroutine(symbolToStringProc),
-		"write":          NewSubroutine(writeProc),
+		"+":              NewSubroutine(plusSubr),
+		"-":              NewSubroutine(minusSubr),
+		"*":              NewSubroutine(multiplySubr),
+		"/":              NewSubroutine(divideSubr),
+		"=":              NewSubroutine(equalSubr),
+		"<":              NewSubroutine(lessThanSubr),
+		"<=":             NewSubroutine(lessEqualSubr),
+		">":              NewSubroutine(greaterThanSubr),
+		">=":             NewSubroutine(greaterEqualSubr),
+		"append":         NewSubroutine(appendSubr),
+		"boolean?":       NewSubroutine(isBooleanSubr),
+		"car":            NewSubroutine(carSubr),
+		"cdr":            NewSubroutine(cdrSubr),
+		"cons":           NewSubroutine(consSubr),
+		"eq?":            NewSubroutine(isEqSubr),
+		"equal?":         NewSubroutine(isEqualSubr),
+		"last":           NewSubroutine(lastSubr),
+		"length":         NewSubroutine(lengthSubr),
+		"list":           NewSubroutine(listSubr),
+		"list?":          NewSubroutine(isListSubr),
+		"load":           NewSubroutine(loadSubr),
+		"memq":           NewSubroutine(memqSubr),
+		"neq?":           NewSubroutine(isNeqSubr),
+		"number?":        NewSubroutine(isNumberSubr),
+		"number->string": NewSubroutine(numberToStringSubr),
+		"pair?":          NewSubroutine(isPairSubr),
+		"print":          NewSubroutine(printSubr),
+		"procedure?":     NewSubroutine(isProcedureSubr),
+		"set-car!":       NewSubroutine(setCarSubr),
+		"set-cdr!":       NewSubroutine(setCdrSubr),
+		"string?":        NewSubroutine(isStringSubr),
+		"string-append":  NewSubroutine(stringAppendSubr),
+		"string->number": NewSubroutine(stringToNumberSubr),
+		"string->symbol": NewSubroutine(stringToSymbolSubr),
+		"symbol?":        NewSubroutine(isSymbolSubr),
+		"symbol->string": NewSubroutine(symbolToStringSubr),
+		"write":          NewSubroutine(writeSubr),
 	}
 )
 
-func plusProc(s *Subroutine, arguments Object) Object {
-	assertListMinimum(arguments, 0)
+func carSubr(s *Subroutine, arguments Object) Object {
+	assertListEqual(arguments, 1)
 
-	numbers := evaledObjects(arguments.(*Pair).Elements())
-	assertObjectsType(numbers, "number")
-
-	sum := 0
-	for _, number := range numbers {
-		sum += number.(*Number).value
-	}
-	return NewNumber(sum)
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(object, "pair")
+	return object.(*Pair).Car
 }
 
-func minusProc(s *Subroutine, arguments Object) Object {
-	assertListMinimum(arguments, 1)
+func cdrSubr(s *Subroutine, arguments Object) Object {
+	assertListEqual(arguments, 1)
 
-	numbers := evaledObjects(arguments.(*Pair).Elements())
-	assertObjectsType(numbers, "number")
-
-	difference := numbers[0].(*Number).value
-	for _, number := range numbers[1:] {
-		difference -= number.(*Number).value
-	}
-	return NewNumber(difference)
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(object, "pair")
+	return object.(*Pair).Cdr
 }
 
-func multiplyProc(s *Subroutine, arguments Object) Object {
-	assertListMinimum(arguments, 0)
+func consSubr(s *Subroutine, arguments Object) Object {
+	assertListEqual(arguments, 2)
+	objects := evaledObjects(arguments.(*Pair).Elements())
 
-	numbers := evaledObjects(arguments.(*Pair).Elements())
-	assertObjectsType(numbers, "number")
-
-	product := 1
-	for _, number := range numbers {
-		product *= number.(*Number).value
+	return &Pair{
+		ObjectBase: ObjectBase{parent: arguments.Parent()},
+		Car:        objects[0],
+		Cdr:        objects[1],
 	}
-	return NewNumber(product)
 }
 
-func divideProc(s *Subroutine, arguments Object) Object {
+func divideSubr(s *Subroutine, arguments Object) Object {
 	assertListMinimum(arguments, 1)
 
 	numbers := evaledObjects(arguments.(*Pair).Elements())
@@ -102,108 +90,19 @@ func divideProc(s *Subroutine, arguments Object) Object {
 	return NewNumber(quotient)
 }
 
-func equalProc(s *Subroutine, arguments Object) Object {
+func equalSubr(s *Subroutine, arguments Object) Object {
 	return compareNumbers(arguments, func(a, b int) bool { return a == b })
 }
 
-func lessThanProc(s *Subroutine, arguments Object) Object {
-	return compareNumbers(arguments, func(a, b int) bool { return a < b })
-}
-
-func lessEqualProc(s *Subroutine, arguments Object) Object {
-	return compareNumbers(arguments, func(a, b int) bool { return a <= b })
-}
-
-func greaterThanProc(s *Subroutine, arguments Object) Object {
+func greaterThanSubr(s *Subroutine, arguments Object) Object {
 	return compareNumbers(arguments, func(a, b int) bool { return a > b })
 }
 
-func greaterEqualProc(s *Subroutine, arguments Object) Object {
+func greaterEqualSubr(s *Subroutine, arguments Object) Object {
 	return compareNumbers(arguments, func(a, b int) bool { return a >= b })
 }
 
-func isNumberProc(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isNumber() })
-}
-
-func isProcedureProc(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isProcedure() })
-}
-
-func isBooleanProc(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isBoolean() })
-}
-
-func isPairProc(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isPair() })
-}
-
-func isListProc(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isList() })
-}
-
-func isSymbolProc(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isSymbol() })
-}
-
-func isStringProc(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isString() })
-}
-
-func consProc(s *Subroutine, arguments Object) Object {
-	assertListEqual(arguments, 2)
-	objects := evaledObjects(arguments.(*Pair).Elements())
-
-	return &Pair{
-		ObjectBase: ObjectBase{parent: arguments.Parent()},
-		Car:        objects[0],
-		Cdr:        objects[1],
-	}
-}
-
-func carProc(s *Subroutine, arguments Object) Object {
-	assertListEqual(arguments, 1)
-
-	object := arguments.(*Pair).ElementAt(0).Eval()
-	assertObjectType(object, "pair")
-	return object.(*Pair).Car
-}
-
-func cdrProc(s *Subroutine, arguments Object) Object {
-	assertListEqual(arguments, 1)
-
-	object := arguments.(*Pair).ElementAt(0).Eval()
-	assertObjectType(object, "pair")
-	return object.(*Pair).Cdr
-}
-
-func listProc(s *Subroutine, arguments Object) Object {
-	return arguments
-}
-
-func setCarProc(s *Subroutine, arguments Object) Object {
-	assertListEqual(arguments, 2)
-
-	object := arguments.(*Pair).ElementAt(1).Eval()
-	pair := arguments.(*Pair).ElementAt(0).Eval()
-	assertObjectType(pair, "pair")
-
-	pair.(*Pair).Car = object
-	return undef
-}
-
-func setCdrProc(s *Subroutine, arguments Object) Object {
-	assertListEqual(arguments, 2)
-
-	object := arguments.(*Pair).ElementAt(1).Eval()
-	pair := arguments.(*Pair).ElementAt(0).Eval()
-	assertObjectType(pair, "pair")
-
-	pair.(*Pair).Cdr = object
-	return undef
-}
-
-func lengthProc(s *Subroutine, arguments Object) Object {
+func lengthSubr(s *Subroutine, arguments Object) Object {
 	assertListEqual(arguments, 1)
 
 	list := arguments.(*Pair).ElementAt(0).Eval()
@@ -212,7 +111,19 @@ func lengthProc(s *Subroutine, arguments Object) Object {
 	return NewNumber(list.(*Pair).ListLength())
 }
 
-func memqProc(s *Subroutine, arguments Object) Object {
+func lessEqualSubr(s *Subroutine, arguments Object) Object {
+	return compareNumbers(arguments, func(a, b int) bool { return a <= b })
+}
+
+func lessThanSubr(s *Subroutine, arguments Object) Object {
+	return compareNumbers(arguments, func(a, b int) bool { return a < b })
+}
+
+func listSubr(s *Subroutine, arguments Object) Object {
+	return arguments
+}
+
+func memqSubr(s *Subroutine, arguments Object) Object {
 	assertListEqual(arguments, 2)
 
 	searchObject := arguments.(*Pair).ElementAt(0).Eval()
@@ -235,7 +146,33 @@ func memqProc(s *Subroutine, arguments Object) Object {
 	return NewBoolean(false)
 }
 
-func lastProc(s *Subroutine, arguments Object) Object {
+func minusSubr(s *Subroutine, arguments Object) Object {
+	assertListMinimum(arguments, 1)
+
+	numbers := evaledObjects(arguments.(*Pair).Elements())
+	assertObjectsType(numbers, "number")
+
+	difference := numbers[0].(*Number).value
+	for _, number := range numbers[1:] {
+		difference -= number.(*Number).value
+	}
+	return NewNumber(difference)
+}
+
+func multiplySubr(s *Subroutine, arguments Object) Object {
+	assertListMinimum(arguments, 0)
+
+	numbers := evaledObjects(arguments.(*Pair).Elements())
+	assertObjectsType(numbers, "number")
+
+	product := 1
+	for _, number := range numbers {
+		product *= number.(*Number).value
+	}
+	return NewNumber(product)
+}
+
+func lastSubr(s *Subroutine, arguments Object) Object {
 	assertListEqual(arguments, 1)
 
 	list := arguments.(*Pair).ElementAt(0).Eval()
@@ -248,7 +185,7 @@ func lastProc(s *Subroutine, arguments Object) Object {
 	return elements[len(elements)-1].Eval()
 }
 
-func appendProc(s *Subroutine, arguments Object) Object {
+func appendSubr(s *Subroutine, arguments Object) Object {
 	assertListMinimum(arguments, 0)
 	elements := evaledObjects(arguments.(*Pair).Elements())
 
@@ -260,44 +197,7 @@ func appendProc(s *Subroutine, arguments Object) Object {
 	return appendedList
 }
 
-func stringAppendProc(s *Subroutine, arguments Object) Object {
-	assertListMinimum(arguments, 0)
-
-	stringObjects := evaledObjects(arguments.(*Pair).Elements())
-	assertObjectsType(stringObjects, "string")
-
-	texts := []string{}
-	for _, stringObject := range stringObjects {
-		texts = append(texts, stringObject.(*String).text)
-	}
-	return NewString(strings.Join(texts, ""))
-}
-
-func symbolToStringProc(s *Subroutine, arguments Object) Object {
-	assertListEqual(arguments, 1)
-
-	object := arguments.(*Pair).ElementAt(0).Eval()
-	assertObjectType(object, "symbol")
-	return NewString(object.(*Symbol).identifier)
-}
-
-func stringToSymbolProc(s *Subroutine, arguments Object) Object {
-	assertListEqual(arguments, 1)
-
-	object := arguments.(*Pair).ElementAt(0).Eval()
-	assertObjectType(object, "string")
-	return NewSymbol(object.(*String).text)
-}
-
-func stringToNumberProc(s *Subroutine, arguments Object) Object {
-	assertListEqual(arguments, 1)
-
-	object := arguments.(*Pair).ElementAt(0).Eval()
-	assertObjectType(object, "string")
-	return NewNumber(object.(*String).text)
-}
-
-func numberToStringProc(s *Subroutine, arguments Object) Object {
+func numberToStringSubr(s *Subroutine, arguments Object) Object {
 	assertListEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
@@ -305,25 +205,53 @@ func numberToStringProc(s *Subroutine, arguments Object) Object {
 	return NewString(object.(*Number).value)
 }
 
-func isEqProc(s *Subroutine, arguments Object) Object {
+func isBooleanSubr(s *Subroutine, arguments Object) Object {
+	return booleanByFunc(arguments, func(object Object) bool { return object.isBoolean() })
+}
+
+func isEqSubr(s *Subroutine, arguments Object) Object {
 	assertListEqual(arguments, 2)
 
 	objects := evaledObjects(arguments.(*Pair).Elements())
 	return NewBoolean(areIdentical(objects[0], objects[1]))
 }
 
-func isNeqProc(s *Subroutine, arguments Object) Object {
-	return NewBoolean(!isEqProc(s, arguments).(*Boolean).value)
-}
-
-func isEqualProc(s *Subroutine, arguments Object) Object {
+func isEqualSubr(s *Subroutine, arguments Object) Object {
 	assertListEqual(arguments, 2)
 
 	objects := evaledObjects(arguments.(*Pair).Elements())
 	return NewBoolean(areEqual(objects[0], objects[1]))
 }
 
-func loadProc(s *Subroutine, arguments Object) Object {
+func isListSubr(s *Subroutine, arguments Object) Object {
+	return booleanByFunc(arguments, func(object Object) bool { return object.isList() })
+}
+
+func isNeqSubr(s *Subroutine, arguments Object) Object {
+	return NewBoolean(!isEqSubr(s, arguments).(*Boolean).value)
+}
+
+func isNumberSubr(s *Subroutine, arguments Object) Object {
+	return booleanByFunc(arguments, func(object Object) bool { return object.isNumber() })
+}
+
+func isPairSubr(s *Subroutine, arguments Object) Object {
+	return booleanByFunc(arguments, func(object Object) bool { return object.isPair() })
+}
+
+func isProcedureSubr(s *Subroutine, arguments Object) Object {
+	return booleanByFunc(arguments, func(object Object) bool { return object.isProcedure() })
+}
+
+func isSymbolSubr(s *Subroutine, arguments Object) Object {
+	return booleanByFunc(arguments, func(object Object) bool { return object.isSymbol() })
+}
+
+func isStringSubr(s *Subroutine, arguments Object) Object {
+	return booleanByFunc(arguments, func(object Object) bool { return object.isString() })
+}
+
+func loadSubr(s *Subroutine, arguments Object) Object {
 	assertListEqual(arguments, 1)
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
@@ -346,18 +274,90 @@ func loadProc(s *Subroutine, arguments Object) Object {
 	return NewBoolean(true)
 }
 
-func writeProc(s *Subroutine, arguments Object) Object {
-	assertListEqual(arguments, 1) // TODO: accept output port
+func plusSubr(s *Subroutine, arguments Object) Object {
+	assertListMinimum(arguments, 0)
 
-	object := arguments.(*Pair).ElementAt(0).Eval()
-	fmt.Printf("%s", object)
-	return undef
+	numbers := evaledObjects(arguments.(*Pair).Elements())
+	assertObjectsType(numbers, "number")
+
+	sum := 0
+	for _, number := range numbers {
+		sum += number.(*Number).value
+	}
+	return NewNumber(sum)
 }
 
-func printProc(s *Subroutine, arguments Object) Object {
+func printSubr(s *Subroutine, arguments Object) Object {
 	assertListEqual(arguments, 1) // TODO: accept output port
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
 	fmt.Printf("%s\n", object)
+	return undef
+}
+
+func setCarSubr(s *Subroutine, arguments Object) Object {
+	assertListEqual(arguments, 2)
+
+	object := arguments.(*Pair).ElementAt(1).Eval()
+	pair := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(pair, "pair")
+
+	pair.(*Pair).Car = object
+	return undef
+}
+
+func setCdrSubr(s *Subroutine, arguments Object) Object {
+	assertListEqual(arguments, 2)
+
+	object := arguments.(*Pair).ElementAt(1).Eval()
+	pair := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(pair, "pair")
+
+	pair.(*Pair).Cdr = object
+	return undef
+}
+
+func stringAppendSubr(s *Subroutine, arguments Object) Object {
+	assertListMinimum(arguments, 0)
+
+	stringObjects := evaledObjects(arguments.(*Pair).Elements())
+	assertObjectsType(stringObjects, "string")
+
+	texts := []string{}
+	for _, stringObject := range stringObjects {
+		texts = append(texts, stringObject.(*String).text)
+	}
+	return NewString(strings.Join(texts, ""))
+}
+
+func stringToNumberSubr(s *Subroutine, arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(object, "string")
+	return NewNumber(object.(*String).text)
+}
+
+func symbolToStringSubr(s *Subroutine, arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(object, "symbol")
+	return NewString(object.(*Symbol).identifier)
+}
+
+func stringToSymbolSubr(s *Subroutine, arguments Object) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	assertObjectType(object, "string")
+	return NewSymbol(object.(*String).text)
+}
+
+func writeSubr(s *Subroutine, arguments Object) Object {
+	assertListEqual(arguments, 1) // TODO: accept output port
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	fmt.Printf("%s", object)
 	return undef
 }
