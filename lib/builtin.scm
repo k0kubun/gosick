@@ -1,21 +1,13 @@
-(define cadr
-  (lambda (x)
-    (car (cdr x))
-  )
+(define (cadr x)
+  (car (cdr x))
 )
-(define cddr
-  (lambda (x)
-    (cdr (cdr x))
-  )
+(define (cddr x)
+  (cdr (cdr x))
 )
 
-(define not
-  (lambda (x)
-    (eq? x #f)
-  )
+(define (not x)
+  (eq? x #f)
 )
-(define null?
-  (lambda (x)
-    (eq? x ())
-  )
+(define (null? x)
+  (eq? x ())
 )
