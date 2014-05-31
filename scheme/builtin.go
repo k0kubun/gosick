@@ -91,15 +91,15 @@ func divideSubr(s *Subroutine, arguments Object) Object {
 }
 
 func equalSubr(s *Subroutine, arguments Object) Object {
-	return compareNumbers(arguments, func(a, b int) bool { return a == b })
+	return s.compareNumbers(arguments, func(a, b int) bool { return a == b })
 }
 
 func greaterThanSubr(s *Subroutine, arguments Object) Object {
-	return compareNumbers(arguments, func(a, b int) bool { return a > b })
+	return s.compareNumbers(arguments, func(a, b int) bool { return a > b })
 }
 
 func greaterEqualSubr(s *Subroutine, arguments Object) Object {
-	return compareNumbers(arguments, func(a, b int) bool { return a >= b })
+	return s.compareNumbers(arguments, func(a, b int) bool { return a >= b })
 }
 
 func lengthSubr(s *Subroutine, arguments Object) Object {
@@ -112,11 +112,11 @@ func lengthSubr(s *Subroutine, arguments Object) Object {
 }
 
 func lessEqualSubr(s *Subroutine, arguments Object) Object {
-	return compareNumbers(arguments, func(a, b int) bool { return a <= b })
+	return s.compareNumbers(arguments, func(a, b int) bool { return a <= b })
 }
 
 func lessThanSubr(s *Subroutine, arguments Object) Object {
-	return compareNumbers(arguments, func(a, b int) bool { return a < b })
+	return s.compareNumbers(arguments, func(a, b int) bool { return a < b })
 }
 
 func listSubr(s *Subroutine, arguments Object) Object {
@@ -206,7 +206,7 @@ func numberToStringSubr(s *Subroutine, arguments Object) Object {
 }
 
 func isBooleanSubr(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isBoolean() })
+	return s.booleanByFunc(arguments, func(object Object) bool { return object.isBoolean() })
 }
 
 func isEqSubr(s *Subroutine, arguments Object) Object {
@@ -224,7 +224,7 @@ func isEqualSubr(s *Subroutine, arguments Object) Object {
 }
 
 func isListSubr(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isList() })
+	return s.booleanByFunc(arguments, func(object Object) bool { return object.isList() })
 }
 
 func isNeqSubr(s *Subroutine, arguments Object) Object {
@@ -232,23 +232,23 @@ func isNeqSubr(s *Subroutine, arguments Object) Object {
 }
 
 func isNumberSubr(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isNumber() })
+	return s.booleanByFunc(arguments, func(object Object) bool { return object.isNumber() })
 }
 
 func isPairSubr(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isPair() })
+	return s.booleanByFunc(arguments, func(object Object) bool { return object.isPair() })
 }
 
 func isProcedureSubr(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isProcedure() })
+	return s.booleanByFunc(arguments, func(object Object) bool { return object.isProcedure() })
 }
 
 func isSymbolSubr(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isSymbol() })
+	return s.booleanByFunc(arguments, func(object Object) bool { return object.isSymbol() })
 }
 
 func isStringSubr(s *Subroutine, arguments Object) Object {
-	return booleanByFunc(arguments, func(object Object) bool { return object.isString() })
+	return s.booleanByFunc(arguments, func(object Object) bool { return object.isString() })
 }
 
 func loadSubr(s *Subroutine, arguments Object) Object {
