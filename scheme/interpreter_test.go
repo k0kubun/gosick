@@ -290,6 +290,25 @@ var interpreterTests = []interpreterTest{
 	evalTest("do", "#<syntax do>"),
 
 	evalTest("+", "#<subr +>"),
+
+	// Tail Call Optimization
+	evalTest(`
+	  (define (even? x)
+	    (if (= x 0)
+	      #t
+	      (odd? (- x 1))
+	    )
+	  )
+
+		(define (odd? x)
+			(if (= x 1)
+				#t
+				(even? (- x 1))
+			)
+		)
+
+		(even? 10)
+	`, "even?", "odd?"),
 }
 
 var runtimeErrorTests = []interpreterTest{

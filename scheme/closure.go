@@ -32,6 +32,23 @@ func (c *Closure) String() string {
 	return fmt.Sprintf("#<closure %s>", c.Bounder())
 }
 
+func (c *Closure) DefineFunction(s *Syntax, variables, body []Object) {
+	c.function = func(givenArguments Object) Object {
+		// assert given arguments
+		givenElements := s.elementsMinimum(givenArguments, 0)
+		if len(variables) != len(givenElements) {
+			compileError("wrong number of arguments: requires %d, but got %d", len(variables), len(givenElements))
+		}
+
+		// define arguments to local scope
+		for index, variable := range variables {
+			c.tryDefine(variable, givenElements[index].Eval())
+		}
+
+		return evalAll(body)
+	}
+}
+
 func (c *Closure) Invoke(argument Object) Object {
 	return c.function(argument)
 }

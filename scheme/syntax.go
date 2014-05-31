@@ -177,24 +177,7 @@ func defineSyntax(s *Syntax, arguments Object) Object {
 
 		defineElements := s.elementsMinimum(elements[0], 1)
 		funcName := defineElements[0]
-		variables := defineElements[1:]
-
-		// generate function
-		closure.function = func(givenArguments Object) Object {
-			// assert given arguments
-			givenElements := s.elementsMinimum(givenArguments, 0)
-			if len(variables) != len(givenElements) {
-				compileError("wrong number of arguments: requires %d, but got %d", len(variables), len(givenElements))
-			}
-
-			// define arguments to local scope
-			for index, variable := range variables {
-				closure.tryDefine(variable, givenElements[index].Eval())
-			}
-
-			// returns last eval result
-			return evalAll(elements[1:])
-		}
+		closure.DefineFunction(s, defineElements[1:], elements[1:])
 
 		if funcName.isVariable() {
 			s.Bounder().define(funcName.(*Variable).identifier, closure)
@@ -266,23 +249,7 @@ func lambdaSyntax(s *Syntax, arguments Object) Object {
 
 	elements := s.elementsMinimum(arguments, 1)
 	variables := s.elementsMinimum(elements[0], 0)
-
-	// generate function
-	closure.function = func(givenArguments Object) Object {
-		// assert given arguments
-		givenElements := s.elementsMinimum(givenArguments, 0)
-		if len(variables) != len(givenElements) {
-			compileError("wrong number of arguments: requires %d, but got %d", len(variables), len(givenElements))
-		}
-
-		// define arguments to local scope
-		for index, variable := range variables {
-			closure.tryDefine(variable, givenElements[index].Eval())
-		}
-
-		// returns last eval result
-		return evalAll(elements[1:])
-	}
+	closure.DefineFunction(s, variables, elements[1:])
 	return closure
 }
 
