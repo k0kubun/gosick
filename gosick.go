@@ -42,7 +42,7 @@ func executeSourceCode(filename string, options *Options) {
 
 func executeExpression(expression string, dumpAST bool) {
 	interpreter := scheme.NewInterpreter(expression)
-	interpreter.PrintResult(dumpAST)
+	interpreter.PrintResults(dumpAST)
 }
 
 func invokeInteractiveShell(options *Options) {
@@ -69,7 +69,7 @@ func invokeInteractiveShell(options *Options) {
 			indentLevel = interpreter.IndentLevel()
 			if indentLevel == 0 {
 				mainInterpreter.ReloadSourceCode(expression)
-				mainInterpreter.PrintResult(options.DumpAST)
+				mainInterpreter.PrintResults(options.DumpAST)
 				break
 			} else if indentLevel < 0 {
 				fmt.Println("*** ERROR: extra close parentheses")

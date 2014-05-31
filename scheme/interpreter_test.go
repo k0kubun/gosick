@@ -379,7 +379,7 @@ func evalTest(source string, results ...string) interpreterTest {
 func runTests(t *testing.T, tests []interpreterTest) {
 	for _, test := range tests {
 		i := NewInterpreter(test.source)
-		evalResults := i.EvalSource(false)
+		evalResults := i.EvalResults(false)
 
 		for i := 0; i < len(test.results); i++ {
 			expect := test.results[i]
@@ -409,7 +409,7 @@ func TestLoad(t *testing.T) {
 	source := fmt.Sprintf("(load \"%s\") x (load invalid)", file.Name())
 	interpreter := NewInterpreter(source)
 	expects := []string{"#t", "3", "*** ERROR: unbound variable: invalid"}
-	actuals := interpreter.EvalSource(false)
+	actuals := interpreter.EvalResults(false)
 
 	for i := 0; i < len(actuals); i++ {
 		expect := expects[i]

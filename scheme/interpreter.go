@@ -31,13 +31,8 @@ func NewInterpreter(source string) *Interpreter {
 	return i
 }
 
-// Load new source code with current environment
-func (i *Interpreter) ReloadSourceCode(source string) {
-	i.Parser = NewParser(source)
-}
-
-func (i *Interpreter) PrintResult(dumpAST bool) {
-	results := i.EvalSource(dumpAST)
+func (i *Interpreter) PrintResults(dumpAST bool) {
+	results := i.EvalResults(dumpAST)
 	if dumpAST {
 		fmt.Printf("\n*** Result ***\n")
 	}
@@ -46,7 +41,7 @@ func (i *Interpreter) PrintResult(dumpAST bool) {
 	}
 }
 
-func (i *Interpreter) EvalSource(dumpAST bool) (results []string) {
+func (i *Interpreter) EvalResults(dumpAST bool) (results []string) {
 	defer func() {
 		if err := recover(); err != nil {
 			results = append(results, fmt.Sprintf("*** ERROR: %s", err))
@@ -66,6 +61,11 @@ func (i *Interpreter) EvalSource(dumpAST bool) (results []string) {
 		results = append(results, expression.Eval().String())
 	}
 	return
+}
+
+// Load new source code with current environment
+func (i *Interpreter) ReloadSourceCode(source string) {
+	i.Parser = NewParser(source)
 }
 
 func (i *Interpreter) DumpAST(object Object, indentLevel int) {
@@ -109,7 +109,7 @@ func (i *Interpreter) loadBuiltinLibrary(name string) {
 		log.Fatal(err)
 	}
 	i.Parser = NewParser(string(buffer))
-	i.EvalSource(false)
+	i.EvalResults(false)
 
 	i.Parser = originalParser
 }
