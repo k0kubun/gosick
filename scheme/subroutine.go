@@ -8,10 +8,10 @@ import (
 
 type Subroutine struct {
 	ObjectBase
-	function func(Object) Object
+	function func(*Subroutine, Object) Object
 }
 
-func NewSubroutine(function func(Object) Object) *Subroutine {
+func NewSubroutine(function func(*Subroutine, Object) Object) *Subroutine {
 	return &Subroutine{function: function}
 }
 
@@ -24,7 +24,7 @@ func (s *Subroutine) Eval() Object {
 }
 
 func (s *Subroutine) Invoke(argument Object) Object {
-	return s.function(argument)
+	return s.function(s, argument)
 }
 
 func (s *Subroutine) isProcedure() bool {

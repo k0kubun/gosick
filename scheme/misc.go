@@ -5,6 +5,52 @@ import (
 	"strings"
 )
 
+func areEqual(a Object, b Object) bool {
+	if a == nil {
+		return true
+	}
+	if typeName(a) != typeName(b) {
+		return false
+	} else if areIdentical(a, b) {
+		return true
+	}
+
+	switch a.(type) {
+	case *Pair:
+		return areEqual(a.(*Pair).Car, b.(*Pair).Car) && areEqual(a.(*Pair).Cdr, b.(*Pair).Cdr)
+	default:
+		return false
+	}
+}
+
+func areIdentical(a Object, b Object) bool {
+	if typeName(a) != typeName(b) {
+		return false
+	}
+
+	switch a.(type) {
+	case *Number:
+		return a.(*Number).value == b.(*Number).value
+	case *Boolean:
+		return a.(*Boolean).value == b.(*Boolean).value
+	default:
+		return a == b
+	}
+}
+
+func areSameList(a Object, b Object) bool {
+	if typeName(a) != typeName(b) {
+		return false
+	}
+
+	switch a.(type) {
+	case *Pair:
+		return areSameList(a.(*Pair).Car, b.(*Pair).Car) && areSameList(a.(*Pair).Cdr, b.(*Pair).Cdr)
+	default:
+		return areIdentical(a, b)
+	}
+}
+
 func assertListMinimum(arguments Object, minimum int) {
 	if !arguments.isList() {
 		compileError("proper list required for function application or macro use")
