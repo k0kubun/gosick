@@ -30,3 +30,26 @@ func (s *Subroutine) Invoke(argument Object) Object {
 func (s *Subroutine) isProcedure() bool {
 	return true
 }
+
+func booleanByFunc(arguments Object, typeCheckFunc func(Object) bool) Object {
+	assertListEqual(arguments, 1)
+
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	return NewBoolean(typeCheckFunc(object))
+}
+
+func compareNumbers(arguments Object, compareFunc func(int, int) bool) Object {
+	assertListMinimum(arguments, 2)
+
+	numbers := evaledObjects(arguments.(*Pair).Elements())
+	assertObjectsType(numbers, "number")
+
+	oldValue := numbers[0].(*Number).value
+	for _, number := range numbers[1:] {
+		if !compareFunc(oldValue, number.(*Number).value) {
+			return NewBoolean(false)
+		}
+		oldValue = number.(*Number).value
+	}
+	return NewBoolean(true)
+}
