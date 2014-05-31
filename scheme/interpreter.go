@@ -24,7 +24,7 @@ func NewInterpreter(source string) *Interpreter {
 		Parser: NewParser(source),
 		closure: &Closure{
 			ObjectBase:   ObjectBase{parent: nil},
-			localBinding: DefaultBinding(),
+			localBinding: defaultBinding(),
 		},
 	}
 	i.loadBuiltinLibrary("builtin")
@@ -124,17 +124,4 @@ func (i *Interpreter) libraryPath(name string) string {
 		"lib",
 		name+".scm",
 	)
-}
-
-func syntaxError(format string, a ...interface{}) Object {
-	return compileError("syntax-error: "+format, a...)
-}
-
-func compileError(format string, a ...interface{}) Object {
-	return runtimeError("Compile Error: "+format, a...)
-}
-
-func runtimeError(format string, a ...interface{}) Object {
-	panic(fmt.Sprintf(format, a...))
-	return undef
 }

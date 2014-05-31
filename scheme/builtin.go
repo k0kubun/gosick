@@ -50,17 +50,6 @@ var (
 	}
 )
 
-func DefaultBinding() Binding {
-	binding := make(Binding)
-	for key, value := range builtinProcedures {
-		binding[key] = value
-	}
-	for key, value := range builtinSyntaxes {
-		binding[key] = value
-	}
-	return binding
-}
-
 func plusProc(arguments Object) Object {
 	assertListMinimum(arguments, 0)
 

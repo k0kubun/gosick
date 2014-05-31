@@ -34,6 +34,39 @@ func assertObjectType(object Object, assertType string) {
 	}
 }
 
+func compileError(format string, a ...interface{}) Object {
+	return runtimeError("Compile Error: "+format, a...)
+}
+
+func defaultBinding() Binding {
+	binding := make(Binding)
+	for key, value := range builtinProcedures {
+		binding[key] = value
+	}
+	for key, value := range builtinSyntaxes {
+		binding[key] = value
+	}
+	return binding
+}
+
+func evaledObjects(objects []Object) []Object {
+	evaledObjects := []Object{}
+
+	for _, object := range objects {
+		evaledObjects = append(evaledObjects, object.Eval())
+	}
+	return evaledObjects
+}
+
+func runtimeError(format string, a ...interface{}) Object {
+	panic(fmt.Sprintf(format, a...))
+	return undef
+}
+
+func syntaxError(format string, a ...interface{}) Object {
+	return compileError("syntax-error: "+format, a...)
+}
+
 func typeName(object Object) string {
 	switch object.(type) {
 	case *Pair:
@@ -47,13 +80,4 @@ func typeName(object Object) string {
 		typeName := strings.Replace(rawTypeName, "*scheme.", "", 1)
 		return strings.ToLower(typeName)
 	}
-}
-
-func evaledObjects(objects []Object) []Object {
-	evaledObjects := []Object{}
-
-	for _, object := range objects {
-		evaledObjects = append(evaledObjects, object.Eval())
-	}
-	return evaledObjects
 }
