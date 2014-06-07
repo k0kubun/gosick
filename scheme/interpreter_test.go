@@ -278,6 +278,8 @@ var interpreterTests = []interpreterTest{
 	evalTest("(letrec ((x 1) (y x)) y)", "*** ERROR: unbound variable: x"),
 	evalTest("(letrec ((x (lambda () x))) (x))", "#<closure x>"),
 
+	evalTest("(define-macro (positive x) (list '> x 0)) positive", "#<undef>", "#<macro positive>"),
+
 	evalTest("set!", "#<syntax set!>"),
 	evalTest("if", "#<syntax if>"),
 	evalTest("and", "#<syntax and>"),

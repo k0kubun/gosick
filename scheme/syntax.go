@@ -8,19 +8,20 @@ import (
 
 var (
 	builtinSyntaxes = Binding{
-		"and":    NewSyntax(andSyntax),
-		"begin":  NewSyntax(beginSyntax),
-		"cond":   NewSyntax(condSyntax),
-		"define": NewSyntax(defineSyntax),
-		"do":     NewSyntax(doSyntax),
-		"if":     NewSyntax(ifSyntax),
-		"lambda": NewSyntax(lambdaSyntax),
-		"let":    NewSyntax(letSyntax),
-		"let*":   NewSyntax(letStarSyntax),
-		"letrec": NewSyntax(letrecSyntax),
-		"or":     NewSyntax(orSyntax),
-		"quote":  NewSyntax(quoteSyntax),
-		"set!":   NewSyntax(setSyntax),
+		"and":          NewSyntax(andSyntax),
+		"begin":        NewSyntax(beginSyntax),
+		"cond":         NewSyntax(condSyntax),
+		"define":       NewSyntax(defineSyntax),
+		"define-macro": NewSyntax(defineMacroSyntax),
+		"do":           NewSyntax(doSyntax),
+		"if":           NewSyntax(ifSyntax),
+		"lambda":       NewSyntax(lambdaSyntax),
+		"let":          NewSyntax(letSyntax),
+		"let*":         NewSyntax(letStarSyntax),
+		"letrec":       NewSyntax(letrecSyntax),
+		"or":           NewSyntax(orSyntax),
+		"quote":        NewSyntax(quoteSyntax),
+		"set!":         NewSyntax(setSyntax),
 	}
 )
 
@@ -185,6 +186,17 @@ func defineSyntax(s *Syntax, arguments Object) Object {
 		}
 	}
 	return syntaxError("%s", s.Bounder().Parent())
+}
+
+func defineMacroSyntax(s *Syntax, arguments Object) Object {
+	elements := s.elementsMinimum(arguments, 2)
+
+	macroElements := s.elementsMinimum(elements[0], 1)
+	assertObjectType(macroElements[0], "variable")
+
+	macro := NewMacro()
+	s.Bounder().define(macroElements[0].(*Variable).identifier, macro)
+	return undef
 }
 
 func doSyntax(s *Syntax, arguments Object) Object {
