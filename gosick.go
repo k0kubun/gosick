@@ -42,7 +42,7 @@ func executeSourceCode(filename string, options *Options) {
 
 func executeExpression(expression string, dumpAST bool) {
 	interpreter := scheme.NewInterpreter(expression)
-	interpreter.PrintResults(dumpAST)
+	interpreter.PrintErrors(dumpAST)
 }
 
 func invokeInteractiveShell(options *Options) {

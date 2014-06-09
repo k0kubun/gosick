@@ -291,7 +291,11 @@ func printSubr(s *Subroutine, arguments Object) Object {
 	assertListEqual(arguments, 1) // TODO: accept output port
 
 	object := arguments.(*Pair).ElementAt(0).Eval()
-	fmt.Printf("%s\n", object)
+	if object.isString() {
+		fmt.Printf("%s\n", object.(*String).text)
+	} else {
+		fmt.Printf("%s\n", object)
+	}
 	return undef
 }
 

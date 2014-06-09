@@ -108,12 +108,19 @@ func evalAll(objects []Object) Object {
 
 func actorSyntax(s *Syntax, arguments Object) Object {
 	elements := s.elementsMinimum(arguments, 0)
+	actor := NewActor()
+
 	for _, element := range elements {
 		caseElements := s.elementsMinimum(element, 1)
-		evalAll(caseElements[1:])
+		caseArguments := s.elementsMinimum(caseElements[0], 1)
+		assertObjectType(caseArguments[0], "string")
+
+		actor.functions[caseArguments[0].(*String).text] = func(objects []Object) {
+			evalAll(caseElements[1:])
+		}
 	}
 
-	return NewActor()
+	return actor
 }
 
 func andSyntax(s *Syntax, arguments Object) Object {

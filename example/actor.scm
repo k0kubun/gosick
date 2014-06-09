@@ -1,9 +1,12 @@
 (define master
   (actor
-    (("hello" name)
-      (print name))
-    (("test" name)
-      (print name)
-      (print name))))
+    (("hello")
+      (print "hello")
+    )
+  )
+)
 
 (master start)
+(master ! "hello")
+
+(do () (#f))

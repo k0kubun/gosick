@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"text/scanner"
 )
@@ -38,6 +39,24 @@ func (i *Interpreter) PrintResults(dumpAST bool) {
 	}
 	for _, result := range results {
 		fmt.Println(result)
+	}
+}
+
+func (i *Interpreter) PrintErrors(dumpAST bool) {
+	results := i.EvalResults(dumpAST)
+	if dumpAST {
+		fmt.Printf("\n*** Result ***\n")
+	}
+
+	re, err := regexp.Compile("^\\*\\*\\* ERROR:")
+	if err != nil {
+		panic(err)
+	}
+
+	for _, result := range results {
+		if re.MatchString(result) {
+			fmt.Println(result)
+		}
 	}
 }
 
