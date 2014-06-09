@@ -108,7 +108,11 @@ func evalAll(objects []Object) Object {
 
 func actorSyntax(s *Syntax, arguments Object) Object {
 	elements := s.elementsMinimum(arguments, 0)
-	actor := NewActor()
+
+	// Insert over the application to override scope
+	application := arguments.Parent()
+	actor := NewActor(application.Parent())
+	application.setParent(actor)
 
 	for _, element := range elements {
 		caseElements := s.elementsMinimum(element, 1)
@@ -116,6 +120,13 @@ func actorSyntax(s *Syntax, arguments Object) Object {
 		assertObjectType(caseArguments[0], "string")
 
 		actor.functions[caseArguments[0].(*String).text] = func(objects []Object) {
+			if len(caseArguments[1:]) != len(objects) {
+				runtimeError("invalid message argument length: requires %d, but got %d", len(caseArguments[1:]), len(objects))
+			}
+
+			for index, variable := range caseArguments[1:] {
+				actor.tryDefine(variable, objects[index].Eval())
+			}
 			evalAll(caseElements[1:])
 		}
 	}

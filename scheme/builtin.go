@@ -25,6 +25,7 @@ var (
 		"car":            NewSubroutine(carSubr),
 		"cdr":            NewSubroutine(cdrSubr),
 		"cons":           NewSubroutine(consSubr),
+		"dump":           NewSubroutine(dumpSubr),
 		"eq?":            NewSubroutine(isEqSubr),
 		"equal?":         NewSubroutine(isEqualSubr),
 		"exit":           NewSubroutine(exitSubr),
@@ -90,6 +91,11 @@ func divideSubr(s *Subroutine, arguments Object) Object {
 		quotient /= number.(*Number).value
 	}
 	return NewNumber(quotient)
+}
+
+func dumpSubr(s *Subroutine, arguments Object) Object {
+	fmt.Printf("%#v\n", arguments)
+	return undef
 }
 
 func equalSubr(s *Subroutine, arguments Object) Object {

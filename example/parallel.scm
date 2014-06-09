@@ -1,11 +1,21 @@
+(define concurrency 1)
+
 (define master
   (actor
     (("sum-upto" last)
-      (print "hello")
-      ((generate-child) ! "sum-range" 0 10 self)
+      (define per-proc (/ last concurrency))
+      (do ((i 0))
+        ((= i concurrency))
+        (let ((child (generate-child)) (start (+ (* i per-proc) 1)) (end (* (+ i 1) per-proc)))
+          (child start)
+          (dump child)
+          (child ! "sum-range" start end self)
+        )
+        (set! i (+ i 1))
+      )
     )
     (("add-result" num)
-      (exit)
+      (print num)
     )
   )
 )
@@ -13,6 +23,7 @@
 (define (generate-child)
   (actor
     (("sum-range" range-start range-end parent)
+      (print "sum-range")
       (do ((sum 0) (i range-start))
         ((> i range-end)
           (parent ! "add-result" sum)
@@ -25,6 +36,6 @@
 )
 
 (master start)
-(master ! "sum-upto" 1000)
+(master ! "sum-upto" 4)
 
 (do () (#f))
