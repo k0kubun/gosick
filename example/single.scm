@@ -1,0 +1,5 @@
+(do ((sum 0) (i 1) (last 1000))
+  ((> i last)
+    (print sum))
+  (set! sum (+ sum i))
+  (set! i (+ i 1)))

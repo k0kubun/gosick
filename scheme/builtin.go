@@ -5,6 +5,7 @@ package scheme
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -26,6 +27,7 @@ var (
 		"cons":           NewSubroutine(consSubr),
 		"eq?":            NewSubroutine(isEqSubr),
 		"equal?":         NewSubroutine(isEqualSubr),
+		"exit":           NewSubroutine(exitSubr),
 		"last":           NewSubroutine(lastSubr),
 		"length":         NewSubroutine(lengthSubr),
 		"list":           NewSubroutine(listSubr),
@@ -92,6 +94,11 @@ func divideSubr(s *Subroutine, arguments Object) Object {
 
 func equalSubr(s *Subroutine, arguments Object) Object {
 	return s.compareNumbers(arguments, func(a, b int) bool { return a == b })
+}
+
+func exitSubr(s *Subroutine, arguments Object) Object {
+	os.Exit(0)
+	return undef
 }
 
 func greaterThanSubr(s *Subroutine, arguments Object) Object {
