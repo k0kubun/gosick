@@ -94,7 +94,8 @@ func divideSubr(s *Subroutine, arguments Object) Object {
 }
 
 func dumpSubr(s *Subroutine, arguments Object) Object {
-	fmt.Printf("%#v\n", arguments)
+	object := arguments.(*Pair).ElementAt(0).Eval()
+	fmt.Printf("%d\n", object)
 	return undef
 }
 
