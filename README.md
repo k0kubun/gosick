@@ -29,27 +29,14 @@ $ gosick -h
 ```
 
 ## Implemented syntax and functions
-### Done
 - +, -, *, /, =, <, <=, >, >=
 - cons, car, cdr, list, length, last, append, set-car!, set-cdr!
 - if, cond, and, or, not, begin, do
+- memq, eq?, neq?, equal?
 - null?, number?, boolean?, procedure?, pair?, list?, symbol?, string?
 - string-append, symbol->string, string->symbol, string->number, number->string
 - let, let*, letrec, lambda, define, set!, quote
-- load
-
-### Pending
-| Name | Description |
-|:-----|:------------|
-| memq, eq?, neq?, equal? | only Number and Symbol are supported |
-| write, print | second argument (choosing output port) is not implemented |
-
-### To be done
-- define-macro
-
-## Pending features
-- Tail Call Optimization
-- Non-integer number
+- write, print, load
 
 ## License
 
