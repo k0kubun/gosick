@@ -278,8 +278,13 @@ var interpreterTests = []interpreterTest{
 	evalTest("(letrec ((x 1) (y x)) y)", "*** ERROR: unbound variable: x"),
 	evalTest("(letrec ((x (lambda () x))) (x))", "#<closure x>"),
 
+	evalTest("(actor)", "#<actor #f>"),
+	evalTest("(actor ((\"hello\") \"hello\"))", "#<actor #f>"),
+	evalTest("(define master (actor)) master", "master", "#<actor master>"),
+
 	evalTest("(define-macro (positive x) (list '> x 0)) positive", "#<undef>", "#<macro positive>"),
 
+	evalTest("actor", "#<syntax actor>"),
 	evalTest("set!", "#<syntax set!>"),
 	evalTest("if", "#<syntax if>"),
 	evalTest("and", "#<syntax and>"),
@@ -295,23 +300,7 @@ var interpreterTests = []interpreterTest{
 
 	// Tail Call Optimization
 	evalTest("(letrec ((rec (lambda (x) (if (= x 0) #t (rec (- x 1)))))) (rec 1))", "#t"),
-	evalTest(`
-	  (define (even? x)
-	    (if (= x 0)
-	      #t
-	      (odd? (- x 1))
-	    )
-	  )
-
-		(define (odd? x)
-			(if (= x 1)
-				#t
-				(even? (- x 1))
-			)
-		)
-
-		(even? 10)
-	`, "even?", "odd?"),
+	evalTest(`(define (even? x) (if (= x 0) #t (odd? (- x 1)))) (define (odd? x) (if (= x 1) #t (even? (- x 1)))) (even? 10)`, "even?", "odd?"),
 }
 
 var runtimeErrorTests = []interpreterTest{
@@ -372,6 +361,8 @@ var compileErrorTests = []interpreterTest{
 
 	evalTest("(define 1 1)", "*** ERROR: Compile Error: syntax-error: (define 1 1)"),
 	evalTest("(let ((x 1 1)))", "*** ERROR: Compile Error: syntax-error: malformed let: (let ((x 1 1)))"),
+
+	evalTest("(actor ())", "*** ERROR: Compile Error: syntax-error: malformed actor: (actor ())"),
 }
 
 func evalTest(source string, results ...string) interpreterTest {

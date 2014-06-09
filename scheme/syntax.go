@@ -8,6 +8,7 @@ import (
 
 var (
 	builtinSyntaxes = Binding{
+		"actor":        NewSyntax(actorSyntax),
 		"and":          NewSyntax(andSyntax),
 		"begin":        NewSyntax(beginSyntax),
 		"cond":         NewSyntax(condSyntax),
@@ -103,6 +104,16 @@ func evalAll(objects []Object) Object {
 		lastResult = object.Eval()
 	}
 	return lastResult
+}
+
+func actorSyntax(s *Syntax, arguments Object) Object {
+	elements := s.elementsMinimum(arguments, 0)
+	for _, element := range elements {
+		caseElements := s.elementsMinimum(element, 1)
+		evalAll(caseElements[1:])
+	}
+
+	return NewActor()
 }
 
 func andSyntax(s *Syntax, arguments Object) Object {
