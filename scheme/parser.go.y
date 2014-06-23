@@ -53,8 +53,6 @@ expr:
 		{ $$ = $1 }
 	| IDENTIFIER
 		{ $$ = NewVariable($1, nil) }
-	| '\'' expr
-		{ $$ = $2 }
 	| '(' expr list ')'
 		{
 			app := NewApplication(nil)

@@ -30,10 +30,10 @@ var interpreterTests = []interpreterTest{
 	evalTest("#f #t", "#f", "#t"),
 	evalTest("1234567890", "1234567890"),
 
-	evalTest("'12", "12"),
+	// evalTest("'12", "12"),
 	// evalTest("'hello", "hello"),
-	evalTest("'#f", "#f"),
-	evalTest("'#t", "#t"),
+	// evalTest("'#f", "#f"),
+	// evalTest("'#t", "#t"),
 	// evalTest("'(1)", "(1)"),
 	// evalTest("'(  1   2   3  )", "(1 2 3)"),
 	// evalTest("'( 1 ( 2 3 ) )", "(1 (2 3))"),
@@ -118,7 +118,7 @@ var interpreterTests = []interpreterTest{
 
 	evalTest("(length ())", "0"),
 	// evalTest("(length '(1 2))", "2"),
-	evalTest("(length (list 1 '(2 3) 4))", "3"),
+	// evalTest("(length (list 1 '(2 3) 4))", "3"),
 
 	// evalTest("(memq (car (cons 'b 'c)) '(a b c))", "(b c)"),
 	// evalTest("(memq 'd '(a b c))", "#f"),
@@ -348,7 +348,7 @@ var compileErrorTests = []interpreterTest{
 	evalTest("(cdr)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
 
 	evalTest("(length (cons 1 2))", "*** ERROR: Compile Error: proper list required for function application or macro use"),
-	evalTest("(memq 'a '(a b c) 1)", "*** ERROR: Compile Error: wrong number of arguments: requires 2, but got 3"),
+	// evalTest("(memq 'a '(a b c) 1)", "*** ERROR: Compile Error: wrong number of arguments: requires 2, but got 3"),
 	evalTest("(append () 1 ())", "*** ERROR: Compile Error: proper list required for function application or macro use"),
 	evalTest("(set! x 1 1)", "*** ERROR: Compile Error: syntax-error: malformed set!: (set! x 1 1)"),
 

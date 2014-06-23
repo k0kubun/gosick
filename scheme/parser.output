@@ -13,11 +13,10 @@ state 1
 
 	$end  accept
 	IDENTIFIER  shift 4
-	NUMBER  shift 7
-	BOOLEAN  shift 8
-	STRING  shift 9
-	\'  shift 5
-	(  shift 6
+	NUMBER  shift 6
+	BOOLEAN  shift 7
+	STRING  shift 8
+	(  shift 5
 	.  error
 
 	expr  goto 2
@@ -42,125 +41,102 @@ state 4
 
 
 state 5
-	expr:  \'.expr 
-
-	IDENTIFIER  shift 4
-	NUMBER  shift 7
-	BOOLEAN  shift 8
-	STRING  shift 9
-	\'  shift 5
-	(  shift 6
-	.  error
-
-	expr  goto 10
-	const  goto 3
-
-state 6
 	expr:  (.expr list ) 
 	const:  (.) 
 
 	IDENTIFIER  shift 4
-	NUMBER  shift 7
-	BOOLEAN  shift 8
-	STRING  shift 9
-	\'  shift 5
-	(  shift 6
-	)  shift 12
+	NUMBER  shift 6
+	BOOLEAN  shift 7
+	STRING  shift 8
+	(  shift 5
+	)  shift 10
 	.  error
 
-	expr  goto 11
+	expr  goto 9
 	const  goto 3
 
-state 7
-	const:  NUMBER.    (9)
+state 6
+	const:  NUMBER.    (8)
 
-	.  reduce 9 (src line 68)
+	.  reduce 8 (src line 66)
+
+
+state 7
+	const:  BOOLEAN.    (9)
+
+	.  reduce 9 (src line 69)
 
 
 state 8
-	const:  BOOLEAN.    (10)
+	const:  STRING.    (10)
 
 	.  reduce 10 (src line 71)
 
 
 state 9
-	const:  STRING.    (11)
-
-	.  reduce 11 (src line 73)
-
-
-state 10
-	expr:  \' expr.    (7)
-
-	.  reduce 7 (src line 56)
-
-
-state 11
 	expr:  ( expr.list ) 
 	list: .    (3)
 
 	IDENTIFIER  shift 4
-	NUMBER  shift 7
-	BOOLEAN  shift 8
-	STRING  shift 9
-	\'  shift 5
-	(  shift 6
+	NUMBER  shift 6
+	BOOLEAN  shift 7
+	STRING  shift 8
+	(  shift 5
 	.  reduce 3 (src line 39)
 
-	list  goto 13
-	expr  goto 14
+	list  goto 11
+	expr  goto 12
 	const  goto 3
 
-state 12
-	const:  ( ).    (12)
+state 10
+	const:  ( ).    (11)
 
-	.  reduce 12 (src line 75)
+	.  reduce 11 (src line 73)
 
 
-state 13
+state 11
 	expr:  ( expr list.) 
 
-	)  shift 15
+	)  shift 13
 	.  error
 
 
-state 14
+state 12
 	list:  expr.list 
 	list: .    (3)
 
 	IDENTIFIER  shift 4
-	NUMBER  shift 7
-	BOOLEAN  shift 8
-	STRING  shift 9
-	\'  shift 5
-	(  shift 6
+	NUMBER  shift 6
+	BOOLEAN  shift 7
+	STRING  shift 8
+	(  shift 5
 	.  reduce 3 (src line 39)
 
-	list  goto 16
-	expr  goto 14
+	list  goto 14
+	expr  goto 12
 	const  goto 3
 
-state 15
-	expr:  ( expr list ).    (8)
+state 13
+	expr:  ( expr list ).    (7)
 
-	.  reduce 8 (src line 58)
+	.  reduce 7 (src line 56)
 
 
-state 16
+state 14
 	list:  expr list.    (4)
 
 	.  reduce 4 (src line 41)
 
 
-10 terminals, 5 nonterminals
-13 grammar rules, 17/2000 states
+9 terminals, 5 nonterminals
+12 grammar rules, 15/2000 states
 0 shift/reduce, 0 reduce/reduce conflicts reported
 54 working sets used
-memory: parser 12/30000
-9 extra closures
-32 shift entries, 1 exceptions
-8 goto entries
-5 entries saved by goto default
-Optimizer space used: output 23/30000
-23 table entries, 1 zero
-maximum spread: 10, maximum offset: 14
+memory: parser 10/30000
+7 extra closures
+22 shift entries, 1 exceptions
+7 goto entries
+4 entries saved by goto default
+Optimizer space used: output 20/30000
+20 table entries, 1 zero
+maximum spread: 9, maximum offset: 12
