@@ -57,7 +57,7 @@ func (l Lexer) TokenType() rune {
 	} else if l.matchRegexp(token, "^#(f|t)$") {
 		return BOOLEAN
 	} else if l.matchRegexp(token, "\"[^\"]*\"") {
-		return StringToken
+		return STRING
 	} else {
 		runes := []rune(token)
 		return runes[0]

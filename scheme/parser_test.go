@@ -28,6 +28,11 @@ var easyParserTests = []easyParserTest{
 	{"hello", "hello"},
 	{"(+)", "(+)"},
 	{"(- 1)", "(- 1)"},
+	{"(+ 3 4 (- 3 2))", "(+ 3 4 (- 3 2))"},
+	{"(<= 1 2 1)", "(<= 1 2 1)"},
+	{"(string-append)", "(string-append)"},
+	{"((lambda (x y z) (* (+ x y) z)) 1 2 3)", "((lambda (x y z) (* (+ x y) z)) 1 2 3)"},
+	{"\"a b\"", "\"a b\""},
 }
 
 var deepParserTests = []deepParserTest{

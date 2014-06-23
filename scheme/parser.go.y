@@ -19,6 +19,7 @@ package scheme
 %token<token> IDENTIFIER
 %token<token> NUMBER
 %token<token> BOOLEAN
+%token<token> STRING
 
 %%
 
@@ -52,12 +53,12 @@ expr:
 		{ $$ = $2 }
 	| '(' expr exprs ')'
 		{
-			application := NewApplication(nil)
-			application.procedure = $2
-			application.procedure.setParent(application)
-			application.arguments = $3
-			application.arguments.setParent(application)
-			$$ = application
+			app := NewApplication(nil)
+			app.procedure = $2
+			app.procedure.setParent(app)
+			app.arguments = $3
+			app.arguments.setParent(app)
+			$$ = app
 		}
 
 const:
@@ -65,6 +66,8 @@ const:
 		{ $$ = NewNumber($1) }
 	| BOOLEAN
 		{ $$ = NewBoolean($1) }
+	| STRING
+		{ $$ = NewString($1[1:len($1)-1]) }
 	| '(' ')'
 		{ $$ = Null }
 

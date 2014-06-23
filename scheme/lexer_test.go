@@ -32,7 +32,7 @@ var tokenTypeTests = []tokenTypeTest{
 	{"f2000", IDENTIFIER},
 	{"a0?!*/<=>:$%^&_~", IDENTIFIER},
 
-	{"\"a b\"", StringToken},
+	{"\"a b\"", STRING},
 }
 
 var tokenizeTests = []tokenizeTest{
