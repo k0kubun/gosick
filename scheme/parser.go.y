@@ -15,7 +15,9 @@ package scheme
 %type<object> expr
 %type<object> const
 
-%token<token> NUMBER BOOLEAN
+%token<token> IDENTIFIER
+%token<token> NUMBER
+%token<token> BOOLEAN
 
 %%
 
@@ -31,6 +33,8 @@ program:
 expr:
 	const
 		{ $$ = $1 }
+	| IDENTIFIER
+		{ $$ = NewVariable($1, nil) }
 	| '\'' expr
 		{ $$ = $2 }
 

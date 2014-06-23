@@ -27,10 +27,10 @@ var tokenTypeTests = []tokenTypeTest{
 	{"#f", BOOLEAN},
 	{"#t", BOOLEAN},
 
-	{"+", IdentifierToken},
-	{"-", IdentifierToken},
-	{"f2000", IdentifierToken},
-	{"a0?!*/<=>:$%^&_~", IdentifierToken},
+	{"+", IDENTIFIER},
+	{"-", IDENTIFIER},
+	{"f2000", IDENTIFIER},
+	{"a0?!*/<=>:$%^&_~", IDENTIFIER},
 
 	{"\"a b\"", StringToken},
 }

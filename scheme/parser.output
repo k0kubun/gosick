@@ -2,10 +2,11 @@
 state 0
 	$accept: .program $end 
 
-	NUMBER  shift 5
-	BOOLEAN  shift 6
-	\'  shift 4
-	(  shift 7
+	IDENTIFIER  shift 4
+	NUMBER  shift 6
+	BOOLEAN  shift 7
+	\'  shift 5
+	(  shift 8
 	.  error
 
 	program  goto 1
@@ -22,67 +23,74 @@ state 1
 state 2
 	program:  expr.    (1)
 
-	.  reduce 1 (src line 22)
+	.  reduce 1 (src line 24)
 
 
 state 3
 	expr:  const.    (2)
 
-	.  reduce 2 (src line 31)
+	.  reduce 2 (src line 33)
 
 
 state 4
-	expr:  \'.expr 
+	expr:  IDENTIFIER.    (3)
 
-	NUMBER  shift 5
-	BOOLEAN  shift 6
-	\'  shift 4
-	(  shift 7
-	.  error
+	.  reduce 3 (src line 36)
 
-	expr  goto 8
-	const  goto 3
 
 state 5
-	const:  NUMBER.    (4)
+	expr:  \'.expr 
 
-	.  reduce 4 (src line 37)
+	IDENTIFIER  shift 4
+	NUMBER  shift 6
+	BOOLEAN  shift 7
+	\'  shift 5
+	(  shift 8
+	.  error
 
+	expr  goto 9
+	const  goto 3
 
 state 6
-	const:  BOOLEAN.    (5)
+	const:  NUMBER.    (5)
 
-	.  reduce 5 (src line 40)
+	.  reduce 5 (src line 41)
 
 
 state 7
-	const:  (.) 
+	const:  BOOLEAN.    (6)
 
-	)  shift 9
-	.  error
+	.  reduce 6 (src line 44)
 
 
 state 8
-	expr:  \' expr.    (3)
+	const:  (.) 
 
-	.  reduce 3 (src line 34)
+	)  shift 10
+	.  error
 
 
 state 9
-	const:  ( ).    (6)
+	expr:  \' expr.    (4)
 
-	.  reduce 6 (src line 42)
+	.  reduce 4 (src line 38)
 
 
-8 terminals, 4 nonterminals
-7 grammar rules, 10/2000 states
+state 10
+	const:  ( ).    (7)
+
+	.  reduce 7 (src line 46)
+
+
+9 terminals, 4 nonterminals
+8 grammar rules, 11/2000 states
 0 shift/reduce, 0 reduce/reduce conflicts reported
 53 working sets used
 memory: parser 4/30000
 0 extra closures
-9 shift entries, 1 exceptions
+11 shift entries, 1 exceptions
 4 goto entries
 1 entries saved by goto default
-Optimizer space used: output 10/30000
-10 table entries, 1 zero
-maximum spread: 8, maximum offset: 8
+Optimizer space used: output 12/30000
+12 table entries, 2 zero
+maximum spread: 9, maximum offset: 9

@@ -16,10 +16,12 @@ type yySymType struct {
 	token  string
 }
 
-const NUMBER = 57346
-const BOOLEAN = 57347
+const IDENTIFIER = 57346
+const NUMBER = 57347
+const BOOLEAN = 57348
 
 var yyToknames = []string{
+	"IDENTIFIER",
 	"NUMBER",
 	"BOOLEAN",
 }
@@ -29,7 +31,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyMaxDepth = 200
 
-//line parser.go.y:45
+//line parser.go.y:49
 
 type Parser struct {
 	*Lexer
@@ -151,53 +153,57 @@ var yyExca = []int{
 	-2, 0,
 }
 
-const yyNprod = 7
+const yyNprod = 8
 const yyPrivate = 57344
 
 var yyTokenNames []string
 var yyStates []string
 
-const yyLast = 10
+const yyLast = 12
 
 var yyAct = []int{
 
-	5, 6, 4, 7, 2, 9, 3, 1, 0, 8,
+	4, 6, 7, 5, 8, 2, 10, 3, 1, 0,
+	0, 9,
 }
 var yyPact = []int{
 
-	-4, -1000, -1000, -1000, -4, -1000, -1000, -3, -1000, -1000,
+	-4, -1000, -1000, -1000, -1000, -4, -1000, -1000, -3, -1000,
+	-1000,
 }
 var yyPgo = []int{
 
-	0, 7, 4, 6,
+	0, 8, 5, 7,
 }
 var yyR1 = []int{
 
-	0, 1, 2, 2, 3, 3, 3,
+	0, 1, 2, 2, 2, 3, 3, 3,
 }
 var yyR2 = []int{
 
-	0, 1, 1, 2, 1, 1, 2,
+	0, 1, 1, 1, 2, 1, 1, 2,
 }
 var yyChk = []int{
 
-	-1000, -1, -2, -3, 6, 4, 5, 7, -2, 8,
+	-1000, -1, -2, -3, 4, 7, 5, 6, 8, -2,
+	9,
 }
 var yyDef = []int{
 
-	0, -2, 1, 2, 0, 4, 5, 0, 3, 6,
+	0, -2, 1, 2, 3, 0, 5, 6, 0, 4,
+	7,
 }
 var yyTok1 = []int{
 
 	1, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 3, 3, 3, 3, 3, 3, 6,
-	7, 8,
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 7,
+	8, 9,
 }
 var yyTok2 = []int{
 
-	2, 3, 4, 5,
+	2, 3, 4, 5, 6,
 }
 var yyTok3 = []int{
 	0,
@@ -429,7 +435,7 @@ yydefault:
 	switch yynt {
 
 	case 1:
-		//line parser.go.y:24
+		//line parser.go.y:26
 		{
 			yyVAL.object = yyS[yypt-0].object
 			if l, ok := yylex.(*Lexer); ok {
@@ -437,27 +443,32 @@ yydefault:
 			}
 		}
 	case 2:
-		//line parser.go.y:33
-		{
-			yyVAL.object = yyS[yypt-0].object
-		}
-	case 3:
 		//line parser.go.y:35
 		{
 			yyVAL.object = yyS[yypt-0].object
 		}
+	case 3:
+		//line parser.go.y:37
+		{
+			yyVAL.object = NewVariable(yyS[yypt-0].token, nil)
+		}
 	case 4:
 		//line parser.go.y:39
 		{
-			yyVAL.object = NewNumber(yyS[yypt-0].token)
+			yyVAL.object = yyS[yypt-0].object
 		}
 	case 5:
-		//line parser.go.y:41
+		//line parser.go.y:43
+		{
+			yyVAL.object = NewNumber(yyS[yypt-0].token)
+		}
+	case 6:
+		//line parser.go.y:45
 		{
 			yyVAL.object = NewBoolean(yyS[yypt-0].token)
 		}
-	case 6:
-		//line parser.go.y:43
+	case 7:
+		//line parser.go.y:47
 		{
 			yyVAL.object = Null
 		}
