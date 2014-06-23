@@ -278,6 +278,7 @@ func loadSubr(s *Subroutine, arguments Object) Object {
 	}
 
 	parser := NewParser(string(buffer))
+	parser.Peek()
 	for _, e := range parser.Parse(arguments.Parent()) {
 		e.Eval()
 	}

@@ -391,7 +391,6 @@ func TestInterpreter(t *testing.T) {
 }
 
 func TestLoad(t *testing.T) {
-	return // pending
 	file, err := ioutil.TempFile(os.TempDir(), "load_test")
 	if err != nil {
 		panic(err)
