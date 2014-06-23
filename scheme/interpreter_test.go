@@ -27,7 +27,7 @@ var interpreterTests = []interpreterTest{
 	evalTest("12", "12"),
 	evalTest("-12", "-12"),
 	evalTest("()", "()"),
-	// evalTest("#f #t", "#f", "#t"),
+	evalTest("#f #t", "#f", "#t"),
 	evalTest("1234567890", "1234567890"),
 
 	evalTest("'12", "12"),
@@ -93,13 +93,13 @@ var interpreterTests = []interpreterTest{
 	evalTest("(>= 3 2 1)", "#t"),
 	evalTest("(>= 1 1 1)", "#t"),
 
-	// evalTest("(not #f)", "#t"),
-	// evalTest("(not #t)", "#f"),
-	// evalTest("(not (number? ()))", "#t"),
-	// evalTest("(not 1)", "#f"),
-	// evalTest("(not ())", "#f"),
+	evalTest("(not #f)", "#t"),
+	evalTest("(not #t)", "#f"),
+	evalTest("(not (number? ()))", "#t"),
+	evalTest("(not 1)", "#f"),
+	evalTest("(not ())", "#f"),
 
-	// evalTest("(cons 1 2)", "(1 . 2)"),
+	evalTest("(cons 1 2)", "(1 . 2)"),
 	evalTest("(car (cons 1 2))", "1"),
 	// evalTest("(cons '(1 2) (list 1 2 3))", "((1 2) 1 2 3)"),
 	evalTest("(cons (cons 1 2) 3)", "((1 . 2) . 3)"),
@@ -107,9 +107,9 @@ var interpreterTests = []interpreterTest{
 	// evalTest("(cdr '(1))", "()"),
 	// evalTest("(car '(1 2))", "1"),
 	// evalTest("(cdr '(1 2))", "(2)"),
-	// evalTest("(cadr (cons 1 (cons 2 3)))", "2"),
+	evalTest("(cadr (cons 1 (cons 2 3)))", "2"),
 	// evalTest("(cadr '(1 2 3))", "2"),
-	// evalTest("(cddr (cons 1 (cons 2 3)))", "3"),
+	evalTest("(cddr (cons 1 (cons 2 3)))", "3"),
 	// evalTest("(cddr '(1 2 3))", "(3)"),
 
 	evalTest("(list)", "()"),
@@ -154,7 +154,7 @@ var interpreterTests = []interpreterTest{
 	evalTest("(boolean? ())", "#f"),
 	evalTest("(boolean? #t)", "#t"),
 	evalTest("(boolean? #f)", "#t"),
-	// evalTest("(boolean? (null? 1))", "#t"),
+	evalTest("(boolean? (null? 1))", "#t"),
 
 	evalTest("(pair? 1)", "#f"),
 	evalTest("(pair? ())", "#f"),
@@ -171,8 +171,8 @@ var interpreterTests = []interpreterTest{
 	evalTest("(string? \"\")", "#t"),
 	evalTest("(string? \"hello\")", "#t"),
 
-	// evalTest("(null? 1)", "#f"),
-	// evalTest("(null? ())", "#t"),
+	evalTest("(null? 1)", "#f"),
+	evalTest("(null? ())", "#t"),
 
 	evalTest("(eq? 1 1)", "#t"),
 	evalTest("(eq? 1 2)", "#f"),
@@ -200,37 +200,37 @@ var interpreterTests = []interpreterTest{
 	// evalTest("(equal? '(1 1) '(1 2))", "#f"),
 	// evalTest("(equal? '(1 2) '(1 2))", "#t"),
 
-	// evalTest("(define x 1) x", "x", "1"),
-	// evalTest("(define x (+ 1 3)) x", "x", "4"),
-	// evalTest("(define x 1) (define y 2) (define z 3) (+ x (* y z))", "x", "y", "z", "7"),
-	// evalTest("(define x 1) (define x 2) x", "x", "x", "2"),
+	evalTest("(define x 1) x", "x", "1"),
+	evalTest("(define x (+ 1 3)) x", "x", "4"),
+	evalTest("(define x 1) (define y 2) (define z 3) (+ x (* y z))", "x", "y", "z", "7"),
+	evalTest("(define x 1) (define x 2) x", "x", "x", "2"),
 
 	evalTest("(lambda (x) x)", "#<closure #f>"),
 	evalTest("((lambda (x) 1) 2)", "1"),
 	evalTest("((lambda (x y z) (+ 3 4) (- 4 1) ) 2 3 3)", "3"),
 	evalTest("((lambda (x) (+ x x)) 1)", "2"),
-	// evalTest("(define x 1) ((lambda (y) (+ x y)) 2)", "x", "3"),
-	// evalTest("(define x 1) ((lambda (x) (+ x x)) 2)", "x", "4"),
+	evalTest("(define x 1) ((lambda (y) (+ x y)) 2)", "x", "3"),
+	evalTest("(define x 1) ((lambda (x) (+ x x)) 2)", "x", "4"),
 	evalTest("((lambda (x) (define x 3) x) 2)", "3"),
 	evalTest("((lambda (x y z) (* (+ x y) z)) 1 2 3)", "9"),
-	// evalTest("(define x (lambda (x) y)) (define y 1) (x 2)", "x", "y", "1"),
-	// evalTest("(define x 0) (define y 0) (define z (lambda (z) (set! x y) (set! y z) x)) (z 1) x y (z 2) x y", "x", "y", "z", "0", "0", "1", "1", "1", "2"),
-	// evalTest("(define x (lambda (x) (set! y x))) (define y 3) (x 2) y", "x", "y", "2", "2"),
-	// evalTest("(define x (lambda (a) (* 2 a))) (define y (lambda (a) (* 3 a))) (define z (lambda (a b) (x a) (y b))) (* (x 3) (y 2) (z 4 5))", "x", "y", "z", "540"),
+	evalTest("(define x (lambda (x) y)) (define y 1) (x 2)", "x", "y", "1"),
+	evalTest("(define x 0) (define y 0) (define z (lambda (z) (set! x y) (set! y z) x)) (z 1) x y (z 2) x y", "x", "y", "z", "0", "0", "1", "1", "1", "2"),
+	evalTest("(define x (lambda (x) (set! y x))) (define y 3) (x 2) y", "x", "y", "2", "2"),
+	evalTest("(define x (lambda (a) (* 2 a))) (define y (lambda (a) (* 3 a))) (define z (lambda (a b) (x a) (y b))) (* (x 3) (y 2) (z 4 5))", "x", "y", "z", "540"),
 
-	// evalTest("(define x 2) (set! x 3) x", "x", "3", "3"),
-	// evalTest("(define x 4) ((lambda (x) (set! x 3) x) 2) x", "x", "3", "4"),
+	evalTest("(define x 2) (set! x 3) x", "x", "3", "3"),
+	evalTest("(define x 4) ((lambda (x) (set! x 3) x) 2) x", "x", "3", "4"),
 
-	// evalTest("(define x (cons 3 2)) (set-car! x 1) x", "x", "#<undef>", "(1 . 2)"),
-	// evalTest("(define x (cons 3 2)) (set-cdr! x 1) x", "x", "#<undef>", "(3 . 1)"),
+	evalTest("(define x (cons 3 2)) (set-car! x 1) x", "x", "#<undef>", "(1 . 2)"),
+	evalTest("(define x (cons 3 2)) (set-cdr! x 1) x", "x", "#<undef>", "(3 . 1)"),
 	evalTest("((lambda (x) (set-car! x 1) x) (cons 2 3))", "(1 . 3)"),
 	evalTest("((lambda (x) (set-cdr! x 1) x) (cons 2 3))", "(2 . 1)"),
 
 	evalTest("(if #t 1 2)", "1"),
 	evalTest("(if #f 1 2)", "2"),
 	evalTest("(if 1 2 3)", "2"),
-	// evalTest("(if (null? ()) 1 2)", "1"),
-	// evalTest("(if (null? 3) 1)", "#<undef>"),
+	evalTest("(if (null? ()) 1 2)", "1"),
+	evalTest("(if (null? 3) 1)", "#<undef>"),
 	// evalTest("(if (number? 3) 'num)", "num"),
 
 	evalTest("(cond (#t))", "#t"),
@@ -253,18 +253,18 @@ var interpreterTests = []interpreterTest{
 
 	evalTest("(begin)", "#<undef>"),
 	evalTest("(begin 1 2 3)", "3"),
-	// evalTest("(begin (define x 2) (set! x 3) x) x", "3", "3"),
-	// evalTest("(define x 1) (define y x) (set! x 3) y", "x", "y", "3", "1"),
+	evalTest("(begin (define x 2) (set! x 3) x) x", "3", "3"),
+	evalTest("(define x 1) (define y x) (set! x 3) y", "x", "y", "3", "1"),
 
-	// evalTest("(define (func x) x) (func 1)", "func", "1"),
-	// evalTest("(define (func x y) (+ x y)) (func 1 2)", "func", "3"),
+	evalTest("(define (func x) x) (func 1)", "func", "1"),
+	evalTest("(define (func x y) (+ x y)) (func 1 2)", "func", "3"),
 	evalTest("(define () x)", "*** ERROR: Compile Error: syntax-error: (define () x)"),
 
 	evalTest("(do () (#t))", "#t"),
 	evalTest("(do ((x #f)) (x) (set! x #t))", "#t"),
 	evalTest("(do ((i (+ 1 2))) (#t i))", "3"),
 	evalTest("(do ((i 1) (j 1)) (#t))", "#t"),
-	// evalTest("(define x \"\") (do ((i 1 (+ i 1)) (j 1 (* j 2))) ((> i 3) x) (begin (set! x (string-append x (number->string i))) (set! x (string-append x (number->string j)))))", "x", "\"112234\""),
+	evalTest("(define x \"\") (do ((i 1 (+ i 1)) (j 1 (* j 2))) ((> i 3) x) (begin (set! x (string-append x (number->string i))) (set! x (string-append x (number->string j)))))", "x", "\"112234\""),
 
 	evalTest("(let ((x 1) (y 2)) (+ x y))", "3"),
 	evalTest("(let ((x 1) (y x)) y)", "*** ERROR: unbound variable: x"),
@@ -280,7 +280,7 @@ var interpreterTests = []interpreterTest{
 
 	evalTest("(actor)", "#<actor #f>"),
 	evalTest("(actor ((\"hello\") \"hello\"))", "#<actor #f>"),
-	// evalTest("(define master (actor)) master", "master", "#<actor master>"),
+	evalTest("(define master (actor)) master", "master", "#<actor master>"),
 
 	// evalTest("(define-macro (positive x) (list '> x 0)) positive", "#<undef>", "#<macro positive>"),
 
@@ -300,19 +300,19 @@ var interpreterTests = []interpreterTest{
 
 	// Tail Call Optimization
 	evalTest("(letrec ((rec (lambda (x) (if (= x 0) #t (rec (- x 1)))))) (rec 1))", "#t"),
-	// evalTest(`(define (even? x) (if (= x 0) #t (odd? (- x 1)))) (define (odd? x) (if (= x 1) #t (even? (- x 1)))) (even? 10)`, "even?", "odd?"),
+	evalTest(`(define (even? x) (if (= x 0) #t (odd? (- x 1)))) (define (odd? x) (if (= x 1) #t (even? (- x 1)))) (even? 10)`, "even?", "odd?"),
 }
 
 var runtimeErrorTests = []interpreterTest{
 	evalTest("(1)", "*** ERROR: invalid application"),
 	evalTest("hello", "*** ERROR: unbound variable: hello"),
-	// evalTest("((lambda (x) (define y 1) 1) 1) y", "1", "*** ERROR: unbound variable: y"),
+	evalTest("((lambda (x) (define y 1) 1) 1) y", "1", "*** ERROR: unbound variable: y"),
 	// evalTest("'1'", "1", "*** ERROR: unterminated quote"),
 	evalTest("(last ())", "*** ERROR: pair required: ()"),
-	// evalTest("((lambda (x) (set! x 3) x) 2) x", "3", "*** ERROR: unbound variable: x"),
+	evalTest("((lambda (x) (set! x 3) x) 2) x", "3", "*** ERROR: unbound variable: x"),
 
-	// evalTest("(define set! 0) (set! define 0)", "set!", "*** ERROR: invalid application"),
-	// evalTest("(define if 0) (if #t 0)", "if", "*** ERROR: invalid application"),
+	evalTest("(define set! 0) (set! define 0)", "set!", "*** ERROR: invalid application"),
+	evalTest("(define if 0) (if #t 0)", "if", "*** ERROR: invalid application"),
 	// evalTest("(define quote 1) '1", "quote", "*** ERROR: invalid application"),
 }
 
@@ -323,9 +323,9 @@ var compileErrorTests = []interpreterTest{
 	evalTest("(-)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),
 	evalTest("(/)", "*** ERROR: Compile Error: procedure requires at least 1 argument"),
 	evalTest("(number?)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
-	// evalTest("(null?)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
-	// evalTest("(null? 1 2)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 2"),
-	// evalTest("(not)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
+	evalTest("(null?)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
+	evalTest("(null? 1 2)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 2"),
+	evalTest("(not)", "*** ERROR: Compile Error: wrong number of arguments: requires 1, but got 0"),
 
 	evalTest("(+ 1 #t)", "*** ERROR: Compile Error: number required, but got #t"),
 	evalTest("(- #t)", "*** ERROR: Compile Error: number required, but got #t"),

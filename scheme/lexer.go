@@ -12,7 +12,7 @@ import (
 
 type Lexer struct {
 	scanner.Scanner
-	result Object
+	results []Object
 }
 
 const (

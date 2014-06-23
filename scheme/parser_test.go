@@ -69,7 +69,8 @@ func TestParser(t *testing.T) {
 	for _, test := range easyParserTests {
 		i := NewInterpreter(test.source)
 		i.Peek()
-		object := i.Parse(nil)
+		objects := i.Parse(nil)
+		object := objects[0]
 
 		if object.String() != test.result {
 			t.Errorf(
@@ -85,7 +86,8 @@ func TestParser(t *testing.T) {
 	for _, test := range deepParserTests {
 		i := NewInterpreter(test.source)
 		i.Peek()
-		object := i.Parse(nil)
+		objects := i.Parse(nil)
+		object := objects[0]
 
 		if !reflect.DeepEqual(object, test.result) {
 			t.Errorf(

@@ -7,12 +7,13 @@ package scheme
 %}
 
 %union{
-	object Object
-	token  string
+	objects []Object
+	object  Object
+	token   string
 }
 
-%type<object> program
-%type<object> exprs
+%type<objects> program
+%type<object> list
 %type<object> expr
 %type<object> const
 
@@ -24,17 +25,20 @@ package scheme
 %%
 
 program:
-	expr
 		{
-			$$ = $1
+			$$ = []Object{}
+		}
+	| program expr
+		{
+			$$ = append($1, $2)
 			if l, ok := yylex.(*Lexer); ok {
-				l.result = $$
+				l.results = $$
 			}
 		}
 
-exprs:
+list:
 		{ $$ = Null }
-	| expr exprs
+	| expr list
 		{
 			pair := NewPair(nil)
 			pair.Car = $1
@@ -51,7 +55,7 @@ expr:
 		{ $$ = NewVariable($1, nil) }
 	| '\'' expr
 		{ $$ = $2 }
-	| '(' expr exprs ')'
+	| '(' expr list ')'
 		{
 			app := NewApplication(nil)
 			app.procedure = $2
@@ -81,13 +85,16 @@ func NewParser(source string) *Parser {
 	return &Parser{NewLexer(source)}
 }
 
-func (p *Parser) Parse(parent Object) Object {
+func (p *Parser) Parse(parent Object) []Object {
 	p.ensureAvailability()
 	if yyParse(p.Lexer) != 0 {
 		panic("parse error")
 	}
-	p.result.setParent(parent)
-	return p.result
+
+	for _, r := range p.results {
+		r.setParent(parent)
+	}
+	return p.results
 }
 
 func (p *Parser) parseObject(parent Object) Object {

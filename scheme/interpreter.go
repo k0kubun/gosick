@@ -12,7 +12,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"text/scanner"
 )
 
 type Interpreter struct {
@@ -67,17 +66,13 @@ func (i *Interpreter) EvalResults(dumpAST bool) (results []string) {
 		}
 	}()
 
-	for i.Peek() != scanner.EOF {
-		expression := i.Parser.Parse(i.closure)
+	i.Peek()
+	for _, e := range i.Parser.Parse(i.closure) {
 		if dumpAST {
 			fmt.Printf("\n*** AST ***\n")
-			i.DumpAST(expression, 0)
+			i.DumpAST(e, 0)
 		}
-
-		if expression == nil {
-			return
-		}
-		results = append(results, expression.Eval().String())
+		results = append(results, e.Eval().String())
 	}
 	return
 }

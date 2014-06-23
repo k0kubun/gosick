@@ -1,7 +1,17 @@
 
 state 0
 	$accept: .program $end 
+	program: .    (1)
 
+	.  reduce 1 (src line 27)
+
+	program  goto 1
+
+state 1
+	$accept:  program.$end 
+	program:  program.expr 
+
+	$end  accept
 	IDENTIFIER  shift 4
 	NUMBER  shift 7
 	BOOLEAN  shift 8
@@ -10,33 +20,25 @@ state 0
 	(  shift 6
 	.  error
 
-	program  goto 1
 	expr  goto 2
 	const  goto 3
 
-state 1
-	$accept:  program.$end 
-
-	$end  accept
-	.  error
-
-
 state 2
-	program:  expr.    (1)
+	program:  program expr.    (2)
 
-	.  reduce 1 (src line 26)
+	.  reduce 2 (src line 31)
 
 
 state 3
-	expr:  const.    (4)
+	expr:  const.    (5)
 
-	.  reduce 4 (src line 47)
+	.  reduce 5 (src line 51)
 
 
 state 4
-	expr:  IDENTIFIER.    (5)
+	expr:  IDENTIFIER.    (6)
 
-	.  reduce 5 (src line 50)
+	.  reduce 6 (src line 54)
 
 
 state 5
@@ -54,7 +56,7 @@ state 5
 	const  goto 3
 
 state 6
-	expr:  (.expr exprs ) 
+	expr:  (.expr list ) 
 	const:  (.) 
 
 	IDENTIFIER  shift 4
@@ -70,32 +72,32 @@ state 6
 	const  goto 3
 
 state 7
-	const:  NUMBER.    (8)
+	const:  NUMBER.    (9)
 
-	.  reduce 8 (src line 64)
+	.  reduce 9 (src line 68)
 
 
 state 8
-	const:  BOOLEAN.    (9)
+	const:  BOOLEAN.    (10)
 
-	.  reduce 9 (src line 67)
+	.  reduce 10 (src line 71)
 
 
 state 9
-	const:  STRING.    (10)
+	const:  STRING.    (11)
 
-	.  reduce 10 (src line 69)
+	.  reduce 11 (src line 73)
 
 
 state 10
-	expr:  \' expr.    (6)
+	expr:  \' expr.    (7)
 
-	.  reduce 6 (src line 52)
+	.  reduce 7 (src line 56)
 
 
 state 11
-	expr:  ( expr.exprs ) 
-	exprs: .    (2)
+	expr:  ( expr.list ) 
+	list: .    (3)
 
 	IDENTIFIER  shift 4
 	NUMBER  shift 7
@@ -103,28 +105,28 @@ state 11
 	STRING  shift 9
 	\'  shift 5
 	(  shift 6
-	.  reduce 2 (src line 35)
+	.  reduce 3 (src line 39)
 
-	exprs  goto 13
+	list  goto 13
 	expr  goto 14
 	const  goto 3
 
 state 12
-	const:  ( ).    (11)
+	const:  ( ).    (12)
 
-	.  reduce 11 (src line 71)
+	.  reduce 12 (src line 75)
 
 
 state 13
-	expr:  ( expr exprs.) 
+	expr:  ( expr list.) 
 
 	)  shift 15
 	.  error
 
 
 state 14
-	exprs:  expr.exprs 
-	exprs: .    (2)
+	list:  expr.list 
+	list: .    (3)
 
 	IDENTIFIER  shift 4
 	NUMBER  shift 7
@@ -132,33 +134,33 @@ state 14
 	STRING  shift 9
 	\'  shift 5
 	(  shift 6
-	.  reduce 2 (src line 35)
+	.  reduce 3 (src line 39)
 
-	exprs  goto 16
+	list  goto 16
 	expr  goto 14
 	const  goto 3
 
 state 15
-	expr:  ( expr exprs ).    (7)
+	expr:  ( expr list ).    (8)
 
-	.  reduce 7 (src line 54)
+	.  reduce 8 (src line 58)
 
 
 state 16
-	exprs:  expr exprs.    (3)
+	list:  expr list.    (4)
 
-	.  reduce 3 (src line 37)
+	.  reduce 4 (src line 41)
 
 
 10 terminals, 5 nonterminals
-12 grammar rules, 17/2000 states
+13 grammar rules, 17/2000 states
 0 shift/reduce, 0 reduce/reduce conflicts reported
 54 working sets used
-memory: parser 13/30000
+memory: parser 12/30000
 9 extra closures
 32 shift entries, 1 exceptions
 8 goto entries
 5 entries saved by goto default
-Optimizer space used: output 25/30000
-25 table entries, 3 zero
+Optimizer space used: output 23/30000
+23 table entries, 1 zero
 maximum spread: 10, maximum offset: 14
