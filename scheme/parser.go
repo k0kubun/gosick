@@ -29,7 +29,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyMaxDepth = 200
 
-//line parser.go.y:41
+//line parser.go.y:43
 
 type Parser struct {
 	*Lexer
@@ -151,49 +151,49 @@ var yyExca = []int{
 	-2, 0,
 }
 
-const yyNprod = 5
+const yyNprod = 6
 const yyPrivate = 57344
 
 var yyTokenNames []string
 var yyStates []string
 
-const yyLast = 6
+const yyLast = 10
 
 var yyAct = []int{
 
-	6, 4, 3, 5, 2, 1,
+	5, 8, 4, 6, 2, 3, 1, 0, 0, 7,
 }
 var yyPact = []int{
 
-	-3, -1000, -1000, -1000, -1000, -7, -1000,
+	-4, -1000, -1000, -1000, -4, -1000, -7, -1000, -1000,
 }
 var yyPgo = []int{
 
-	0, 5, 4, 2,
+	0, 6, 4, 5,
 }
 var yyR1 = []int{
 
-	0, 1, 2, 3, 3,
+	0, 1, 2, 2, 3, 3,
 }
 var yyR2 = []int{
 
-	0, 1, 1, 1, 2,
+	0, 1, 1, 2, 1, 2,
 }
 var yyChk = []int{
 
-	-1000, -1, -2, -3, 4, 6, 7,
+	-1000, -1, -2, -3, 6, 4, 7, -2, 8,
 }
 var yyDef = []int{
 
-	0, -2, 1, 2, 3, 0, 4,
+	0, -2, 1, 2, 0, 4, 0, 3, 5,
 }
 var yyTok1 = []int{
 
 	1, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-	6, 7,
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 6,
+	7, 8,
 }
 var yyTok2 = []int{
 
@@ -442,12 +442,17 @@ yydefault:
 			yyVAL.object = yyS[yypt-0].object
 		}
 	case 3:
-		//line parser.go.y:37
+		//line parser.go.y:35
 		{
-			yyVAL.object = NewNumber(yyS[yypt-0].token)
+			yyVAL.object = yyS[yypt-0].object
 		}
 	case 4:
 		//line parser.go.y:39
+		{
+			yyVAL.object = NewNumber(yyS[yypt-0].token)
+		}
+	case 5:
+		//line parser.go.y:41
 		{
 			yyVAL.object = Null
 		}

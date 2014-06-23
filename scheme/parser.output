@@ -2,8 +2,9 @@
 state 0
 	$accept: .program $end 
 
-	NUMBER  shift 4
-	(  shift 5
+	NUMBER  shift 5
+	\'  shift 4
+	(  shift 6
 	.  error
 
 	program  goto 1
@@ -30,33 +31,50 @@ state 3
 
 
 state 4
-	const:  NUMBER.    (3)
+	expr:  \'.expr 
 
-	.  reduce 3 (src line 35)
+	NUMBER  shift 5
+	\'  shift 4
+	(  shift 6
+	.  error
 
+	expr  goto 7
+	const  goto 3
 
 state 5
-	const:  (.) 
+	const:  NUMBER.    (4)
 
-	)  shift 6
-	.  error
+	.  reduce 4 (src line 37)
 
 
 state 6
-	const:  ( ).    (4)
+	const:  (.) 
 
-	.  reduce 4 (src line 38)
+	)  shift 8
+	.  error
 
 
-7 terminals, 4 nonterminals
-5 grammar rules, 7/2000 states
+state 7
+	expr:  \' expr.    (3)
+
+	.  reduce 3 (src line 34)
+
+
+state 8
+	const:  ( ).    (5)
+
+	.  reduce 5 (src line 40)
+
+
+8 terminals, 4 nonterminals
+6 grammar rules, 9/2000 states
 0 shift/reduce, 0 reduce/reduce conflicts reported
 53 working sets used
-memory: parser 2/30000
+memory: parser 4/30000
 0 extra closures
-3 shift entries, 1 exceptions
-3 goto entries
-0 entries saved by goto default
-Optimizer space used: output 6/30000
-6 table entries, 0 zero
-maximum spread: 7, maximum offset: 7
+7 shift entries, 1 exceptions
+4 goto entries
+1 entries saved by goto default
+Optimizer space used: output 10/30000
+10 table entries, 2 zero
+maximum spread: 8, maximum offset: 8

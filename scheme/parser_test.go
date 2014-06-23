@@ -14,6 +14,7 @@ var parserTests = []parserTest{
 	{"1", NewNumber(1)},
 	{"-2", NewNumber(-2)},
 	{"()", Null},
+	{"'12", NewNumber(12)},
 }
 
 func TestParser(t *testing.T) {
