@@ -13,8 +13,13 @@ type parserTest struct {
 var parserTests = []parserTest{
 	{"1", NewNumber(1)},
 	{"-2", NewNumber(-2)},
-	{"()", Null},
 	{"'12", NewNumber(12)},
+	{"()", Null},
+	{"'()", Null},
+	{"#f", NewBoolean(false)},
+	{"#t", NewBoolean(true)},
+	{"'#f", NewBoolean(false)},
+	{"'#t", NewBoolean(true)},
 }
 
 func TestParser(t *testing.T) {

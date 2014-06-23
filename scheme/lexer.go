@@ -37,9 +37,6 @@ func NewLexer(source string) *Lexer {
 func (l *Lexer) Lex(lval *yySymType) int {
 	token := int(l.TokenType())
 	lval.token = l.NextToken()
-	if token == IntToken {
-		token = NUMBER
-	}
 	return token
 }
 

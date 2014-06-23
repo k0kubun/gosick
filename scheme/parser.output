@@ -3,8 +3,9 @@ state 0
 	$accept: .program $end 
 
 	NUMBER  shift 5
+	BOOLEAN  shift 6
 	\'  shift 4
-	(  shift 6
+	(  shift 7
 	.  error
 
 	program  goto 1
@@ -34,11 +35,12 @@ state 4
 	expr:  \'.expr 
 
 	NUMBER  shift 5
+	BOOLEAN  shift 6
 	\'  shift 4
-	(  shift 6
+	(  shift 7
 	.  error
 
-	expr  goto 7
+	expr  goto 8
 	const  goto 3
 
 state 5
@@ -48,33 +50,39 @@ state 5
 
 
 state 6
-	const:  (.) 
+	const:  BOOLEAN.    (5)
 
-	)  shift 8
-	.  error
+	.  reduce 5 (src line 40)
 
 
 state 7
+	const:  (.) 
+
+	)  shift 9
+	.  error
+
+
+state 8
 	expr:  \' expr.    (3)
 
 	.  reduce 3 (src line 34)
 
 
-state 8
-	const:  ( ).    (5)
+state 9
+	const:  ( ).    (6)
 
-	.  reduce 5 (src line 40)
+	.  reduce 6 (src line 42)
 
 
 8 terminals, 4 nonterminals
-6 grammar rules, 9/2000 states
+7 grammar rules, 10/2000 states
 0 shift/reduce, 0 reduce/reduce conflicts reported
 53 working sets used
 memory: parser 4/30000
 0 extra closures
-7 shift entries, 1 exceptions
+9 shift entries, 1 exceptions
 4 goto entries
 1 entries saved by goto default
 Optimizer space used: output 10/30000
-10 table entries, 2 zero
+10 table entries, 1 zero
 maximum spread: 8, maximum offset: 8

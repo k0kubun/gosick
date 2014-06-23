@@ -37,6 +37,8 @@ expr:
 const:
 	NUMBER
 		{ $$ = NewNumber($1) }
+	| BOOLEAN
+		{ $$ = NewBoolean($1) }
 	| '(' ')'
 		{ $$ = Null }
 
