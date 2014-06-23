@@ -21,18 +21,18 @@ var tokenTypeTests = []tokenTypeTest{
 	{")", ')'},
 	{"'", '\''},
 
-	{"100", IntToken},
-	{"-1", IntToken},
+	{"100", NUMBER},
+	{"-1", NUMBER},
 
-	{"#f", BooleanToken},
-	{"#t", BooleanToken},
+	{"#f", BOOLEAN},
+	{"#t", BOOLEAN},
 
-	{"+", IdentifierToken},
-	{"-", IdentifierToken},
-	{"f2000", IdentifierToken},
-	{"a0?!*/<=>:$%^&_~", IdentifierToken},
+	{"+", IDENTIFIER},
+	{"-", IDENTIFIER},
+	{"f2000", IDENTIFIER},
+	{"a0?!*/<=>:$%^&_~", IDENTIFIER},
 
-	{"\"a b\"", StringToken},
+	{"\"a b\"", STRING},
 }
 
 var tokenizeTests = []tokenizeTest{

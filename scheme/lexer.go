@@ -12,6 +12,7 @@ import (
 
 type Lexer struct {
 	scanner.Scanner
+	results []Object
 }
 
 const (
@@ -33,6 +34,16 @@ func NewLexer(source string) *Lexer {
 	return lexer
 }
 
+func (l *Lexer) Lex(lval *yySymType) int {
+	token := int(l.TokenType())
+	lval.token = l.NextToken()
+	return token
+}
+
+func (l *Lexer) Error(e string) {
+	panic(e)
+}
+
 // Non-destructive scanner.Scan().
 // This method returns next token type or unicode character.
 func (l Lexer) TokenType() rune {
@@ -40,13 +51,13 @@ func (l Lexer) TokenType() rune {
 	if l.matchRegexp(token, "^[ ]*$") {
 		return EOF
 	} else if l.matchRegexp(token, fmt.Sprintf("^(%s|\\+|-)$", identifierExp)) {
-		return IdentifierToken
+		return IDENTIFIER
 	} else if l.matchRegexp(token, "^-?[0-9]+$") {
-		return IntToken
+		return NUMBER
 	} else if l.matchRegexp(token, "^#(f|t)$") {
-		return BooleanToken
+		return BOOLEAN
 	} else if l.matchRegexp(token, "\"[^\"]*\"") {
-		return StringToken
+		return STRING
 	} else {
 		runes := []rune(token)
 		return runes[0]
