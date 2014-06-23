@@ -69,13 +69,13 @@ state 6
 state 7
 	const:  NUMBER.    (8)
 
-	.  reduce 8 (src line 64)
+	.  reduce 8 (src line 63)
 
 
 state 8
 	const:  BOOLEAN.    (9)
 
-	.  reduce 9 (src line 67)
+	.  reduce 9 (src line 66)
 
 
 state 9
@@ -102,7 +102,7 @@ state 10
 state 11
 	const:  ( ).    (10)
 
-	.  reduce 10 (src line 69)
+	.  reduce 10 (src line 68)
 
 
 state 12

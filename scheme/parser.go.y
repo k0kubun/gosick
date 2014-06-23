@@ -58,7 +58,6 @@ expr:
 			application.arguments = $3
 			application.arguments.setParent(application)
 			$$ = application
-
 		}
 
 const:

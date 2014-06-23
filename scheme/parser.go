@@ -31,7 +31,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyMaxDepth = 200
 
-//line parser.go.y:72
+//line parser.go.y:71
 
 type Parser struct {
 	*Lexer
@@ -484,20 +484,19 @@ yydefault:
 			application.arguments = yyS[yypt-1].object
 			application.arguments.setParent(application)
 			yyVAL.object = application
-
 		}
 	case 8:
-		//line parser.go.y:66
+		//line parser.go.y:65
 		{
 			yyVAL.object = NewNumber(yyS[yypt-0].token)
 		}
 	case 9:
-		//line parser.go.y:68
+		//line parser.go.y:67
 		{
 			yyVAL.object = NewBoolean(yyS[yypt-0].token)
 		}
 	case 10:
-		//line parser.go.y:70
+		//line parser.go.y:69
 		{
 			yyVAL.object = Null
 		}
