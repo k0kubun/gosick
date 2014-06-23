@@ -8,13 +8,14 @@ package scheme
 
 %union{
 	object Object
+	token  string
 }
 
 %type<object> program
 %type<object> expr
 %type<object> const
 
-%token<object> NUMBER
+%token<token> NUMBER BOOLEAN
 
 %%
 
@@ -23,21 +24,21 @@ program:
 		{
 			$$ = $1
 			if l, ok := yylex.(*Lexer); ok {
-				l.result = NewNumber(1)
+				l.result = $$
 			}
 		}
 
 expr:
 	const
-		{
-			$$ = $1
-		}
+		{ $$ = $1 }
 
 const:
 	NUMBER
-		{
-			$$ = NewNumber(1)
-		}
+		{ $$ = NewNumber($1) }
+	| '-' NUMBER
+		{ $$ = NewNumber(__yyfmt__.Sprintf("-%s", $2)) }
+	| '(' ')'
+		{ $$ = Null }
 
 %%
 

@@ -13,12 +13,15 @@ import __yyfmt__ "fmt"
 type yySymType struct {
 	yys    int
 	object Object
+	token  string
 }
 
 const NUMBER = 57346
+const BOOLEAN = 57347
 
 var yyToknames = []string{
 	"NUMBER",
+	"BOOLEAN",
 }
 var yyStatenames = []string{}
 
@@ -26,7 +29,7 @@ const yyEofCode = 1
 const yyErrCode = 2
 const yyMaxDepth = 200
 
-//line parser.go.y:42
+//line parser.go.y:43
 
 type Parser struct {
 	*Lexer
@@ -148,49 +151,53 @@ var yyExca = []int{
 	-2, 0,
 }
 
-const yyNprod = 4
+const yyNprod = 6
 const yyPrivate = 57344
 
 var yyTokenNames []string
 var yyStates []string
 
-const yyLast = 4
+const yyLast = 8
 
 var yyAct = []int{
 
-	4, 3, 2, 1,
+	4, 8, 5, 6, 7, 3, 2, 1,
 }
 var yyPact = []int{
 
-	-4, -1000, -1000, -1000, -1000,
+	-4, -1000, -1000, -1000, -1000, 0, -7, -1000, -1000,
 }
 var yyPgo = []int{
 
-	0, 3, 2, 1,
+	0, 7, 6, 5,
 }
 var yyR1 = []int{
 
-	0, 1, 2, 3,
+	0, 1, 2, 3, 3, 3,
 }
 var yyR2 = []int{
 
-	0, 1, 1, 1,
+	0, 1, 1, 1, 2, 2,
 }
 var yyChk = []int{
 
-	-1000, -1, -2, -3, 4,
+	-1000, -1, -2, -3, 4, 6, 7, 4, 8,
 }
 var yyDef = []int{
 
-	0, -2, 1, 2, 3,
+	0, -2, 1, 2, 3, 0, 0, 4, 5,
 }
 var yyTok1 = []int{
 
-	1,
+	1, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	7, 8, 3, 3, 3, 6,
 }
 var yyTok2 = []int{
 
-	2, 3, 4,
+	2, 3, 4, 5,
 }
 var yyTok3 = []int{
 	0,
@@ -422,22 +429,32 @@ yydefault:
 	switch yynt {
 
 	case 1:
-		//line parser.go.y:23
+		//line parser.go.y:24
 		{
 			yyVAL.object = yyS[yypt-0].object
 			if l, ok := yylex.(*Lexer); ok {
-				l.result = NewNumber(1)
+				l.result = yyVAL.object
 			}
 		}
 	case 2:
-		//line parser.go.y:32
+		//line parser.go.y:33
 		{
 			yyVAL.object = yyS[yypt-0].object
 		}
 	case 3:
-		//line parser.go.y:38
+		//line parser.go.y:37
 		{
-			yyVAL.object = NewNumber(1)
+			yyVAL.object = NewNumber(yyS[yypt-0].token)
+		}
+	case 4:
+		//line parser.go.y:39
+		{
+			yyVAL.object = NewNumber(__yyfmt__.Sprintf("-%s", yyS[yypt-0].token))
+		}
+	case 5:
+		//line parser.go.y:41
+		{
+			yyVAL.object = Null
 		}
 	}
 	goto yystack /* stack new state and value */

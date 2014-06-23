@@ -12,6 +12,8 @@ type parserTest struct {
 
 var parserTests = []parserTest{
 	{"1", NewNumber(1)},
+	{"-2", NewNumber(-2)},
+	{"()", Null},
 }
 
 func TestParser(t *testing.T) {

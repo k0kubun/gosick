@@ -35,7 +35,8 @@ func NewLexer(source string) *Lexer {
 }
 
 func (l *Lexer) Lex(lval *yySymType) int {
-	token := int(l.Scan())
+	token := int(l.TokenType())
+	lval.token = l.NextToken()
 	if token == IntToken {
 		token = NUMBER
 	}
@@ -55,9 +56,9 @@ func (l Lexer) TokenType() rune {
 	} else if l.matchRegexp(token, fmt.Sprintf("^(%s|\\+|-)$", identifierExp)) {
 		return IdentifierToken
 	} else if l.matchRegexp(token, "^-?[0-9]+$") {
-		return IntToken
+		return NUMBER
 	} else if l.matchRegexp(token, "^#(f|t)$") {
-		return BooleanToken
+		return BOOLEAN
 	} else if l.matchRegexp(token, "\"[^\"]*\"") {
 		return StringToken
 	} else {

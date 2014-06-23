@@ -21,11 +21,11 @@ var tokenTypeTests = []tokenTypeTest{
 	{")", ')'},
 	{"'", '\''},
 
-	{"100", IntToken},
-	{"-1", IntToken},
+	{"100", NUMBER},
+	{"-1", NUMBER},
 
-	{"#f", BooleanToken},
-	{"#t", BooleanToken},
+	{"#f", BOOLEAN},
+	{"#t", BOOLEAN},
 
 	{"+", IdentifierToken},
 	{"-", IdentifierToken},
