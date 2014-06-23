@@ -15,6 +15,7 @@ package scheme
 %type<objects> program
 %type<object> list
 %type<object> expr
+%type<object> sexpr
 %type<object> const
 
 %token<token> IDENTIFIER
@@ -53,6 +54,8 @@ expr:
 		{ $$ = $1 }
 	| IDENTIFIER
 		{ $$ = NewVariable($1, nil) }
+	| '\'' sexpr
+		{ $$ = $2 }
 	| '(' expr list ')'
 		{
 			app := NewApplication(nil)
@@ -62,6 +65,14 @@ expr:
 			app.arguments.setParent(app)
 			$$ = app
 		}
+
+sexpr:
+	const
+		{ $$ = $1 }
+	| IDENTIFIER
+		{ $$ = NewSymbol($1) }
+	| '(' list ')'
+		{ $$ = $2 }
 
 const:
 	NUMBER

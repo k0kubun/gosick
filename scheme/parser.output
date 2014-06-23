@@ -3,7 +3,7 @@ state 0
 	$accept: .program $end 
 	program: .    (1)
 
-	.  reduce 1 (src line 27)
+	.  reduce 1 (src line 28)
 
 	program  goto 1
 
@@ -13,10 +13,11 @@ state 1
 
 	$end  accept
 	IDENTIFIER  shift 4
-	NUMBER  shift 6
-	BOOLEAN  shift 7
-	STRING  shift 8
-	(  shift 5
+	NUMBER  shift 7
+	BOOLEAN  shift 8
+	STRING  shift 9
+	\'  shift 5
+	(  shift 6
 	.  error
 
 	expr  goto 2
@@ -25,118 +26,184 @@ state 1
 state 2
 	program:  program expr.    (2)
 
-	.  reduce 2 (src line 31)
+	.  reduce 2 (src line 32)
 
 
 state 3
 	expr:  const.    (5)
 
-	.  reduce 5 (src line 51)
+	.  reduce 5 (src line 52)
 
 
 state 4
 	expr:  IDENTIFIER.    (6)
 
-	.  reduce 6 (src line 54)
+	.  reduce 6 (src line 55)
 
 
 state 5
+	expr:  \'.sexpr 
+
+	IDENTIFIER  shift 12
+	NUMBER  shift 7
+	BOOLEAN  shift 8
+	STRING  shift 9
+	(  shift 13
+	.  error
+
+	sexpr  goto 10
+	const  goto 11
+
+state 6
 	expr:  (.expr list ) 
 	const:  (.) 
 
 	IDENTIFIER  shift 4
-	NUMBER  shift 6
-	BOOLEAN  shift 7
-	STRING  shift 8
-	(  shift 5
-	)  shift 10
+	NUMBER  shift 7
+	BOOLEAN  shift 8
+	STRING  shift 9
+	\'  shift 5
+	(  shift 6
+	)  shift 15
 	.  error
 
-	expr  goto 9
+	expr  goto 14
 	const  goto 3
 
-state 6
-	const:  NUMBER.    (8)
-
-	.  reduce 8 (src line 66)
-
-
 state 7
-	const:  BOOLEAN.    (9)
+	const:  NUMBER.    (12)
+
+	.  reduce 12 (src line 77)
+
+
+state 8
+	const:  BOOLEAN.    (13)
+
+	.  reduce 13 (src line 80)
+
+
+state 9
+	const:  STRING.    (14)
+
+	.  reduce 14 (src line 82)
+
+
+state 10
+	expr:  \' sexpr.    (7)
+
+	.  reduce 7 (src line 57)
+
+
+state 11
+	sexpr:  const.    (9)
 
 	.  reduce 9 (src line 69)
 
 
-state 8
-	const:  STRING.    (10)
+state 12
+	sexpr:  IDENTIFIER.    (10)
 
-	.  reduce 10 (src line 71)
+	.  reduce 10 (src line 72)
 
 
-state 9
+13: shift/reduce conflict (shift 15(0), red'n 3(0)) on )
+state 13
+	sexpr:  (.list ) 
+	const:  (.) 
+	list: .    (3)
+
+	IDENTIFIER  shift 4
+	NUMBER  shift 7
+	BOOLEAN  shift 8
+	STRING  shift 9
+	\'  shift 5
+	(  shift 6
+	)  shift 15
+	.  error
+
+	list  goto 16
+	expr  goto 17
+	const  goto 3
+
+state 14
 	expr:  ( expr.list ) 
 	list: .    (3)
 
 	IDENTIFIER  shift 4
-	NUMBER  shift 6
-	BOOLEAN  shift 7
-	STRING  shift 8
-	(  shift 5
-	.  reduce 3 (src line 39)
+	NUMBER  shift 7
+	BOOLEAN  shift 8
+	STRING  shift 9
+	\'  shift 5
+	(  shift 6
+	.  reduce 3 (src line 40)
 
-	list  goto 11
-	expr  goto 12
+	list  goto 18
+	expr  goto 17
 	const  goto 3
 
-state 10
-	const:  ( ).    (11)
+state 15
+	const:  ( ).    (15)
 
-	.  reduce 11 (src line 73)
+	.  reduce 15 (src line 84)
 
 
-state 11
-	expr:  ( expr list.) 
+state 16
+	sexpr:  ( list.) 
 
-	)  shift 13
+	)  shift 19
 	.  error
 
 
-state 12
+state 17
 	list:  expr.list 
 	list: .    (3)
 
 	IDENTIFIER  shift 4
-	NUMBER  shift 6
-	BOOLEAN  shift 7
-	STRING  shift 8
-	(  shift 5
-	.  reduce 3 (src line 39)
+	NUMBER  shift 7
+	BOOLEAN  shift 8
+	STRING  shift 9
+	\'  shift 5
+	(  shift 6
+	.  reduce 3 (src line 40)
 
-	list  goto 14
-	expr  goto 12
+	list  goto 20
+	expr  goto 17
 	const  goto 3
 
-state 13
-	expr:  ( expr list ).    (7)
+state 18
+	expr:  ( expr list.) 
 
-	.  reduce 7 (src line 56)
+	)  shift 21
+	.  error
 
 
-state 14
+state 19
+	sexpr:  ( list ).    (11)
+
+	.  reduce 11 (src line 74)
+
+
+state 20
 	list:  expr list.    (4)
 
-	.  reduce 4 (src line 41)
+	.  reduce 4 (src line 42)
 
 
-9 terminals, 5 nonterminals
-12 grammar rules, 15/2000 states
-0 shift/reduce, 0 reduce/reduce conflicts reported
-54 working sets used
-memory: parser 10/30000
-7 extra closures
-22 shift entries, 1 exceptions
-7 goto entries
-4 entries saved by goto default
-Optimizer space used: output 20/30000
-20 table entries, 1 zero
-maximum spread: 9, maximum offset: 12
+state 21
+	expr:  ( expr list ).    (8)
+
+	.  reduce 8 (src line 59)
+
+
+10 terminals, 6 nonterminals
+16 grammar rules, 22/2000 states
+1 shift/reduce, 0 reduce/reduce conflicts reported
+55 working sets used
+memory: parser 20/30000
+14 extra closures
+39 shift entries, 1 exceptions
+10 goto entries
+6 entries saved by goto default
+Optimizer space used: output 33/30000
+33 table entries, 3 zero
+maximum spread: 10, maximum offset: 17

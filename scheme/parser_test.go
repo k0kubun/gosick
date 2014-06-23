@@ -18,24 +18,27 @@ type deepParserTest struct {
 var easyParserTests = []easyParserTest{
 	{"1", "1"},
 	{"-2", "-2"},
-	// {"'12", "12"},
+	{"'12", "12"},
 	{"()", "()"},
-	// {"'()", "()"},
+	{"'()", "()"},
 	{"#f", "#f"},
 	{"#t", "#t"},
-	// {"'#f", "#f"},
-	// {"'#t", "#t"},
+	{"'#f", "#f"},
+	{"'#t", "#t"},
 	{"hello", "hello"},
+	{"'hello", "hello"},
 	{"(+)", "(+)"},
 	{"(- 1)", "(- 1)"},
 	{"(+ 3 4 (- 3 2))", "(+ 3 4 (- 3 2))"},
 	{"(<= 1 2 1)", "(<= 1 2 1)"},
+	{"'(1 2 3)", "(1 2 3)"},
 	{"(string-append)", "(string-append)"},
 	{"((lambda (x y z) (* (+ x y) z)) 1 2 3)", "((lambda (x y z) (* (+ x y) z)) 1 2 3)"},
 	{"\"a b\"", "\"a b\""},
 }
 
 var deepParserTests = []deepParserTest{
+	{"'hello", NewSymbol("hello")},
 	{
 		"(+)",
 		func() Object {
@@ -61,6 +64,17 @@ var deepParserTests = []deepParserTest{
 			app.procedure.setParent(app)
 			pair.setParent(app)
 			return app
+		}(),
+	},
+	{
+		"'(1)",
+		func() Object {
+			pair := &Pair{
+				Cdr: Null,
+			}
+			pair.Car = NewNumber(1, pair)
+			pair.Car.setParent(pair)
+			return pair
 		}(),
 	},
 }
