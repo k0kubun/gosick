@@ -1,0 +1,28 @@
+
+state 0
+	$accept: .program $end 
+	program: .    (1)
+
+	.  reduce 1 (src line 16)
+
+	program  goto 1
+
+state 1
+	$accept:  program.$end 
+
+	$end  accept
+	.  error
+
+
+3 terminals, 2 nonterminals
+2 grammar rules, 2/2000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+51 working sets used
+memory: parser 0/30000
+0 extra closures
+0 shift entries, 1 exceptions
+1 goto entries
+0 entries saved by goto default
+Optimizer space used: output 1/30000
+1 table entries, 0 zero
+maximum spread: 0, maximum offset: 0
