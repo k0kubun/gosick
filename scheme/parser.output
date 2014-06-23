@@ -1,11 +1,13 @@
 
 state 0
 	$accept: .program $end 
-	program: .    (1)
 
-	.  reduce 1 (src line 16)
+	NUMBER  shift 4
+	.  error
 
 	program  goto 1
+	expr  goto 2
+	const  goto 3
 
 state 1
 	$accept:  program.$end 
@@ -14,15 +16,33 @@ state 1
 	.  error
 
 
-3 terminals, 2 nonterminals
-2 grammar rules, 2/2000 states
+state 2
+	program:  expr.    (1)
+
+	.  reduce 1 (src line 21)
+
+
+state 3
+	expr:  const.    (2)
+
+	.  reduce 2 (src line 30)
+
+
+state 4
+	const:  NUMBER.    (3)
+
+	.  reduce 3 (src line 36)
+
+
+4 terminals, 4 nonterminals
+4 grammar rules, 5/2000 states
 0 shift/reduce, 0 reduce/reduce conflicts reported
-51 working sets used
-memory: parser 0/30000
+53 working sets used
+memory: parser 2/30000
 0 extra closures
-0 shift entries, 1 exceptions
-1 goto entries
+1 shift entries, 1 exceptions
+3 goto entries
 0 entries saved by goto default
-Optimizer space used: output 1/30000
-1 table entries, 0 zero
-maximum spread: 0, maximum offset: 0
+Optimizer space used: output 4/30000
+4 table entries, 0 zero
+maximum spread: 4, maximum offset: 4

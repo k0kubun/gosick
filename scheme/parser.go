@@ -15,14 +15,18 @@ type yySymType struct {
 	object Object
 }
 
-var yyToknames = []string{}
+const NUMBER = 57346
+
+var yyToknames = []string{
+	"NUMBER",
+}
 var yyStatenames = []string{}
 
 const yyEofCode = 1
 const yyErrCode = 2
 const yyMaxDepth = 200
 
-//line parser.go.y:21
+//line parser.go.y:42
 
 type Parser struct {
 	*Lexer
@@ -34,7 +38,11 @@ func NewParser(source string) *Parser {
 
 func (p *Parser) Parse(parent Object) Object {
 	p.ensureAvailability()
-	return p.parseObject(parent)
+	if yyParse(p.Lexer) != 0 {
+		panic("parse error")
+	}
+	p.result.setParent(parent)
+	return p.result
 }
 
 func (p *Parser) parseObject(parent Object) Object {
@@ -140,41 +148,41 @@ var yyExca = []int{
 	-2, 0,
 }
 
-const yyNprod = 2
+const yyNprod = 4
 const yyPrivate = 57344
 
 var yyTokenNames []string
 var yyStates []string
 
-const yyLast = 1
+const yyLast = 4
 
 var yyAct = []int{
 
-	1,
+	4, 3, 2, 1,
 }
 var yyPact = []int{
 
-	-1000, -1000,
+	-4, -1000, -1000, -1000, -1000,
 }
 var yyPgo = []int{
 
-	0, 0,
+	0, 3, 2, 1,
 }
 var yyR1 = []int{
 
-	0, 1,
+	0, 1, 2, 3,
 }
 var yyR2 = []int{
 
-	0, 0,
+	0, 1, 1, 1,
 }
 var yyChk = []int{
 
-	-1000, -1,
+	-1000, -1, -2, -3, 4,
 }
 var yyDef = []int{
 
-	1, -2,
+	0, -2, 1, 2, 3,
 }
 var yyTok1 = []int{
 
@@ -182,7 +190,7 @@ var yyTok1 = []int{
 }
 var yyTok2 = []int{
 
-	2, 3,
+	2, 3, 4,
 }
 var yyTok3 = []int{
 	0,
@@ -414,8 +422,22 @@ yydefault:
 	switch yynt {
 
 	case 1:
-		//line parser.go.y:18
+		//line parser.go.y:23
 		{
+			yyVAL.object = yyS[yypt-0].object
+			if l, ok := yylex.(*Lexer); ok {
+				l.result = NewNumber(1)
+			}
+		}
+	case 2:
+		//line parser.go.y:32
+		{
+			yyVAL.object = yyS[yypt-0].object
+		}
+	case 3:
+		//line parser.go.y:38
+		{
+			yyVAL.object = NewNumber(1)
 		}
 	}
 	goto yystack /* stack new state and value */

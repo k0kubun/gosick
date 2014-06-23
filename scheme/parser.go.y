@@ -9,14 +9,35 @@ package scheme
 %union{
 	object Object
 }
+
 %type<object> program
+%type<object> expr
+%type<object> const
+
+%token<object> NUMBER
 
 %%
 
-program
-:
-{
-}
+program:
+	expr
+		{
+			$$ = $1
+			if l, ok := yylex.(*Lexer); ok {
+				l.result = NewNumber(1)
+			}
+		}
+
+expr:
+	const
+		{
+			$$ = $1
+		}
+
+const:
+	NUMBER
+		{
+			$$ = NewNumber(1)
+		}
 
 %%
 
@@ -30,7 +51,11 @@ func NewParser(source string) *Parser {
 
 func (p *Parser) Parse(parent Object) Object {
 	p.ensureAvailability()
-	return p.parseObject(parent)
+	if yyParse(p.Lexer) != 0 {
+		panic("parse error")
+	}
+	p.result.setParent(parent)
+	return p.result
 }
 
 func (p *Parser) parseObject(parent Object) Object {

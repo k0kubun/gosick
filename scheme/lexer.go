@@ -12,6 +12,7 @@ import (
 
 type Lexer struct {
 	scanner.Scanner
+	result Object
 }
 
 const (
@@ -31,6 +32,18 @@ func NewLexer(source string) *Lexer {
 	lexer.Init(strings.NewReader(source))
 	lexer.Mode &^= scanner.ScanChars
 	return lexer
+}
+
+func (l *Lexer) Lex(lval *yySymType) int {
+	token := int(l.Scan())
+	if token == IntToken {
+		token = NUMBER
+	}
+	return token
+}
+
+func (l *Lexer) Error(e string) {
+	panic(e)
 }
 
 // Non-destructive scanner.Scan().

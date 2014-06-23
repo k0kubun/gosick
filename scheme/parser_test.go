@@ -1,43 +1,33 @@
 package scheme
 
 import (
+	"reflect"
 	"testing"
 )
 
 type parserTest struct {
-	source  string
-	results []string
+	source string
+	result Object
 }
 
 var parserTests = []parserTest{
-	parseTest(" x ", "x"),
-	parseTest("'( 1 )", "'(1)"),
-	parseTest("''''hello", "''''hello"),
-	parseTest("( x 1 )", "(x 1)"),
-	parseTest("( x ( 1 ) )", "(x (1))"),
-}
-
-func parseTest(source string, results ...string) parserTest {
-	return parserTest{source: source, results: results}
+	{"1", NewNumber(1)},
 }
 
 func TestParser(t *testing.T) {
 	for _, test := range parserTests {
 		i := NewInterpreter(test.source)
-		parseResults := []string{}
-		for i.Peek() != EOF {
-			object := i.Parse(i.closure)
-			if object != nil {
-				parseResults = append(parseResults, object.String())
-			}
-		}
+		i.Peek()
+		object := i.Parse(nil)
 
-		for i := 0; i < len(test.results); i++ {
-			expect := test.results[i]
-			actual := parseResults[i]
-			if actual != expect {
-				t.Errorf("%s =>\n got: %s\nwant: %s", test.source, actual, expect)
-			}
+		if !reflect.DeepEqual(object, test.result) {
+			t.Errorf(
+				"%s:\n  Expected:\n    %#v\n  Got:\n    %#v\n",
+				test.source,
+				test.result,
+				object,
+			)
+			return
 		}
 	}
 }
