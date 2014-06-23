@@ -35,8 +35,6 @@ expr:
 const:
 	NUMBER
 		{ $$ = NewNumber($1) }
-	| '-' NUMBER
-		{ $$ = NewNumber(__yyfmt__.Sprintf("-%s", $2)) }
 	| '(' ')'
 		{ $$ = Null }
 
