@@ -3,10 +3,10 @@ state 0
 	$accept: .program $end 
 
 	IDENTIFIER  shift 4
-	NUMBER  shift 6
-	BOOLEAN  shift 7
+	NUMBER  shift 7
+	BOOLEAN  shift 8
 	\'  shift 5
-	(  shift 8
+	(  shift 6
 	.  error
 
 	program  goto 1
@@ -23,74 +23,131 @@ state 1
 state 2
 	program:  expr.    (1)
 
-	.  reduce 1 (src line 24)
+	.  reduce 1 (src line 25)
 
 
 state 3
-	expr:  const.    (2)
+	expr:  const.    (4)
 
-	.  reduce 2 (src line 33)
+	.  reduce 4 (src line 46)
 
 
 state 4
-	expr:  IDENTIFIER.    (3)
+	expr:  IDENTIFIER.    (5)
 
-	.  reduce 3 (src line 36)
+	.  reduce 5 (src line 49)
 
 
 state 5
 	expr:  \'.expr 
 
 	IDENTIFIER  shift 4
-	NUMBER  shift 6
-	BOOLEAN  shift 7
+	NUMBER  shift 7
+	BOOLEAN  shift 8
 	\'  shift 5
-	(  shift 8
+	(  shift 6
 	.  error
 
 	expr  goto 9
 	const  goto 3
 
 state 6
-	const:  NUMBER.    (5)
+	expr:  (.expr exprs ) 
+	const:  (.) 
 
-	.  reduce 5 (src line 41)
+	IDENTIFIER  shift 4
+	NUMBER  shift 7
+	BOOLEAN  shift 8
+	\'  shift 5
+	(  shift 6
+	)  shift 11
+	.  error
 
+	expr  goto 10
+	const  goto 3
 
 state 7
-	const:  BOOLEAN.    (6)
+	const:  NUMBER.    (8)
 
-	.  reduce 6 (src line 44)
+	.  reduce 8 (src line 64)
 
 
 state 8
-	const:  (.) 
+	const:  BOOLEAN.    (9)
 
-	)  shift 10
-	.  error
+	.  reduce 9 (src line 67)
 
 
 state 9
-	expr:  \' expr.    (4)
+	expr:  \' expr.    (6)
 
-	.  reduce 4 (src line 38)
+	.  reduce 6 (src line 51)
 
 
 state 10
-	const:  ( ).    (7)
+	expr:  ( expr.exprs ) 
+	exprs: .    (2)
 
-	.  reduce 7 (src line 46)
+	IDENTIFIER  shift 4
+	NUMBER  shift 7
+	BOOLEAN  shift 8
+	\'  shift 5
+	(  shift 6
+	.  reduce 2 (src line 34)
+
+	exprs  goto 12
+	expr  goto 13
+	const  goto 3
+
+state 11
+	const:  ( ).    (10)
+
+	.  reduce 10 (src line 69)
 
 
-9 terminals, 4 nonterminals
-8 grammar rules, 11/2000 states
+state 12
+	expr:  ( expr exprs.) 
+
+	)  shift 14
+	.  error
+
+
+state 13
+	exprs:  expr.exprs 
+	exprs: .    (2)
+
+	IDENTIFIER  shift 4
+	NUMBER  shift 7
+	BOOLEAN  shift 8
+	\'  shift 5
+	(  shift 6
+	.  reduce 2 (src line 34)
+
+	exprs  goto 15
+	expr  goto 13
+	const  goto 3
+
+state 14
+	expr:  ( expr exprs ).    (7)
+
+	.  reduce 7 (src line 53)
+
+
+state 15
+	exprs:  expr exprs.    (3)
+
+	.  reduce 3 (src line 36)
+
+
+9 terminals, 5 nonterminals
+11 grammar rules, 16/2000 states
 0 shift/reduce, 0 reduce/reduce conflicts reported
-53 working sets used
-memory: parser 4/30000
-0 extra closures
-11 shift entries, 1 exceptions
-4 goto entries
-1 entries saved by goto default
-Optimizer space used: output 12/30000
-12 table entries, 2 zero
-maximum spread: 9, maximum offset: 9
+54 working sets used
+memory: parser 13/30000
+9 extra closures
+27 shift entries, 1 exceptions
+8 goto entries
+5 entries saved by goto default
+Optimizer space used: output 23/30000
+23 table entries, 3 zero
+maximum spread: 9, maximum offset: 13

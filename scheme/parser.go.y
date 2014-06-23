@@ -12,6 +12,7 @@ package scheme
 }
 
 %type<object> program
+%type<object> exprs
 %type<object> expr
 %type<object> const
 
@@ -30,6 +31,18 @@ program:
 			}
 		}
 
+exprs:
+		{ $$ = Null }
+	| expr exprs
+		{
+			pair := NewPair(nil)
+			pair.Car = $1
+			pair.Car.setParent(pair)
+			pair.Cdr = $2
+			pair.Cdr.setParent(pair)
+			$$ = pair
+		}
+
 expr:
 	const
 		{ $$ = $1 }
@@ -37,6 +50,16 @@ expr:
 		{ $$ = NewVariable($1, nil) }
 	| '\'' expr
 		{ $$ = $2 }
+	| '(' expr exprs ')'
+		{
+			application := NewApplication(nil)
+			application.procedure = $2
+			application.procedure.setParent(application)
+			application.arguments = $3
+			application.arguments.setParent(application)
+			$$ = application
+
+		}
 
 const:
 	NUMBER

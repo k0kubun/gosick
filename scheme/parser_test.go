@@ -20,6 +20,7 @@ var parserTests = []parserTest{
 	{"'#f", "#f"},
 	{"'#t", "#t"},
 	{"hello", "hello"},
+	{"(+)", "(+)"},
 }
 
 func TestParser(t *testing.T) {
